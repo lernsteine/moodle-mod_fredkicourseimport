@@ -33,7 +33,6 @@
  */
 namespace mod_fredkicourseimport\local;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * token_manager class for FredKI CourseImport.

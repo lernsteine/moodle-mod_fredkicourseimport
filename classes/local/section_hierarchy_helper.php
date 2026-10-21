@@ -30,7 +30,6 @@
 
 namespace mod_fredkicourseimport\local;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * section_hierarchy_helper class for FredKI CourseImport.

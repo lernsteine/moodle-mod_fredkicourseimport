@@ -23,7 +23,6 @@
  */
 namespace mod_fredkicourseimport\privacy;
 
-defined('MOODLE_INTERNAL') || die();
 
 use context_module;
 use core_privacy\local\metadata\collection;

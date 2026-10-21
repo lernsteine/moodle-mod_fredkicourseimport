@@ -24,7 +24,6 @@
 
 namespace mod_fredkicourseimport\task;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Conservative reconciliation of physical Moodle deletions, never visibility.

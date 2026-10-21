@@ -39,7 +39,6 @@
 
 namespace mod_fredkicourseimport\local;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * manual sync service for FredKI CourseImport.
