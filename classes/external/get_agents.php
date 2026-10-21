@@ -30,7 +30,17 @@ use external_multiple_structure;
 use external_single_structure;
 use external_value;
 
+/**
+ * get_agents class for FredKI CourseImport.
+ *
+ * @package mod_fredkicourseimport
+ */
 final class get_agents extends external_api {
+    /**
+     * execute parameters operation.
+     *
+     * @return external_function_parameters Operation result.
+     */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'courseid' => new external_value(PARAM_INT),
@@ -39,6 +49,15 @@ final class get_agents extends external_api {
             'workspace' => new external_value(PARAM_TEXT),
         ]);
     }
+    /**
+     * execute operation.
+     *
+     * @param int $courseid Parameter for this operation.
+     * @param string $username Parameter for this operation.
+     * @param string $password Parameter for this operation.
+     * @param string $workspace Parameter for this operation.
+     * @return array Operation result.
+     */
     public static function execute(int $courseid, string $username, string $password, string $workspace): array {
         $params = self::validate_parameters(self::execute_parameters(), compact('courseid', 'username', 'password', 'workspace'));
         $context = \context_course::instance($params['courseid']);
@@ -55,6 +74,11 @@ final class get_agents extends external_api {
         );
         return $client->list_agents();
     }
+    /**
+     * execute returns operation.
+     *
+     * @return external_multiple_structure Operation result.
+     */
     public static function execute_returns(): external_multiple_structure {
         return new external_multiple_structure(new external_single_structure([
             'id' => new external_value(PARAM_TEXT),

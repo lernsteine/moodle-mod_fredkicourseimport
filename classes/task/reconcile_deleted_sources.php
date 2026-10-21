@@ -31,10 +31,20 @@ defined('MOODLE_INTERNAL') || die();
  * Fail-closed for uncertain sources and bulk deletions.
  */
 final class reconcile_deleted_sources extends \core\task\scheduled_task {
+    /**
+     * get name operation.
+     *
+     * @return string Operation result.
+     */
     public function get_name(): string {
         return get_string('taskreconciledeleted', 'mod_fredkicourseimport');
     }
 
+    /**
+     * execute operation.
+     *
+     * @return void Operation result.
+     */
     public function execute(): void {
         global $DB;
         // Explicit upper bound: if we cannot inspect the whole bounded register,

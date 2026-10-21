@@ -32,6 +32,11 @@ namespace mod_fredkicourseimport\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * section_hierarchy_helper class for FredKI CourseImport.
+ *
+ * @package mod_fredkicourseimport
+ */
 class section_hierarchy_helper {
     /**
      * Return the section hierarchy for one course module.

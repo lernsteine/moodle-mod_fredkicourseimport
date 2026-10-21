@@ -26,7 +26,20 @@ namespace mod_fredkicourseimport\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * file_sync_helper class for FredKI CourseImport.
+ *
+ * @package mod_fredkicourseimport
+ */
 class file_sync_helper {
+    /**
+     * scan generated files operation.
+     *
+     * @param int $cmid Parameter for this operation.
+     * @param int $activityid Parameter for this operation.
+     * @param array $contentmodes Parameter for this operation.
+     * @return array Operation result.
+     */
     public static function scan_generated_files(
         int $cmid,
         int $activityid,

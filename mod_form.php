@@ -28,7 +28,17 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/fredkicourseimport/classes/local/fredki_client.php');
 require_once($CFG->dirroot . '/mod/fredkicourseimport/classes/local/license_manager.php');
 
+/**
+ * mod_fredkicourseimport_mod_form class for FredKI CourseImport.
+ *
+ * @package mod_fredkicourseimport
+ */
 class mod_fredkicourseimport_mod_form extends moodleform_mod {
+    /**
+     * definition operation.
+     *
+     * @return mixed Operation result.
+     */
     public function definition() {
         $mform = $this->_form;
         $config = get_config('mod_fredkicourseimport');
@@ -291,25 +301,36 @@ class mod_fredkicourseimport_mod_form extends moodleform_mod {
             $script = <<<JS
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    /** button constant. */
     const button = document.getElementById('$buttonid');
     if (!button) {
         return;
     }
 
+    /** statusNode constant. */
     const statusNode = document.getElementById('$statusid');
+    /** selectNode constant. */
     const selectNode = document.getElementById('$knowledgefieldid');
+    /** nameNode constant. */
     const nameNode = document.getElementById('id_knowledgebasename');
+    /** selectedNode constant. */
     const selectedNode = document.getElementById('fredki-knowledgebase-selected');
+    /** cardsNode constant. */
     const cardsNode = document.getElementById('fredki-knowledgebase-cards');
+    /** usernameNode constant. */
     const usernameNode = document.getElementById('$usernameid');
+    /** passwordNode constant. */
     const passwordNode = document.getElementById('$passwordid');
+    /** workspaceNode constant. */
     const workspaceNode = document.getElementById('$workspaceid');
 
+    /** selectRow constant. */
     const selectRow = selectNode ? selectNode.closest('.fitem, .form-group, .mb-3') : null;
     if (selectRow) {
         selectRow.style.display = 'none';
     }
 
+    /** setStatus constant. */
     const setStatus = function(message, cssclass) {
         if (!statusNode) {
             return;
@@ -318,11 +339,14 @@ document.addEventListener('DOMContentLoaded', function() {
         statusNode.textContent = message || '';
     };
 
+    /** getInitial constant. */
     const getInitial = function(name) {
+        /** trimmed constant. */
         const trimmed = (name || '').trim();
         return trimmed ? trimmed.charAt(0).toUpperCase() : '?';
     };
 
+    /** updateSelectedText constant. */
     const updateSelectedText = function(name) {
         if (!selectedNode) {
             return;
@@ -335,16 +359,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    /** syncNameFromSelect constant. */
     const syncNameFromSelect = function() {
         if (!selectNode || !nameNode) {
             return;
         }
+        /** selected constant. */
         const selected = selectNode.options[selectNode.selectedIndex];
+        /** name constant. */
         const name = selected && selected.value ? selected.textContent : '';
         nameNode.value = name;
         updateSelectedText(name);
     };
 
+    /** renderCards constant. */
     const renderCards = function() {
         if (!selectNode || !cardsNode) {
             return;
@@ -354,29 +382,36 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!option.value) {
                 return;
             }
+            /** card constant. */
             const card = document.createElement('button');
             card.type = 'button';
             card.className = 'fredki-kb-card' + (option.selected ? ' is-selected' : '');
 
+            /** avatar constant. */
             const avatar = document.createElement('span');
             avatar.className = 'fredki-kb-avatar';
             avatar.textContent = getInitial(option.textContent);
 
+            /** body constant. */
             const body = document.createElement('span');
             body.className = 'fredki-kb-body';
 
+            /** title constant. */
             const title = document.createElement('span');
             title.className = 'fredki-kb-title';
             title.textContent = option.textContent;
 
+            /** subtitle constant. */
             const subtitle = document.createElement('span');
             subtitle.className = 'fredki-kb-subtitle';
             subtitle.textContent = 'Wissensbasis';
 
+            /** action constant. */
             const action = document.createElement('span');
             action.className = 'fredki-kb-action';
             action.textContent = option.selected ? '$selectedbutton' : '$choosebutton';
 
+            /** brand constant. */
             const brand = document.createElement('span');
             brand.className = 'fredki-kb-brand';
             brand.textContent = 'FredKI';
@@ -396,11 +431,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
+    /** resetOptions constant. */
     const resetOptions = function() {
         if (!selectNode) {
             return;
         }
         selectNode.innerHTML = '';
+        /** option constant. */
         const option = document.createElement('option');
         option.value = '';
         option.textContent = '$choose';
@@ -419,8 +456,11 @@ document.addEventListener('DOMContentLoaded', function() {
     renderCards();
 
     button.addEventListener('click', async function() {
+        /** username constant. */
         const username = usernameNode ? usernameNode.value.trim() : '';
+        /** password constant. */
         const password = passwordNode ? passwordNode.value : '';
+        /** workspace constant. */
         const workspace = workspaceNode && workspaceNode.value ? workspaceNode.value : 'default';
 
         if (!username || !password) {
@@ -433,6 +473,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setStatus('$loading', 'alert alert-info');
 
         try {
+            /** response constant. */
             const response = await fetch('$endpoint', {
                 method: 'POST',
                 headers: {
@@ -447,6 +488,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
 
+            /** data constant. */
             const data = await response.json();
             if (!response.ok || !data.success) {
                 throw new Error(data.error || '$loadingerror');
@@ -454,6 +496,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             resetOptions();
             (data.items || []).forEach(function(item) {
+                /** option constant. */
                 const option = document.createElement('option');
                 option.value = String(item.id || '');
                 option.textContent = String(item.name || item.id || '');
@@ -534,22 +577,31 @@ JS;
                 $agentscript = <<<JS
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    /** button constant. */
     const button = document.getElementById('$agentbuttonid');
     if (!button) {
         return;
     }
 
+    /** statusNode constant. */
     const statusNode = document.getElementById('$agentstatusid');
+    /** selectNode constant. */
     const selectNode = document.getElementById('$agentfieldid');
+    /** embedNode constant. */
     const embedNode = document.getElementById('id_fredkiembedcode');
+    /** chatUrlNode constant. */
     const chatUrlNode = document.getElementById('id_fredkichaturl');
 
+    /** toggleChatUrlFallback constant. */
     const toggleChatUrlFallback = function() {
         if (!chatUrlNode) {
             return;
         }
+        /** row constant. */
         const row = chatUrlNode.closest('.fitem, .form-group, .mb-3');
+        /** infoRow constant. */
         const infoRow = document.getElementById('fitem_id_fredkichaturlinfo');
+        /** hasUrl constant. */
         const hasUrl = chatUrlNode.value.trim() !== '';
         if (row) {
             row.style.display = hasUrl ? 'none' : '';
@@ -559,10 +611,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    /** usernameNode constant. */
     const usernameNode = document.getElementById('$usernameid');
+    /** passwordNode constant. */
     const passwordNode = document.getElementById('$passwordid');
+    /** workspaceNode constant. */
     const workspaceNode = document.getElementById('$workspaceid');
 
+    /** setStatus constant. */
     const setStatus = function(message, cssclass) {
         if (!statusNode) {
             return;
@@ -571,11 +627,13 @@ document.addEventListener('DOMContentLoaded', function() {
         statusNode.textContent = message || '';
     };
 
+    /** resetOptions constant. */
     const resetOptions = function() {
         if (!selectNode) {
             return;
         }
         selectNode.innerHTML = '';
+        /** option constant. */
         const option = document.createElement('option');
         option.value = '';
         option.textContent = '$agentchoose';
@@ -584,10 +642,12 @@ document.addEventListener('DOMContentLoaded', function() {
         selectNode.appendChild(option);
     };
 
+    /** updateEmbedCode constant. */
     const updateEmbedCode = function() {
         if (!selectNode || !embedNode) {
             return;
         }
+        /** selected constant. */
         const selected = selectNode.options[selectNode.selectedIndex];
         if (selected && selected.dataset) {
             embedNode.value = selected.dataset.embedcode || '';
@@ -604,8 +664,11 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleChatUrlFallback();
 
     button.addEventListener('click', async function() {
+        /** username constant. */
         const username = usernameNode ? usernameNode.value.trim() : '';
+        /** password constant. */
         const password = passwordNode ? passwordNode.value : '';
+        /** workspace constant. */
         const workspace = workspaceNode && workspaceNode.value ? workspaceNode.value : 'default';
 
         if (!username || !password) {
@@ -618,6 +681,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setStatus('$agentsloading', 'alert alert-info');
 
         try {
+            /** response constant. */
             const response = await fetch('$agentendpoint', {
                 method: 'POST',
                 headers: {
@@ -632,6 +696,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
 
+            /** data constant. */
             const data = await response.json();
             if (!response.ok || !data.success) {
                 throw new Error(data.error || '$agentsloadingerror');
@@ -639,6 +704,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             resetOptions();
             (data.items || []).forEach(function(item) {
+                /** option constant. */
                 const option = document.createElement('option');
                 option.value = item.id;
                 option.textContent = item.name;
@@ -688,6 +754,15 @@ JS;
         $this->add_action_buttons();
     }
 
+    /**
+     * load knowledge base options operation.
+     *
+     * @param mixed $config Parameter for this operation.
+     * @param string $username Parameter for this operation.
+     * @param string $password Parameter for this operation.
+     * @param string $workspace Parameter for this operation.
+     * @return array Operation result.
+     */
     protected function load_knowledge_base_options($config, string $username, string $password, string $workspace): array {
         $options = [];
 
@@ -715,6 +790,15 @@ JS;
         return $options;
     }
 
+    /**
+     * load agent options operation.
+     *
+     * @param mixed $config Parameter for this operation.
+     * @param string $username Parameter for this operation.
+     * @param string $password Parameter for this operation.
+     * @param string $workspace Parameter for this operation.
+     * @return array Operation result.
+     */
     protected function load_agent_options($config, string $username, string $password, string $workspace): array {
         $options = [];
 
@@ -742,6 +826,13 @@ JS;
         return $options;
     }
 
+    /**
+     * validation operation.
+     *
+     * @param mixed $data Parameter for this operation.
+     * @param mixed $files Parameter for this operation.
+     * @return mixed Operation result.
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 

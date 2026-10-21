@@ -34,6 +34,13 @@ defined('MOODLE_INTERNAL') || die();
  * creating a new one with a different pathname hash.
  */
 final class glossary_entry_helper {
+    /**
+     * export filename operation.
+     *
+     * @param int $cmid Parameter for this operation.
+     * @param int $entryid Parameter for this operation.
+     * @return string Operation result.
+     */
     public static function export_filename(int $cmid, int $entryid): string {
         if ($cmid <= 0 || $entryid <= 0) {
             throw new \InvalidArgumentException('Glossary course-module and entry IDs must be positive.');
@@ -58,6 +65,12 @@ final class glossary_entry_helper {
         return ['cmid' => (int)$parts[1], 'entryid' => (int)$parts[2]];
     }
 
+    /**
+     * direct url operation.
+     *
+     * @param int $entryid Parameter for this operation.
+     * @return string Operation result.
+     */
     public static function direct_url(int $entryid): string {
         if ($entryid <= 0) {
             throw new \InvalidArgumentException('Glossary entry ID must be positive.');

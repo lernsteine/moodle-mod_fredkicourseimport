@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * sourcecmid = 0 is reserved for the course section texts option.
  */
 class selection_manager {
+    /** SUPPORTED_MODNAMES constant. */
     private const SUPPORTED_MODNAMES = [
         'resource', 'folder', 'url', 'glossary', 'page', 'label', 'book',
         'lesson', 'h5pactivity', 'scorm',
@@ -184,6 +185,16 @@ class selection_manager {
         return compact('selectedcmids', 'includesectiontexts', 'contentmodes');
     }
 
+    /**
+     * upsert operation.
+     *
+     * @param int $activityid Parameter for this operation.
+     * @param int $sourcecmid Parameter for this operation.
+     * @param bool $selected Parameter for this operation.
+     * @param string $contentmode Parameter for this operation.
+     * @param int $now Parameter for this operation.
+     * @return void Operation result.
+     */
     private static function upsert(
         int $activityid,
         int $sourcecmid,

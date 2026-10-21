@@ -35,8 +35,15 @@ namespace mod_fredkicourseimport\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * token_manager class for FredKI CourseImport.
+ *
+ * @package mod_fredkicourseimport
+ */
 final class token_manager {
+    /** DEFAULT_LIFETIME constant. */
     public const DEFAULT_LIFETIME = 28800;
+    /** RENEW_BEFORE constant. */
     private const RENEW_BEFORE = 300;
 
     /**
@@ -261,6 +268,12 @@ final class token_manager {
         return $client;
     }
 
+    /**
+     * delete activity operation.
+     *
+     * @param int $activityid Parameter for this operation.
+     * @return void Operation result.
+     */
     public static function delete_activity(int $activityid): void {
         global $DB;
         $DB->delete_records('fredkicourseimport_auth', ['activityid' => $activityid]);
