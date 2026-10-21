@@ -430,8 +430,9 @@ class course_content_importer {
 
     /** Metadata is always rendered before optional learning content.      * @param \stdClass $course Parameter.
      * @param \cm_info $sourcecm Parameter.
+     *
      * @param array $data Parameter.
-*/
+     */
     protected function render_document(\stdClass $course, \cm_info $sourcecm, array $data): string {
         $title = trim((string)($data['title'] ?? format_string($sourcecm->name ?: $sourcecm->modname)));
         $filename = trim((string)($data['filename'] ?? ''));
@@ -492,7 +493,7 @@ class course_content_importer {
     }
 
     /** Returns a readable Moodle activity type while preserving the technical module name.      * @param string $modname Parameter.
-*/
+     */
     protected function get_readable_activity_type(string $modname): string {
         $labels = [
             'resource' => 'Datei (resource)',
@@ -530,9 +531,10 @@ class course_content_importer {
      * Determine a useful title for a Moodle text field. Moodle may not have a
      * separately maintained title, so the first four content words are used as
      * a stable fallback.
-          * @param \cm_info $sourcecm Parameter.
+     *
+     * @param \cm_info $sourcecm Parameter.
      * @param string $plaincontent Parameter.
-*/
+     */
     protected function get_label_export_title(\cm_info $sourcecm, string $plaincontent): string {
         $title = trim(format_string((string)($sourcecm->name ?? '')));
         if ($title !== '') {
@@ -546,8 +548,9 @@ class course_content_importer {
 
     /** Convert a course section description to clean plain text.      * @param \stdClass $course Parameter.
      * @param string $summary Parameter.
+     *
      * @param int $format Parameter.
-*/
+     */
     protected function section_summary_to_plain_text(\stdClass $course, string $summary, int $format): string {
         if (trim($summary) === '') {
             return '';

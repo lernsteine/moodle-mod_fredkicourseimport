@@ -270,6 +270,7 @@ class sync_manager {
      * document and one Moodle mapping record.
      *
      * @param string $knowledgeid FredKI knowledge base id.
+     *
      * @param string $content Structured Markdown content.
      * @param string $title Document title.
      * @return array Tuple containing paragraphs and the first source-file id.
@@ -322,6 +323,7 @@ class sync_manager {
      * Split structured PDF text at semantic boundaries and enforce a safe maximum size.
      *
      * @param string $content Structured Markdown content.
+     *
      * @param int $maxchars Maximum UTF-8 characters per part.
      * @return array Non-empty chunks.
      */
@@ -373,6 +375,7 @@ class sync_manager {
      * Split an oversized PDF block without cutting in the middle of a sentence where possible.
      *
      * @param string $block Text block.
+     *
      * @param int $maxchars Maximum characters.
      * @return array Pieces.
      */
@@ -414,6 +417,7 @@ class sync_manager {
      * Preserve FredKI's paragraph schema while replacing paragraph text.
      *
      * @param mixed $originalparagraphs Paragraph structure returned by split_upload.
+     *
      * @param array $texts Replacement text chunks.
      * @return array Paragraph list.
      */
@@ -466,6 +470,7 @@ class sync_manager {
      * This must happen after splitting, otherwise only the first chunk carries the source.
      *
      * @param mixed $paragraphs Paragraph list as returned by FredKI.
+     *
      * @param string|null $sourceurl Source URL.
      * @return mixed Paragraph list with source appended to each paragraph.
      */
@@ -574,9 +579,10 @@ ENDE EINTRAG";
      * Build one FredKI paragraph while preserving the paragraph shape returned by split_upload.
      * FredKI's batch_create endpoint is sensitive to the paragraph schema. Therefore we do not
      * send a plain arbitrary structure, but reuse the first extracted paragraph object if present.
-          * @param mixed $originalparagraphs Parameter.
+     *
+     * @param mixed $originalparagraphs Parameter.
      * @param string $text Parameter.
-*/
+     */
     protected function make_single_paragraph_like_original($originalparagraphs, string $text) {
         $text = trim($text);
         if ($text === '') {
@@ -634,6 +640,7 @@ ENDE EINTRAG";
      * CourseImport guarantees that its documents contain no linked questions.
      *
      * @param mixed $paragraphs Paragraphs returned by FredKI split.
+     *
      * @param string $title Human-readable activity/material title.
      * @return array Normalised paragraph list without problem_list entries.
      */
@@ -817,8 +824,9 @@ ENDE EINTRAG";
      * Convert importer-generated HTML into the same Markdown structure used for
      * PDF and Office files. This keeps books, lessons, pages, glossaries and
      * section texts visually consistent in FredKI without duplicating the title.
-          * @param string $html Parameter.
-*/
+     *
+     * @param string $html Parameter.
+     */
     protected function generated_html_to_markdown(string $html): string {
         // The document title is transported separately as the FredKI document name.
         // Remove head/title and any legacy H1 before converting the body.
@@ -861,6 +869,7 @@ ENDE EINTRAG";
      * vector and hybrid retrieval as document content.
      *
      * @param array $rows Markdown rows.
+     *
      * @param mixed $tags FredKI tag metadata.
      */
     protected function add_fredki_tag_metadata_rows(array &$rows, $tags): void {
@@ -890,6 +899,7 @@ ENDE EINTRAG";
      * Insert FredKI tag metadata into importer-generated Markdown.
      *
      * @param string $text Markdown generated from the HTML import document.
+     *
      * @param mixed $tags FredKI tag metadata.
      * @param string $activityname Parameter.
      * @return string

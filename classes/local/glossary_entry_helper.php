@@ -43,7 +43,7 @@ final class glossary_entry_helper {
 
     /** @return array{cmid:int,entryid:int}|null      * @param string $filepath Parameter.
      * @param string $filename Parameter.
-*/
+     */
     public static function parse_export_filename(string $filepath, string $filename): ?array {
         if ($filepath !== '/glossaries/' ||
                 !preg_match('/^cm([1-9][0-9]*)-glossary-eid([1-9][0-9]*)\.html$/D', $filename, $parts)) {

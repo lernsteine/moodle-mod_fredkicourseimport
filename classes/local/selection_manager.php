@@ -41,6 +41,7 @@ class selection_manager {
      * Return all selectable source course-module IDs for the course.
      *
      * @param \stdClass $course Parameter.
+     *
      * @param int $targetcmid Parameter.
      * @return int[]
      */
@@ -77,13 +78,16 @@ class selection_manager {
 
     /**
      * Persist every selectable checkbox, including unchecked items.
-          * @param \stdClass $course Parameter.
+     *
+     * @param \stdClass $course Parameter.
      * @param int $targetcmid Parameter.
+     *
      * @param int $activityid Parameter.
      * @param array $selectedcmids Parameter.
+     *
      * @param bool $includesectiontexts Parameter.
      * @param array $contentmodes Parameter.
-*/
+     */
     public static function save(
         \stdClass $course,
         int $targetcmid,
