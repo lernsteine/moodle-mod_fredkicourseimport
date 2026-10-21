@@ -1,3 +1,10 @@
+## 1.6.8-rc16 — Moodle 4.5–5.3 compatibility preview (2026-10-21)
+
+- Declare Moodle 4.5.0 as the minimum and add an inclusive 4.5–5.3 support target.
+- Expand GitHub CI to five Moodle branches, PostgreSQL and MariaDB, using appropriate database and PHP releases (10 jobs).
+- Keep all existing FredKI import, glossary, login, synchronisation and deletion code unchanged.
+- The expanded range must not be advertised as verified until CI and integration tests pass.
+
 ## 1.6.8-rc14 (2026-10-21)
 
 - Replace the plain-text FredKI credential-management link in activity Settings with

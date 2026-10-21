@@ -10,17 +10,26 @@ permissions:
 
 jobs:
   test:
-    name: Moodle 5.2 / PHP 8.3 / ${{ matrix.db }}
+    name: Moodle ${{ matrix.moodle }} / PHP ${{ matrix.php }} / ${{ matrix.db }}
     runs-on: ubuntu-24.04
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
         include:
-          - db: pgsql
-          - db: mariadb
+          - {moodle: '4.5', branch: MOODLE_405_STABLE, php: '8.1', db: pgsql, postgres: '16', mariadb: '10.11'}
+          - {moodle: '4.5', branch: MOODLE_405_STABLE, php: '8.1', db: mariadb, postgres: '16', mariadb: '10.11'}
+          - {moodle: '5.0', branch: MOODLE_500_STABLE, php: '8.2', db: pgsql, postgres: '16', mariadb: '10.11'}
+          - {moodle: '5.0', branch: MOODLE_500_STABLE, php: '8.2', db: mariadb, postgres: '16', mariadb: '10.11'}
+          - {moodle: '5.1', branch: MOODLE_501_STABLE, php: '8.2', db: pgsql, postgres: '16', mariadb: '10.11'}
+          - {moodle: '5.1', branch: MOODLE_501_STABLE, php: '8.2', db: mariadb, postgres: '16', mariadb: '10.11'}
+          - {moodle: '5.2', branch: MOODLE_502_STABLE, php: '8.3', db: pgsql, postgres: '16', mariadb: '10.11'}
+          - {moodle: '5.2', branch: MOODLE_502_STABLE, php: '8.3', db: mariadb, postgres: '16', mariadb: '10.11'}
+          - {moodle: '5.3', branch: MOODLE_503_STABLE, php: '8.3', db: pgsql, postgres: '17', mariadb: '11.4'}
+          - {moodle: '5.3', branch: MOODLE_503_STABLE, php: '8.3', db: mariadb, postgres: '17', mariadb: '11.4'}
     services:
       postgres:
-        image: postgres:16
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -30,7 +39,7 @@ jobs:
           --health-cmd "pg_isready -U postgres"
           --health-interval 10s --health-timeout 5s --health-retries 5
       mariadb:
-        image: mariadb:10.11
+        image: mariadb:${{ matrix.mariadb }}
         env:
           MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
         ports:
@@ -45,7 +54,7 @@ jobs:
           persist-credentials: false
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: ${{ matrix.php }}
           tools: composer:v2
           extensions: mbstring, intl, zip, gd, xml, pgsql, pdo_pgsql, mysqli, pdo_mysql, sodium
           ini-values: max_input_vars=5000, opcache.enable_cli=1
@@ -56,11 +65,11 @@ jobs:
           echo "$GITHUB_WORKSPACE/ci/bin" >> "$GITHUB_PATH"
           echo "$GITHUB_WORKSPACE/ci/vendor/bin" >> "$GITHUB_PATH"
           sudo locale-gen en_AU.UTF-8
-      - name: Install Moodle 5.2 test environment
+      - name: Install Moodle test environment
         id: moodle_install
         env:
           DB: ${{ matrix.db }}
-          MOODLE_BRANCH: MOODLE_502_STABLE
+          MOODLE_BRANCH: ${{ matrix.branch }}
         run: |
           if [ "$DB" = "pgsql" ]; then
             moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --db-user=postgres --db-pass=postgres

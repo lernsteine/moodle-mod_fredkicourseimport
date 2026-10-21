@@ -4,8 +4,8 @@
 /** Version metadata for the FredKI CourseImport activity. */
 defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'mod_fredkicourseimport';
-$plugin->version = 202610210015;
-$plugin->requires = 2026042000;
-$plugin->supported = [502, 502];
+$plugin->version = 202610210016;
+$plugin->requires = 2024100700;
+$plugin->supported = [405, 503];
 $plugin->maturity = MATURITY_RC;
-$plugin->release = '1.6.8-rc15-marketplace-preflight';
+$plugin->release = '1.6.8-rc16-compatibility-preview';

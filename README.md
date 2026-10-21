@@ -189,3 +189,23 @@ verify installation/upgrade and scheduled deletion on Moodle 5.2 with an isolate
 test workspace, and supply reviewer access and rights-cleared screenshots.
 An active FredKI service entitlement and account may be necessary. The plugin
 checks the entitlement externally; see FREDKI-SERVICE-ACCESS.md.
+
+## Moodle 4.5–5.3 compatibility target (RC16 — verification pending)
+
+This release candidate targets **Moodle 4.5, 5.0, 5.1, 5.2, and 5.3**.
+The CI matrix tests PostgreSQL and MariaDB on each release with matching
+supported PHP and database versions:
+
+| Moodle | PHP in CI | PostgreSQL | MariaDB |
+|---|---|---|---|
+| 4.5 LTS | 8.1 | 16 | 10.11 |
+| 5.0 | 8.2 | 16 | 10.11 |
+| 5.1 | 8.2 | 16 | 10.11 |
+| 5.2 | 8.3 | 16 | 10.11 |
+| 5.3 LTS | 8.3 | 17 | 11.4 |
+
+**Compatibility is not yet verified.** The installation, PHP syntax, validation,
+PHPDoc, codechecker, savepoints and PHPUnit results must be reviewed for every
+matrix job. These tests cannot replace Moodle/FredKI end-to-end tests involving
+glossary links, authentication, permissions, synchronisation and deletion.
+No data-transfer or remote deletion logic has been changed for this preview.
