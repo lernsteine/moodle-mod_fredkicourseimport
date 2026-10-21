@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/fredkicourseimport/db" VERSION="202610200001" COMMENT="Install XML for mod_fredkicourseimport"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+    <TABLE NAME="fredkicourseimport" COMMENT="Main table for FredKI course import activities">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="knowledgeid" TYPE="char" LENGTH="64" NOTNULL="true"/>
+        <FIELD NAME="knowledgebasename" TYPE="char" LENGTH="255" NOTNULL="false"/>
+        <FIELD NAME="authorizedbyuserid" TYPE="int" LENGTH="10" NOTNULL="false"/>
+        <FIELD NAME="workspace" TYPE="char" LENGTH="64" NOTNULL="true" DEFAULT="default"/>
+        <FIELD NAME="agentid" TYPE="char" LENGTH="64" NOTNULL="false"/>
+        <FIELD NAME="fredkiembedcode" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="fredkichaturl" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="agentcoursevisible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="syncenabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="course_fk" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
+        <KEY NAME="authorizedby_fk" TYPE="foreign" FIELDS="authorizedbyuserid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="fredkicourseimport_auth" COMMENT="User-scoped FredKI access tokens">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="fredkiusername" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="token" TYPE="text" NOTNULL="true"/>
+        <FIELD NAME="tokenexpires" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="passwordencrypted" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="lastused" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="activity_fk" TYPE="foreign" FIELDS="activityid" REFTABLE="fredkicourseimport" REFFIELDS="id"/>
+        <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="useractivity_uix" UNIQUE="true" FIELDS="userid, activityid"/>
+        <INDEX NAME="expiry_ix" UNIQUE="false" FIELDS="tokenexpires"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="fredkicourseimport_map" COMMENT="Maps generated course content files to FredKI documents">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="sourcecmid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="pathnamehash" TYPE="char" LENGTH="40" NOTNULL="true"/>
+        <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true"/>
+        <FIELD NAME="metadatahash" TYPE="char" LENGTH="40" NOTNULL="false"/>
+        <FIELD NAME="filesize" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="contentmode" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="reference"/>
+        <FIELD NAME="fredki_document_id" TYPE="char" LENGTH="64" NOTNULL="false"/>
+        <FIELD NAME="fredki_source_file_id" TYPE="char" LENGTH="64" NOTNULL="false"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pending"/>
+        <FIELD NAME="lastresult" TYPE="char" LENGTH="20" NOTNULL="false"/>
+        <FIELD NAME="lasterror" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timesynced" TYPE="int" LENGTH="10" NOTNULL="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="activity_fk" TYPE="foreign" FIELDS="activityid" REFTABLE="fredkicourseimport" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="pathnamehash_uix" UNIQUE="true" FIELDS="activityid, pathnamehash"/>
+        <INDEX NAME="status_ix" UNIQUE="false" FIELDS="status"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="fredkicourseimport_selection" COMMENT="Persisted trainer selection for Moodle course content">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="sourcecmid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Course module id; 0 represents course section texts"/>
+        <FIELD NAME="selected" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="contentmode" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="reference"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="activity_fk" TYPE="foreign" FIELDS="activityid" REFTABLE="fredkicourseimport" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="activitysource_uix" UNIQUE="true" FIELDS="activityid, sourcecmid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="fredkicourseimport_cleanup" COMMENT="Remote FredKI documents recorded after Moodle activity deletion, no credentials stored">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="knowledgeid" TYPE="char" LENGTH="64" NOTNULL="true"/>
+        <FIELD NAME="workspace" TYPE="char" LENGTH="64" NOTNULL="true" DEFAULT="default"/>
+        <FIELD NAME="documentid" TYPE="char" LENGTH="64" NOTNULL="true"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course_ix" UNIQUE="false" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
