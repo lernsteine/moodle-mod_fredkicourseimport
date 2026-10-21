@@ -82,6 +82,11 @@ final class glossary_entry_export_test extends \advanced_testcase {
         $importer = new class extends course_content_importer {
             /**
              * Make glossary for FredKI CourseImport.
+             *
+             * @param \stdClass $course Source course.
+             * @param \cm_info $sourcecm Source activity.
+             * @param \stdClass $glossary Glossary data.
+             * @return array Generated files and count.
              */
             public function make_glossary($course, $sourcecm, $glossary): array {
                 $count = $this->add_glossary_exports($course, $sourcecm, $glossary, '');

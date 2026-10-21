@@ -31,6 +31,9 @@ class restore_fredkicourseimport_activity_structure_step extends restore_activit
     }
     /**
      * Process fredkicourseimport for FredKI CourseImport.
+     *
+     * @param mixed $data Restored activity data.
+     * @return void
      */
     protected function process_fredkicourseimport($data) {
         global $DB;
@@ -52,6 +55,9 @@ class restore_fredkicourseimport_activity_structure_step extends restore_activit
     }
     /**
      * Process fredkicourseimport map for FredKI CourseImport.
+     *
+     * @param mixed $data Restored map data.
+     * @return void
      */
     protected function process_fredkicourseimport_map($data) {
         global $DB;

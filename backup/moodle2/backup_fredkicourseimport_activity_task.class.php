@@ -36,6 +36,9 @@ class backup_fredkicourseimport_activity_task extends backup_activity_task {
     }
     /**
      * Encode content links for FredKI CourseImport.
+     *
+     * @param string $content Content to encode.
+     * @return string Original content.
      */
     public static function encode_content_links($content) {
         return $content;

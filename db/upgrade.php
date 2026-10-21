@@ -26,6 +26,9 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Xmldb fredkicourseimport upgrade for FredKI CourseImport.
+ *
+ * @param int $oldversion Previously installed plugin version.
+ * @return bool Upgrade completed successfully.
  */
 function xmldb_fredkicourseimport_upgrade($oldversion) {
     global $DB;
