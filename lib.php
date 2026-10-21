@@ -143,7 +143,9 @@ function fredkicourseimport_build_embed_code_from_chat_url(?string $url): string
     if ($token === '') {
         return '';
     }
-    $src = $scheme . '://' . $host . '/chat/api/embed?protocol=' . rawurlencode($scheme) . '&host=' . rawurlencode($host) . '&token=' . rawurlencode($token);
+    $src = $scheme . '://' . $host . '/chat/api/embed?protocol=' .
+        rawurlencode($scheme) . '&host=' . rawurlencode($host) .
+        '&token=' . rawurlencode($token);
     return fredkicourseimport_clean_embed_code($src);
 }
 
@@ -348,7 +350,14 @@ function fredkicourseimport_add_instance($data, $mform = null) {
             $config->loginpath ?? '/admin/api/user/login',
             !empty($config->debuglog)
         );
-        \mod_fredkicourseimport\local\token_manager::store($id, $USER->id, $fredkiusername, $client->login(), $fredkipassword, $autorenew);
+        \mod_fredkicourseimport\local\token_manager::store(
+            $id,
+            $USER->id,
+            $fredkiusername,
+            $client->login(),
+            $fredkipassword,
+            $autorenew
+        );
     }
     fredkicourseimport_sync_agent_block_for_course((int)$data->course);
     return $id;
@@ -408,7 +417,14 @@ function fredkicourseimport_update_instance($data, $mform = null) {
             $config->loginpath ?? '/admin/api/user/login',
             !empty($config->debuglog)
         );
-        \mod_fredkicourseimport\local\token_manager::store($data->id, $USER->id, $fredkiusername, $client->login(), $fredkipassword, $autorenew);
+        \mod_fredkicourseimport\local\token_manager::store(
+            $data->id,
+            $USER->id,
+            $fredkiusername,
+            $client->login(),
+            $fredkipassword,
+            $autorenew
+        );
     }
     fredkicourseimport_sync_agent_block_for_course((int)$data->course);
     return $result;
@@ -548,7 +564,12 @@ function fredkicourseimport_cm_info_view(cm_info $cm): void {
         return;
     }
 
-    $activity = $DB->get_record('fredkicourseimport', ['id' => $cm->instance], 'id, fredkiembedcode, agentcoursevisible', IGNORE_MISSING);
+    $activity = $DB->get_record(
+        'fredkicourseimport',
+        ['id' => $cm->instance],
+        'id, fredkiembedcode, agentcoursevisible',
+        IGNORE_MISSING
+    );
     if (!$activity || empty($activity->agentcoursevisible)) {
         return;
     }
