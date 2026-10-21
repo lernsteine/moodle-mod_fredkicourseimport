@@ -24,7 +24,6 @@
 
 namespace mod_fredkicourseimport\local;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Shared endpoint authorisation and response handling.

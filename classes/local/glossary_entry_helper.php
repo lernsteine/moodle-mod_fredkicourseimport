@@ -24,7 +24,6 @@
 
 namespace mod_fredkicourseimport\local;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Stable file identity and direct Moodle source URLs for individual glossary entries.

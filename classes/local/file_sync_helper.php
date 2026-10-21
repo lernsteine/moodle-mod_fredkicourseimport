@@ -24,7 +24,6 @@
 
 namespace mod_fredkicourseimport\local;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * file_sync_helper class for FredKI CourseImport.

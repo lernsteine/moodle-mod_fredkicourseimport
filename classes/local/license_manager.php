@@ -24,7 +24,6 @@
 
 namespace mod_fredkicourseimport\local;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * License handling for FredKI Course Import.

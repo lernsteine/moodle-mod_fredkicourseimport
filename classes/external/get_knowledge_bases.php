@@ -23,7 +23,6 @@
  */
 
 namespace mod_fredkicourseimport\external;
-defined('MOODLE_INTERNAL') || die();
 use external_api;
 use external_function_parameters;
 use external_multiple_structure;

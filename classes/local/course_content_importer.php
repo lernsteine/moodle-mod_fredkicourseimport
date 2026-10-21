@@ -24,7 +24,6 @@
 
 namespace mod_fredkicourseimport\local;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Creates FredKI documents with metadata first and optional activity content.

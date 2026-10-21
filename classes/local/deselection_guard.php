@@ -24,7 +24,6 @@
 
 namespace mod_fredkicourseimport\local;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Explicitly confirm the exact source selection (and remote mapping snapshot) being revoked.
