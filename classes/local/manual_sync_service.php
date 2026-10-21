@@ -41,7 +41,19 @@ namespace mod_fredkicourseimport\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * manual sync service for FredKI CourseImport.
+ *
+ * @package mod_fredkicourseimport
+ */
 class manual_sync_service {
+    /**
+     * Sync record for FredKI CourseImport.
+     *
+     * @param \stdClass $activity Parameter for this operation.
+     * @param \stdClass $maprecord Parameter for this operation.
+     * @return void Operation result.
+     */
     public static function sync_record(\stdClass $activity, \stdClass $maprecord): void {
         global $DB;
 
@@ -336,6 +348,13 @@ class manual_sync_service {
         }
     }
 
+    /**
+     * Get module type name for FredKI CourseImport.
+     *
+     * @param string $modname Parameter for this operation.
+     * @param ?\stdClass $course Parameter for this operation.
+     * @return string Operation result.
+     */
     protected static function get_module_type_name(string $modname, ?\stdClass $course = null): string {
         $component = 'mod_' . $modname;
         $lang = self::get_course_language($course);
@@ -345,6 +364,13 @@ class manual_sync_service {
         return ucfirst($modname);
     }
 
+    /**
+     * Get module type prefix for FredKI CourseImport.
+     *
+     * @param string $modname Parameter for this operation.
+     * @param ?\stdClass $course Parameter for this operation.
+     * @return string Operation result.
+     */
     protected static function get_module_type_prefix(string $modname, ?\stdClass $course = null): string {
         $map = [
             'resource' => 'documenttype_resource',
@@ -364,6 +390,13 @@ class manual_sync_service {
         return ucfirst($modname);
     }
 
+    /**
+     * Get localized string for FredKI CourseImport.
+     *
+     * @param string $identifier Parameter for this operation.
+     * @param ?\stdClass $course Parameter for this operation.
+     * @return string Operation result.
+     */
     protected static function get_localized_string(string $identifier, ?\stdClass $course = null): string {
         return get_string_manager()->get_string(
             $identifier,
@@ -373,6 +406,12 @@ class manual_sync_service {
         );
     }
 
+    /**
+     * Get course language for FredKI CourseImport.
+     *
+     * @param ?\stdClass $course Parameter for this operation.
+     * @return string Operation result.
+     */
     protected static function get_course_language(?\stdClass $course): string {
         global $CFG;
         if ($course && !empty($course->lang)) {
@@ -381,6 +420,12 @@ class manual_sync_service {
         return clean_param($CFG->lang ?? 'en', PARAM_LANG);
     }
 
+    /**
+     * Get course category path for FredKI CourseImport.
+     *
+     * @param \stdClass $course Parameter for this operation.
+     * @return string Operation result.
+     */
     protected static function get_course_category_path(\stdClass $course): string {
         global $DB;
 
@@ -405,6 +450,13 @@ class manual_sync_service {
         return implode(' / ', $names);
     }
 
+    /**
+     * Get moodle source url for FredKI CourseImport.
+     *
+     * @param \stored_file $file Parameter for this operation.
+     * @param \stdClass $activity Parameter for this operation.
+     * @return string Operation result.
+     */
     protected static function get_moodle_source_url(\stored_file $file, \stdClass $activity): string {
         $filepath = $file->get_filepath();
         $filename = $file->get_filename();
@@ -467,6 +519,13 @@ class manual_sync_service {
         return $url->out(false);
     }
 
+    /**
+     * Delete record for FredKI CourseImport.
+     *
+     * @param \stdClass $activity Parameter for this operation.
+     * @param \stdClass $maprecord Parameter for this operation.
+     * @return void Operation result.
+     */
     public static function delete_record(\stdClass $activity, \stdClass $maprecord): void {
         global $DB;
 

@@ -26,13 +26,36 @@ namespace mod_fredkicourseimport\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * sync manager for FredKI CourseImport.
+ *
+ * @package mod_fredkicourseimport
+ */
 class sync_manager {
     protected $client;
 
+    /**
+     *   construct for FredKI CourseImport.
+     *
+     * @param fredki_client $client Parameter for this operation.
+     */
     public function __construct(fredki_client $client) {
         $this->client = $client;
     }
 
+    /**
+     * Sync new or changed file for FredKI CourseImport.
+     *
+     * @param string $knowledgeid Parameter for this operation.
+     * @param string $filepath Parameter for this operation.
+     * @param string $filename Parameter for this operation.
+     * @param ?string $olddocumentid Parameter for this operation.
+     * @param ?string $sourceurl Parameter for this operation.
+     * @param ?string $coursename Parameter for this operation.
+     * @param array $metadata Parameter for this operation.
+     * @param ?string $sourcefilepath Parameter for this operation.
+     * @return array Operation result.
+     */
     public function sync_new_or_changed_file(
         string $knowledgeid,
         string $filepath,
@@ -531,6 +554,13 @@ class sync_manager {
         return $paragraphs;
     }
 
+    /**
+     * Append source to text for FredKI CourseImport.
+     *
+     * @param string $text Parameter for this operation.
+     * @param string $sourcetext Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function append_source_to_text(string $text, string $sourcetext): string {
         if (strpos($text, 'Quelle in Moodle:') !== false) {
             return $text;
@@ -538,11 +568,24 @@ class sync_manager {
         return rtrim($text) . $sourcetext;
     }
 
+    /**
+     * Is transformable document for FredKI CourseImport.
+     *
+     * @param string $filename Parameter for this operation.
+     * @return bool Operation result.
+     */
     protected function is_transformable_document(string $filename): bool {
         $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         return in_array($ext, ['pdf', 'doc', 'docx'], true);
     }
 
+    /**
+     * Create temp structured file for FredKI CourseImport.
+     *
+     * @param string $content Parameter for this operation.
+     * @param string $title Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function create_temp_structured_file(string $content, string $title): string {
         $dir = make_request_directory();
         $path = $dir . '/' . $this->clean_filename_for_upload($title) . '.txt';
@@ -550,6 +593,12 @@ class sync_manager {
         return $path;
     }
 
+    /**
+     * Clean filename for upload for FredKI CourseImport.
+     *
+     * @param string $name Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function clean_filename_for_upload(string $name): string {
         $name = trim($name);
         if ($name === '') {
@@ -564,6 +613,13 @@ class sync_manager {
         return mb_substr($name, 0, 80);
     }
 
+    /**
+     * Force single text paragraph for FredKI CourseImport.
+     *
+     * @param mixed $originalparagraphs Parameter for this operation.
+     * @param string $text Parameter for this operation.
+     * @return mixed Operation result.
+     */
     protected function force_single_text_paragraph($originalparagraphs, string $text) {
         // Preserve the shape FredKI returned for the freshly uploaded TXT file, but
         // force exactly one content paragraph. This prevents accidental document
@@ -705,6 +761,17 @@ ENDE EINTRAG";
         return $result;
     }
 
+    /**
+     * Build document entry for FredKI CourseImport.
+     *
+     * @param mixed $paragraphs Parameter for this operation.
+     * @param string $filename Parameter for this operation.
+     * @param ?string $sourceurl Parameter for this operation.
+     * @param ?string $coursename Parameter for this operation.
+     * @param array $metadata Parameter for this operation.
+     * @param ?string $sourcefilepath Parameter for this operation.
+     * @return array Operation result.
+     */
     protected function build_document_entry(
         $paragraphs,
         string $filename,
@@ -938,6 +1005,14 @@ ENDE EINTRAG";
         return $prefix . "\n\n" . ltrim($text);
     }
 
+    /**
+     * Add metadata text row for FredKI CourseImport.
+     *
+     * @param array $rows Parameter for this operation.
+     * @param string $label Parameter for this operation.
+     * @param string $value Parameter for this operation.
+     * @return void Operation result.
+     */
     protected function add_metadata_text_row(array &$rows, string $label, string $value): void {
         $value = trim(preg_replace('/\s+/u', ' ', $value) ?? '');
         if ($value !== '') {
@@ -945,6 +1020,12 @@ ENDE EINTRAG";
         }
     }
 
+    /**
+     * Flatten text for FredKI CourseImport.
+     *
+     * @param mixed $value Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function flatten_text($value): string {
         if (is_string($value)) {
             return $value;
@@ -1023,6 +1104,12 @@ ENDE EINTRAG";
         return trim($text);
     }
 
+    /**
+     * Clean document text for FredKI CourseImport.
+     *
+     * @param string $text Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function clean_document_text(string $text): string {
         $text = html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $text = $this->fix_mojibake($text);
@@ -1068,6 +1155,13 @@ ENDE EINTRAG";
         return trim($text);
     }
 
+    /**
+     * Derive title for FredKI CourseImport.
+     *
+     * @param string $text Parameter for this operation.
+     * @param string $filename Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function derive_title(string $text, string $filename): string {
         // Für PDF/DOCX niemals zufällige OCR-/PDF-Zeilen als Titel verwenden.
         // Der Dateiname ist bei Moodle-Materialien meist die stabilste Quelle.
@@ -1110,6 +1204,12 @@ ENDE EINTRAG";
         return 'Moodle-Dokument';
     }
 
+    /**
+     * Looks like bad title for FredKI CourseImport.
+     *
+     * @param string $title Parameter for this operation.
+     * @return bool Operation result.
+     */
     protected function looks_like_bad_title(string $title): bool {
         $title = trim($title);
         if ($title === '') {
@@ -1127,6 +1227,12 @@ ENDE EINTRAG";
         return false;
     }
 
+    /**
+     * Clean title for FredKI CourseImport.
+     *
+     * @param string $title Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function clean_title(string $title): string {
         $title = html_entity_decode(strip_tags($title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $title = $this->fix_mojibake($title);
@@ -1137,6 +1243,12 @@ ENDE EINTRAG";
         return trim($title, " \t\n\r\0\x0B:-–—");
     }
 
+    /**
+     * Fix mojibake for FredKI CourseImport.
+     *
+     * @param string $text Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function fix_mojibake(string $text): string {
         $map = [
             'Ã¤' => 'ä', 'Ã¶' => 'ö', 'Ã¼' => 'ü', 'Ã„' => 'Ä', 'Ã–' => 'Ö', 'Ãœ' => 'Ü', 'ÃŸ' => 'ß',
@@ -1146,6 +1258,13 @@ ENDE EINTRAG";
         return strtr($text, $map);
     }
 
+    /**
+     * Derive type for FredKI CourseImport.
+     *
+     * @param string $text Parameter for this operation.
+     * @param string $filename Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function derive_type(string $text, string $filename): string {
         $haystack = mb_strtolower($text . ' ' . $filename);
         if (preg_match('/checkliste|check list|prüfliste/u', $haystack)) {
@@ -1163,6 +1282,13 @@ ENDE EINTRAG";
         return 'Wissen';
     }
 
+    /**
+     * Derive category for FredKI CourseImport.
+     *
+     * @param string $text Parameter for this operation.
+     * @param string $filename Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function derive_category(string $text, string $filename): string {
         $haystack = mb_strtolower($text . ' ' . $filename);
         $categories = [
@@ -1179,6 +1305,15 @@ ENDE EINTRAG";
         return 'Allgemeines';
     }
 
+    /**
+     * Derive keywords for FredKI CourseImport.
+     *
+     * @param string $text Parameter for this operation.
+     * @param string $filename Parameter for this operation.
+     * @param string $category Parameter for this operation.
+     * @param string $type Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function derive_keywords(string $text, string $filename, string $category, string $type): string {
         $keywords = [$type, $category];
         $map = [
@@ -1203,6 +1338,14 @@ ENDE EINTRAG";
         return implode(', ', array_slice($keywords, 0, 8));
     }
 
+    /**
+     * Derive priority for FredKI CourseImport.
+     *
+     * @param string $type Parameter for this operation.
+     * @param string $text Parameter for this operation.
+     * @param string $filename Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function derive_priority(string $type, string $text, string $filename): string {
         if (in_array($type, ['Lernprogramm', 'Vorlage', 'Checkliste'], true)) {
             return 'hoch';
@@ -1213,6 +1356,14 @@ ENDE EINTRAG";
         return 'niedrig';
     }
 
+    /**
+     * Derive description for FredKI CourseImport.
+     *
+     * @param string $text Parameter for this operation.
+     * @param string $title Parameter for this operation.
+     * @param string $type Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function derive_description(string $text, string $title, string $type): string {
         $sentences = $this->best_sentences($text, 2);
         if ($sentences !== '') {
@@ -1224,6 +1375,13 @@ ENDE EINTRAG";
         return 'Dieses Dokument enthält Informationen und Materialien zum angegebenen Thema.';
     }
 
+    /**
+     * Derive benefit for FredKI CourseImport.
+     *
+     * @param string $type Parameter for this operation.
+     * @param string $category Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function derive_benefit(string $type, string $category): string {
         switch ($type) {
             case 'Vorlage':
@@ -1239,6 +1397,13 @@ ENDE EINTRAG";
         }
     }
 
+    /**
+     * Derive content overview for FredKI CourseImport.
+     *
+     * @param string $text Parameter for this operation.
+     * @param string $type Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function derive_content_overview(string $text, string $type): string {
         $sentences = $this->best_sentences($text, 4);
         if ($sentences === '') {
@@ -1247,6 +1412,13 @@ ENDE EINTRAG";
         return $sentences;
     }
 
+    /**
+     * Best sentences for FredKI CourseImport.
+     *
+     * @param string $text Parameter for this operation.
+     * @param int $limit Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function best_sentences(string $text, int $limit): string {
         $text = trim($text);
         if ($text === '') {

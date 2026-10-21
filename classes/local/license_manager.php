@@ -32,12 +32,22 @@ defined('MOODLE_INTERNAL') || die();
  * The plugin validates the Moodle site domain against the external license server.
  */
 class license_manager {
+    /** license endpoint constant. */
     private const LICENSE_ENDPOINT = 'https://bildungbleibt.de/generator/check.php';
+    /** cache ttl constant. */
     private const CACHE_TTL = 86400; // 24 hours.
 
+    /** config component constant. */
     private const CONFIG_COMPONENT = 'fredkicourseimport';
+    /** legacy config component constant. */
     private const LEGACY_CONFIG_COMPONENT = 'mod_fredkicourseimport';
 
+    /**
+     * Require valid license for FredKI CourseImport.
+     *
+     * @param bool $forcecheck Parameter for this operation.
+     * @return void Operation result.
+     */
     public static function require_valid_license(bool $forcecheck = false): void {
         $status = self::get_license_status($forcecheck);
         if (empty($status['valid'])) {
@@ -46,11 +56,23 @@ class license_manager {
         }
     }
 
+    /**
+     * Is valid license for FredKI CourseImport.
+     *
+     * @param bool $forcecheck Parameter for this operation.
+     * @return bool Operation result.
+     */
     public static function is_valid_license(bool $forcecheck = false): bool {
         $status = self::get_license_status($forcecheck);
         return !empty($status['valid']);
     }
 
+    /**
+     * Get license status for FredKI CourseImport.
+     *
+     * @param bool $forcecheck Parameter for this operation.
+     * @return array Operation result.
+     */
     public static function get_license_status(bool $forcecheck = false): array {
         global $CFG;
 
@@ -104,6 +126,11 @@ class license_manager {
         ];
     }
 
+    /**
+     * Clear license cache for FredKI CourseImport.
+     *
+     * @return void Operation result.
+     */
     public static function clear_license_cache(): void {
         unset_config('license_status_cache', self::CONFIG_COMPONENT);
         unset_config('license_valid_until', self::CONFIG_COMPONENT);
@@ -111,6 +138,11 @@ class license_manager {
         unset_config('license_valid_until', self::LEGACY_CONFIG_COMPONENT);
     }
 
+    /**
+     * Get license key for FredKI CourseImport.
+     *
+     * @return string Operation result.
+     */
     private static function get_license_key(): string {
         $licensekey = trim((string)get_config(self::CONFIG_COMPONENT, 'licensekey'));
         if ($licensekey !== '') {
@@ -120,6 +152,11 @@ class license_manager {
         return trim((string)get_config(self::LEGACY_CONFIG_COMPONENT, 'licensekey'));
     }
 
+    /**
+     * Get current domain for FredKI CourseImport.
+     *
+     * @return string Operation result.
+     */
     private static function get_current_domain(): string {
         global $CFG;
 
@@ -128,6 +165,13 @@ class license_manager {
         return trim((string)$domain);
     }
 
+    /**
+     * Get cached status for FredKI CourseImport.
+     *
+     * @param string $licensekey Parameter for this operation.
+     * @param string $domain Parameter for this operation.
+     * @return ?array Operation result.
+     */
     private static function get_cached_status(string $licensekey, string $domain): ?array {
         $raw = get_config(self::CONFIG_COMPONENT, 'license_status_cache');
         if (empty($raw)) {
@@ -167,6 +211,14 @@ class license_manager {
         ];
     }
 
+    /**
+     * Set cached status for FredKI CourseImport.
+     *
+     * @param string $licensekey Parameter for this operation.
+     * @param string $domain Parameter for this operation.
+     * @param array $status Parameter for this operation.
+     * @return void Operation result.
+     */
     private static function set_cached_status(string $licensekey, string $domain, array $status): void {
         $validuntil = (int)($status['cacheduntil'] ?? (time() + self::CACHE_TTL));
         $cache = [
@@ -180,10 +232,23 @@ class license_manager {
         set_config('license_valid_until', $validuntil, self::CONFIG_COMPONENT);
     }
 
+    /**
+     * Cache key hash for FredKI CourseImport.
+     *
+     * @param string $licensekey Parameter for this operation.
+     * @return string Operation result.
+     */
     private static function cache_key_hash(string $licensekey): string {
         return hash('sha256', $licensekey);
     }
 
+    /**
+     * Check remote license for FredKI CourseImport.
+     *
+     * @param string $licensekey Parameter for this operation.
+     * @param string $domain Parameter for this operation.
+     * @return array Operation result.
+     */
     private static function check_remote_license(string $licensekey, string $domain): array {
         global $CFG;
 

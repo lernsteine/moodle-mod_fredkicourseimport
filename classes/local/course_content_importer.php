@@ -47,6 +47,17 @@ class course_content_importer {
         'scorm',
     ];
 
+    /**
+     * Import course content for FredKI CourseImport.
+     *
+     * @param \stdClass $course Parameter for this operation.
+     * @param \stdClass $cm Parameter for this operation.
+     * @param \stdClass $activity Parameter for this operation.
+     * @param ?array $selectedcmids Parameter for this operation.
+     * @param bool $includesectiontexts Parameter for this operation.
+     * @param ?array $contentmodes Parameter for this operation.
+     * @return array Operation result.
+     */
     public function import_course_content(
         \stdClass $course,
         \stdClass $cm,
@@ -215,6 +226,12 @@ class course_content_importer {
         return array_merge($counters, $syncstats);
     }
 
+    /**
+     * Add section exports for FredKI CourseImport.
+     *
+     * @param \stdClass $course Parameter for this operation.
+     * @return int Operation result.
+     */
     protected function add_section_exports(\stdClass $course): int {
         $modinfo = get_fast_modinfo($course);
         $count = 0;
@@ -261,10 +278,26 @@ class course_content_importer {
         return $count;
     }
 
+    /**
+     * Clear generated area for FredKI CourseImport.
+     *
+     * @param int $contextid Parameter for this operation.
+     * @return void Operation result.
+     */
     protected function clear_generated_area(int $contextid): void {
         get_file_storage()->delete_area_files($contextid, 'mod_fredkicourseimport', 'generated_files', 0);
     }
 
+    /**
+     * Add file exports for FredKI CourseImport.
+     *
+     * @param int $targetcontextid Parameter for this operation.
+     * @param \stdClass $course Parameter for this operation.
+     * @param \cm_info $sourcecm Parameter for this operation.
+     * @param string $summary Parameter for this operation.
+     * @param bool $includecontent Parameter for this operation.
+     * @return int Operation result.
+     */
     protected function add_file_exports(int $targetcontextid, \stdClass $course, \cm_info $sourcecm, string $summary, bool $includecontent): int {
         $sourcecontext = \context_module::instance($sourcecm->id);
         $component = 'mod_' . $sourcecm->modname;
@@ -319,6 +352,15 @@ class course_content_importer {
         return $count;
     }
 
+    /**
+     * Add single metadata export for FredKI CourseImport.
+     *
+     * @param \stdClass $course Parameter for this operation.
+     * @param \cm_info $sourcecm Parameter for this operation.
+     * @param string $summary Parameter for this operation.
+     * @param string $folder Parameter for this operation.
+     * @return int Operation result.
+     */
     protected function add_single_metadata_export(\stdClass $course, \cm_info $sourcecm, string $summary, string $folder): int {
         $url = $this->get_activity_url($course, $sourcecm);
         $document = $this->render_document($course, $sourcecm, [
@@ -333,6 +375,19 @@ class course_content_importer {
         return 1;
     }
 
+    /**
+     * Add single content export for FredKI CourseImport.
+     *
+     * @param \stdClass $course Parameter for this operation.
+     * @param \cm_info $sourcecm Parameter for this operation.
+     * @param ?\stdClass $record Parameter for this operation.
+     * @param string $summary Parameter for this operation.
+     * @param string $rawcontent Parameter for this operation.
+     * @param int $format Parameter for this operation.
+     * @param string $folder Parameter for this operation.
+     * @param ?string $exporttitle Parameter for this operation.
+     * @return void Operation result.
+     */
     protected function add_single_content_export(\stdClass $course, \cm_info $sourcecm, ?\stdClass $record, string $summary, string $rawcontent, int $format, string $folder, ?string $exporttitle = null): void {
         $url = $this->get_activity_url($course, $sourcecm);
         $content = $this->content_to_plain_text($rawcontent, $format, $sourcecm);
@@ -350,6 +405,15 @@ class course_content_importer {
         ), $document);
     }
 
+    /**
+     * Add glossary exports for FredKI CourseImport.
+     *
+     * @param \stdClass $course Parameter for this operation.
+     * @param \cm_info $sourcecm Parameter for this operation.
+     * @param ?\stdClass $glossary Parameter for this operation.
+     * @param string $summary Parameter for this operation.
+     * @return int Operation result.
+     */
     protected function add_glossary_exports(\stdClass $course, \cm_info $sourcecm, ?\stdClass $glossary, string $summary): int {
         global $DB;
         if (!$glossary) {
@@ -391,6 +455,15 @@ class course_content_importer {
         return count($entries);
     }
 
+    /**
+     * Add book exports for FredKI CourseImport.
+     *
+     * @param \stdClass $course Parameter for this operation.
+     * @param \cm_info $sourcecm Parameter for this operation.
+     * @param ?\stdClass $book Parameter for this operation.
+     * @param string $summary Parameter for this operation.
+     * @return int Operation result.
+     */
     protected function add_book_exports(\stdClass $course, \cm_info $sourcecm, ?\stdClass $book, string $summary): int {
         global $DB;
         if (!$book || !$DB->get_manager()->table_exists('book_chapters')) {
@@ -415,6 +488,15 @@ class course_content_importer {
         return 1;
     }
 
+    /**
+     * Add lesson exports for FredKI CourseImport.
+     *
+     * @param \stdClass $course Parameter for this operation.
+     * @param \cm_info $sourcecm Parameter for this operation.
+     * @param ?\stdClass $lesson Parameter for this operation.
+     * @param string $summary Parameter for this operation.
+     * @return int Operation result.
+     */
     protected function add_lesson_exports(\stdClass $course, \cm_info $sourcecm, ?\stdClass $lesson, string $summary): int {
         global $DB;
         if (!$lesson || !$DB->get_manager()->table_exists('lesson_pages')) {
@@ -526,6 +608,13 @@ class course_content_importer {
         return $labels[$modname] ?? ucfirst($modname) . ' (' . $modname . ')';
     }
 
+    /**
+     * Render html link row for FredKI CourseImport.
+     *
+     * @param string $label Parameter for this operation.
+     * @param string $url Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function render_html_link_row(string $label, string $url): string {
         $url = trim($url);
         if ($url === '') {
@@ -534,6 +623,14 @@ class course_content_importer {
         return '<p><strong>' . s($label) . ':</strong> <a href="' . s($url) . '">' . s($url) . '</a></p>';
     }
 
+    /**
+     * Content to plain text for FredKI CourseImport.
+     *
+     * @param string $content Parameter for this operation.
+     * @param int $format Parameter for this operation.
+     * @param \cm_info $sourcecm Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function content_to_plain_text(string $content, int $format, \cm_info $sourcecm): string {
         if (trim($content) === '') {
             return '';
@@ -585,6 +682,12 @@ class course_content_importer {
         return trim((string)$plain);
     }
 
+    /**
+     * Get instance record for FredKI CourseImport.
+     *
+     * @param \cm_info $sourcecm Parameter for this operation.
+     * @return ?\stdClass Operation result.
+     */
     protected function get_instance_record(\cm_info $sourcecm): ?\stdClass {
         global $DB;
         $table = $sourcecm->modname;
@@ -594,6 +697,12 @@ class course_content_importer {
         return $DB->get_record($table, ['id' => $sourcecm->instance], '*', IGNORE_MISSING) ?: null;
     }
 
+    /**
+     * Get short summary for FredKI CourseImport.
+     *
+     * @param ?\stdClass $record Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function get_short_summary(?\stdClass $record): string {
         if (!$record || !property_exists($record, 'intro')) {
             return '';
@@ -609,6 +718,13 @@ class course_content_importer {
         return $text;
     }
 
+    /**
+     * Get activity url for FredKI CourseImport.
+     *
+     * @param \stdClass $course Parameter for this operation.
+     * @param \cm_info $sourcecm Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function get_activity_url(\stdClass $course, \cm_info $sourcecm): string {
         if (!empty($sourcecm->url)) {
             return $sourcecm->url->out(false);
@@ -616,6 +732,13 @@ class course_content_importer {
         return (new \moodle_url('/course/view.php', ['id' => $course->id], 'module-' . $sourcecm->id))->out(false);
     }
 
+    /**
+     * Increment counter for FredKI CourseImport.
+     *
+     * @param array $counters Parameter for this operation.
+     * @param string $modname Parameter for this operation.
+     * @return void Operation result.
+     */
     protected function increment_counter(array &$counters, string $modname): void {
         $map = ['url' => 'urls', 'glossary' => 'glossaries', 'page' => 'pages', 'label' => 'labels',
             'book' => 'books', 'lesson' => 'lessons', 'h5pactivity' => 'h5p', 'scorm' => 'scorm'];
@@ -626,10 +749,24 @@ class course_content_importer {
         }
     }
 
+    /**
+     * Add text file for FredKI CourseImport.
+     *
+     * @param string $filepath Parameter for this operation.
+     * @param string $filename Parameter for this operation.
+     * @param string $content Parameter for this operation.
+     * @return void Operation result.
+     */
     protected function add_text_file(string $filepath, string $filename, string $content): void {
         $this->textfiles[$filepath . $filename] = compact('filepath', 'filename', 'content');
     }
 
+    /**
+     * Get course category path for FredKI CourseImport.
+     *
+     * @param \stdClass $course Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function get_course_category_path(\stdClass $course): string {
         global $DB;
         if (empty($course->category)) {
@@ -653,6 +790,12 @@ class course_content_importer {
         return implode(' / ', $names);
     }
 
+    /**
+     * Build safe filename for FredKI CourseImport.
+     *
+     * @param string $name Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function build_safe_filename(string $name): string {
         $name = clean_filename($name);
         return $name !== '' ? $name : ('export-' . time() . '.txt');

@@ -26,6 +26,11 @@ namespace mod_fredkicourseimport\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * fredki client for FredKI CourseImport.
+ *
+ * @package mod_fredkicourseimport
+ */
 class fredki_client {
     protected $baseurl;
     protected $workspace;
@@ -39,6 +44,16 @@ class fredki_client {
     /** @var callable|null Marks an unauthorised token as expired. */
     protected $authfailurecallback = null;
 
+    /**
+     *   construct for FredKI CourseImport.
+     *
+     * @param string $baseurl Parameter for this operation.
+     * @param string $workspace Parameter for this operation.
+     * @param string $username Parameter for this operation.
+     * @param string $password Parameter for this operation.
+     * @param string $loginpath Parameter for this operation.
+     * @param bool $debuglog Parameter for this operation.
+     */
     public function __construct(string $baseurl, string $workspace, string $username, string $password, string $loginpath = '/admin/api/user/login', bool $debuglog = false) {
         $baseurl = rtrim($baseurl, '/');
         $parts = parse_url($baseurl);
@@ -53,6 +68,12 @@ class fredki_client {
         $this->debuglog = $debuglog;
     }
 
+    /**
+     * Log debug for FredKI CourseImport.
+     *
+     * @param string $message Parameter for this operation.
+     * @return void Operation result.
+     */
     protected function log_debug(string $message): void {
         global $CFG;
         if ($this->debuglog && $CFG->debug >= DEBUG_DEVELOPER) {
@@ -60,20 +81,43 @@ class fredki_client {
         }
     }
 
+    /**
+     * Set token for FredKI CourseImport.
+     *
+     * @param string $token Parameter for this operation.
+     * @return void Operation result.
+     */
     public function set_token(string $token): void {
         $this->token = $token;
     }
 
+    /**
+     * Set auth failure callback for FredKI CourseImport.
+     *
+     * @param callable $callback Parameter for this operation.
+     * @return void Operation result.
+     */
     public function set_auth_failure_callback(callable $callback): void {
         $this->authfailurecallback = $callback;
     }
 
+    /**
+     * Report unauthorized for FredKI CourseImport.
+     *
+     * @return void Operation result.
+     */
     protected function report_unauthorized(): void {
         if ($this->authfailurecallback) {
             call_user_func($this->authfailurecallback);
         }
     }
 
+    /**
+     * Set token renewal callback for FredKI CourseImport.
+     *
+     * @param callable $callback Parameter for this operation.
+     * @return void Operation result.
+     */
     public function set_token_renewal_callback(callable $callback): void {
         $this->tokenrenewalcallback = $callback;
     }
@@ -93,6 +137,11 @@ class fredki_client {
         return $this->token !== '';
     }
 
+    /**
+     * Login for FredKI CourseImport.
+     *
+     * @return string Operation result.
+     */
     public function login(): string {
         license_manager::require_valid_license();
         if (!empty($this->token)) {
@@ -109,6 +158,11 @@ class fredki_client {
     }
 
 
+    /**
+     * List knowledge bases for FredKI CourseImport.
+     *
+     * @return array Operation result.
+     */
     public function list_knowledge_bases(): array {
         $this->login();
         $url = $this->baseurl . '/admin/api/workspace/' . rawurlencode($this->workspace) . '/knowledge';
@@ -142,6 +196,11 @@ class fredki_client {
     }
 
 
+    /**
+     * List agents for FredKI CourseImport.
+     *
+     * @return array Operation result.
+     */
     public function list_agents(): array {
         $this->login();
 
@@ -177,6 +236,12 @@ class fredki_client {
     }
 
 
+    /**
+     * Get agent embed code for FredKI CourseImport.
+     *
+     * @param string $agentid Parameter for this operation.
+     * @return string Operation result.
+     */
     public function get_agent_embed_code(string $agentid): string {
         $agentid = trim($agentid);
         if ($agentid === '') {
@@ -209,6 +274,12 @@ class fredki_client {
         return '';
     }
 
+    /**
+     * Extract list items for FredKI CourseImport.
+     *
+     * @param array $response Parameter for this operation.
+     * @return array Operation result.
+     */
     protected function extract_list_items(array $response): array {
         $candidates = [
             $response['data'] ?? null,
@@ -228,6 +299,12 @@ class fredki_client {
         return [];
     }
 
+    /**
+     * Normalise agent items for FredKI CourseImport.
+     *
+     * @param array $items Parameter for this operation.
+     * @return array Operation result.
+     */
     protected function normalise_agent_items(array $items): array {
         $result = [];
         foreach ($items as $item) {
@@ -283,6 +360,12 @@ class fredki_client {
         return $result;
     }
 
+    /**
+     * Get agent detail for embed for FredKI CourseImport.
+     *
+     * @param string $agentid Parameter for this operation.
+     * @return array Operation result.
+     */
     protected function get_agent_detail_for_embed(string $agentid): array {
         if ($agentid === '') {
             return [];
@@ -357,6 +440,12 @@ class fredki_client {
 
         return [];
     }
+    /**
+     * Build chat url from agent item for FredKI CourseImport.
+     *
+     * @param array $item Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function build_chat_url_from_agent_item(array $item): string {
         $token = $this->extract_embed_token($item);
         if ($token === '') {
@@ -371,6 +460,12 @@ class fredki_client {
         return $scheme . '://' . $host . '/chat/' . rawurlencode($token);
     }
 
+    /**
+     * Build embed code from agent item for FredKI CourseImport.
+     *
+     * @param array $item Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function build_embed_code_from_agent_item(array $item): string {
         $token = $this->extract_embed_token($item);
         if ($token === '') {
@@ -389,6 +484,12 @@ class fredki_client {
         return '<script async defer src="' . htmlspecialchars($src, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '"></script>';
     }
 
+    /**
+     * Extract embed token for FredKI CourseImport.
+     *
+     * @param array $item Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function extract_embed_token(array $item): string {
         $directkeys = [
             'embed_token', 'embedToken', 'public_token', 'publicToken', 'share_token', 'shareToken',
@@ -435,6 +536,12 @@ class fredki_client {
         return '';
     }
 
+    /**
+     * Extract token from url for FredKI CourseImport.
+     *
+     * @param string $url Parameter for this operation.
+     * @return string Operation result.
+     */
     protected function extract_token_from_url(string $url): string {
         $url = html_entity_decode(trim($url), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         if ($url === '') {
@@ -456,6 +563,14 @@ class fredki_client {
         return '';
     }
 
+    /**
+     * Split upload for FredKI CourseImport.
+     *
+     * @param string $knowledgeid Parameter for this operation.
+     * @param string $filepath Parameter for this operation.
+     * @param string $filename Parameter for this operation.
+     * @return array Operation result.
+     */
     public function split_upload(string $knowledgeid, string $filepath, string $filename): array {
         global $CFG;
 
@@ -569,6 +684,13 @@ class fredki_client {
         return null;
     }
 
+    /**
+     * Batch create for FredKI CourseImport.
+     *
+     * @param string $knowledgeid Parameter for this operation.
+     * @param array $documents Parameter for this operation.
+     * @return array Operation result.
+     */
     public function batch_create(string $knowledgeid, array $documents): array {
         license_manager::require_valid_license();
         $this->login();
@@ -710,6 +832,13 @@ class fredki_client {
         return $this->request_json('POST', $url, $tagids, true);
     }
 
+    /**
+     * Delete document for FredKI CourseImport.
+     *
+     * @param string $knowledgeid Parameter for this operation.
+     * @param string $documentid Parameter for this operation.
+     * @return array Operation result.
+     */
     public function delete_document(string $knowledgeid, string $documentid): array {
         global $CFG;
 
@@ -760,6 +889,16 @@ class fredki_client {
         return is_array($response) ? $response : [];
     }
 
+    /**
+     * Request json for FredKI CourseImport.
+     *
+     * @param string $method Parameter for this operation.
+     * @param string $url Parameter for this operation.
+     * @param ?array $payload Parameter for this operation.
+     * @param bool $withauth Parameter for this operation.
+     * @param bool $replayed Parameter for this operation.
+     * @return array Operation result.
+     */
     protected function request_json(
         string $method,
         string $url,

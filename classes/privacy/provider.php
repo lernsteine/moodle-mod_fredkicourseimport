@@ -37,7 +37,18 @@ use core_privacy\local\request\transform;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
+/**
+ * provider for FredKI CourseImport.
+ *
+ * @package mod_fredkicourseimport
+ */
 final class provider implements core_userlist_provider, metadata_provider, request_provider {
+    /**
+     * Get metadata for FredKI CourseImport.
+     *
+     * @param collection $collection Parameter for this operation.
+     * @return collection Operation result.
+     */
     public static function get_metadata(collection $collection): collection {
         $collection->add_database_table('fredkicourseimport', [
             'authorizedbyuserid' => 'privacy:metadata:activity:authorizedbyuserid',
@@ -66,6 +77,12 @@ final class provider implements core_userlist_provider, metadata_provider, reque
         return $collection;
     }
 
+    /**
+     * Get contexts for userid for FredKI CourseImport.
+     *
+     * @param int $userid Parameter for this operation.
+     * @return contextlist Operation result.
+     */
     public static function get_contexts_for_userid(int $userid): contextlist {
         $list = new contextlist();
         $sql = "SELECT DISTINCT ctx.id
@@ -86,6 +103,12 @@ final class provider implements core_userlist_provider, metadata_provider, reque
         return $list;
     }
 
+    /**
+     * Export user data for FredKI CourseImport.
+     *
+     * @param approved_contextlist $contextlist Parameter for this operation.
+     * @return void Operation result.
+     */
     public static function export_user_data(approved_contextlist $contextlist): void {
         global $DB;
         foreach ($contextlist->get_contexts() as $context) {
@@ -119,6 +142,12 @@ final class provider implements core_userlist_provider, metadata_provider, reque
         }
     }
 
+    /**
+     * Delete data for all users in context for FredKI CourseImport.
+     *
+     * @param \context $context Parameter for this operation.
+     * @return void Operation result.
+     */
     public static function delete_data_for_all_users_in_context(\context $context): void {
         global $DB;
         if (!$context instanceof context_module) {
@@ -131,6 +160,12 @@ final class provider implements core_userlist_provider, metadata_provider, reque
         }
     }
 
+    /**
+     * Delete data for user for FredKI CourseImport.
+     *
+     * @param approved_contextlist $contextlist Parameter for this operation.
+     * @return void Operation result.
+     */
     public static function delete_data_for_user(approved_contextlist $contextlist): void {
         global $DB;
         foreach ($contextlist->get_contexts() as $context) {
@@ -154,6 +189,12 @@ final class provider implements core_userlist_provider, metadata_provider, reque
         }
     }
 
+    /**
+     * Get users in context for FredKI CourseImport.
+     *
+     * @param userlist $userlist Parameter for this operation.
+     * @return void Operation result.
+     */
     public static function get_users_in_context(userlist $userlist): void {
         $context = $userlist->get_context();
         if (!$context instanceof context_module) {
@@ -174,6 +215,12 @@ final class provider implements core_userlist_provider, metadata_provider, reque
         }
     }
 
+    /**
+     * Delete data for users for FredKI CourseImport.
+     *
+     * @param approved_userlist $userlist Parameter for this operation.
+     * @return void Operation result.
+     */
     public static function delete_data_for_users(approved_userlist $userlist): void {
         global $DB;
         $context = $userlist->get_context();

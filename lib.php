@@ -27,6 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/classes/local/fredki_client.php');
 require_once(__DIR__ . '/classes/local/license_manager.php');
 
+/**
+ * Fredkicourseimport supports for FredKI CourseImport.
+ *
+ * @param mixed $feature Parameter for this operation.
+ * @return mixed Operation result.
+ */
 function fredkicourseimport_supports($feature) {
     switch ($feature) {
         case FEATURE_MOD_PURPOSE:
@@ -42,10 +48,21 @@ function fredkicourseimport_supports($feature) {
     }
 }
 
+/**
+ * Fredkicourseimport require license for FredKI CourseImport.
+ *
+ * @return void Operation result.
+ */
 function fredkicourseimport_require_license(): void {
     \mod_fredkicourseimport\local\license_manager::require_valid_license();
 }
 
+/**
+ * Fredkicourseimport resolve knowledge base name for FredKI CourseImport.
+ *
+ * @param mixed $data Parameter for this operation.
+ * @return string Operation result.
+ */
 function fredkicourseimport_resolve_knowledge_base_name($data): string {
     $knowledgeid = trim((string)($data->knowledgeid ?? ''));
     if ($knowledgeid === '') {
@@ -83,6 +100,12 @@ function fredkicourseimport_resolve_knowledge_base_name($data): string {
     return trim((string)($data->knowledgebasename ?? ''));
 }
 
+/**
+ * Fredkicourseimport extract token from chat url for FredKI CourseImport.
+ *
+ * @param ?string $url Parameter for this operation.
+ * @return string Operation result.
+ */
 function fredkicourseimport_extract_token_from_chat_url(?string $url): string {
     $url = html_entity_decode(trim((string)$url), ENT_QUOTES | ENT_HTML5, 'UTF-8');
     if ($url === '') {
@@ -101,6 +124,12 @@ function fredkicourseimport_extract_token_from_chat_url(?string $url): string {
     return '';
 }
 
+/**
+ * Fredkicourseimport build embed code from chat url for FredKI CourseImport.
+ *
+ * @param ?string $url Parameter for this operation.
+ * @return string Operation result.
+ */
 function fredkicourseimport_build_embed_code_from_chat_url(?string $url): string {
     $url = html_entity_decode(trim((string)$url), ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $parts = parse_url($url);
@@ -117,6 +146,12 @@ function fredkicourseimport_build_embed_code_from_chat_url(?string $url): string
     return fredkicourseimport_clean_embed_code($src);
 }
 
+/**
+ * Fredkicourseimport resolve agent embed code for FredKI CourseImport.
+ *
+ * @param mixed $data Parameter for this operation.
+ * @return string Operation result.
+ */
 function fredkicourseimport_resolve_agent_embed_code($data): string {
     $fromchaturl = fredkicourseimport_build_embed_code_from_chat_url($data->fredkichaturl ?? '');
     if ($fromchaturl !== '') {
@@ -153,6 +188,12 @@ function fredkicourseimport_resolve_agent_embed_code($data): string {
     }
 }
 
+/**
+ * Fredkicourseimport preserve locked mapping fields for FredKI CourseImport.
+ *
+ * @param stdClass $data Parameter for this operation.
+ * @return stdClass Operation result.
+ */
 function fredkicourseimport_preserve_locked_mapping_fields(stdClass $data): stdClass {
     global $DB;
 
@@ -195,6 +236,12 @@ function fredkicourseimport_apply_form_post_fallbacks(stdClass $data): stdClass 
     return $data;
 }
 
+/**
+ * Fredkicourseimport sync agent block for course for FredKI CourseImport.
+ *
+ * @param int $courseid Parameter for this operation.
+ * @return void Operation result.
+ */
 function fredkicourseimport_sync_agent_block_for_course(int $courseid): void {
     global $DB;
 
@@ -264,6 +311,13 @@ function fredkicourseimport_sync_agent_block_for_course(int $courseid): void {
     }
 }
 
+/**
+ * Fredkicourseimport add instance for FredKI CourseImport.
+ *
+ * @param mixed $data Parameter for this operation.
+ * @param mixed $mform Parameter for this operation.
+ * @return mixed Operation result.
+ */
 function fredkicourseimport_add_instance($data, $mform = null) {
     global $DB, $USER;
 
@@ -302,6 +356,13 @@ function fredkicourseimport_add_instance($data, $mform = null) {
     return $id;
 }
 
+/**
+ * Fredkicourseimport update instance for FredKI CourseImport.
+ *
+ * @param mixed $data Parameter for this operation.
+ * @param mixed $mform Parameter for this operation.
+ * @return mixed Operation result.
+ */
 function fredkicourseimport_update_instance($data, $mform = null) {
     global $DB, $USER;
 
@@ -355,6 +416,12 @@ function fredkicourseimport_update_instance($data, $mform = null) {
     return $result;
 }
 
+/**
+ * Fredkicourseimport delete instance for FredKI CourseImport.
+ *
+ * @param mixed $id Parameter for this operation.
+ * @return mixed Operation result.
+ */
 function fredkicourseimport_delete_instance($id) {
     global $DB;
 
@@ -396,6 +463,12 @@ function fredkicourseimport_delete_instance($id) {
     return true;
 }
 
+/**
+ * Fredkicourseimport clean embed code for FredKI CourseImport.
+ *
+ * @param ?string $embedcode Parameter for this operation.
+ * @return string Operation result.
+ */
 function fredkicourseimport_clean_embed_code(?string $embedcode): string {
     $embedcode = trim((string)$embedcode);
     if ($embedcode === '') {
@@ -439,6 +512,12 @@ function fredkicourseimport_clean_embed_code(?string $embedcode): string {
     ]);
 }
 
+/**
+ * Fredkicourseimport extract embed src for FredKI CourseImport.
+ *
+ * @param ?string $embedcode Parameter for this operation.
+ * @return string Operation result.
+ */
 function fredkicourseimport_extract_embed_src(?string $embedcode): string {
     $clean = fredkicourseimport_clean_embed_code($embedcode);
     if ($clean === '') {
@@ -450,6 +529,12 @@ function fredkicourseimport_extract_embed_src(?string $embedcode): string {
     return '';
 }
 
+/**
+ * Fredkicourseimport cm info view for FredKI CourseImport.
+ *
+ * @param cm_info $cm Parameter for this operation.
+ * @return void Operation result.
+ */
 function fredkicourseimport_cm_info_view(cm_info $cm): void {
     global $DB;
 
@@ -481,6 +566,18 @@ function fredkicourseimport_cm_info_view(cm_info $cm): void {
     }
 }
 
+/**
+ * Fredkicourseimport pluginfile for FredKI CourseImport.
+ *
+ * @param mixed $course Parameter for this operation.
+ * @param mixed $cm Parameter for this operation.
+ * @param mixed $context Parameter for this operation.
+ * @param mixed $filearea Parameter for this operation.
+ * @param mixed $args Parameter for this operation.
+ * @param mixed $forcedownload Parameter for this operation.
+ * @param array $options Parameter for this operation.
+ * @return mixed Operation result.
+ */
 function fredkicourseimport_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
