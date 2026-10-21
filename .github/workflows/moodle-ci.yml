@@ -17,7 +17,7 @@ jobs:
       matrix:
         include:
           - db: pgsql
-          - db: mysqli
+          - db: mariadb
     services:
       postgres:
         image: postgres:16
@@ -57,6 +57,7 @@ jobs:
           echo "$GITHUB_WORKSPACE/ci/vendor/bin" >> "$GITHUB_PATH"
           sudo locale-gen en_AU.UTF-8
       - name: Install Moodle 5.2 test environment
+        id: moodle_install
         env:
           DB: ${{ matrix.db }}
           MOODLE_BRANCH: MOODLE_502_STABLE
@@ -66,12 +67,18 @@ jobs:
           else
             moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --db-user=root
           fi
-      - name: Static checks and upgrade validation
-        run: |
-          moodle-plugin-ci phplint
-          moodle-plugin-ci validate
-          moodle-plugin-ci codechecker
-          moodle-plugin-ci savepoints
-          moodle-plugin-ci phpdoc
+      - name: PHP syntax check
+        run: moodle-plugin-ci phplint
+      - name: Moodle plugin validation
+        run: moodle-plugin-ci validate
+      - name: Moodle coding style
+        run: moodle-plugin-ci codechecker
+      - name: Moodle savepoints
+        if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
+        run: moodle-plugin-ci savepoints
+      - name: PHPDoc check
+        if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
+        run: moodle-plugin-ci phpdoc
       - name: PHPUnit
+        if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
         run: moodle-plugin-ci phpunit
