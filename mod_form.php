@@ -784,7 +784,8 @@ JS;
                 $options[$item['id']] = $item['name'];
             }
         } catch (\Throwable $e) {
-            // Keep form usable even if API is temporarily unreachable.
+            // Keep the form usable when the remote API cannot be reached.
+            return $options;
         }
 
         return $options;
@@ -820,7 +821,8 @@ JS;
                 $options[$item['id']] = $item['name'];
             }
         } catch (\Throwable $e) {
-            // Keep form usable even if API is temporarily unreachable.
+            // Keep the form usable when the remote API cannot be reached.
+            return $options;
         }
 
         return $options;

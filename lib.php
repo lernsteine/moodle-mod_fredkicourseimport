@@ -94,7 +94,8 @@ function fredkicourseimport_resolve_knowledge_base_name($data): string {
             }
         }
     } catch (\Throwable $e) {
-        // Saving should not fail if the name cannot be looked up again right now.
+        // Preserve the configured label if FredKI cannot be reached while saving.
+        return trim((string)($data->knowledgebasename ?? ''));
     }
 
     return trim((string)($data->knowledgebasename ?? ''));

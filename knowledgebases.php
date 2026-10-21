@@ -28,6 +28,7 @@ use mod_fredkicourseimport\local\ajax_helper;
 use mod_fredkicourseimport\local\fredki_client;
 use mod_fredkicourseimport\local\license_manager;
 
+require_login();
 ajax_helper::require_course_access();
 
 try {
