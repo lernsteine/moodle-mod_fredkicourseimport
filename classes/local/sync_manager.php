@@ -1216,7 +1216,11 @@ ENDE EINTRAG";
         if ($title === '') {
             return true;
         }
-        if (preg_match('/^(am|datum|ort|name|straße|strasse|plz|telefon|tel|fax|mail|e-mail|iban|bic|unterschrift|an das|sehr geehrte|hiermit|wir bitten|mentor\s*-?\s*die)/iu', $title)) {
+        if (preg_match(
+            '/^(am|datum|ort|name|straße|strasse|plz|telefon|tel|fax|mail|e-mail|iban|bic|unterschrift|' .
+            'an das|sehr geehrte|hiermit|wir bitten|mentor\s*-?\s*die)/iu',
+            $title
+        )) {
             return true;
         }
         if (preg_match('/^[\d\W_]+$/u', $title)) {

@@ -761,9 +761,18 @@ function fredkicourseimport_render_activity_selection(
         ['class' => 'text-muted fredki-unselect-confirmation']
     );
     $html .= html_writer::start_div('fredki-actions-inline');
-    $html .= html_writer::tag('button', get_string('startselectedimport', 'mod_fredkicourseimport'), ['type' => 'submit', 'class' => 'btn btn-primary fredki-btn-sync fredki-btn-main', 'id' => 'fredki-import-link']);
+    $html .= html_writer::tag(
+        'button',
+        get_string('startselectedimport', 'mod_fredkicourseimport'),
+        ['type' => 'submit', 'class' => 'btn btn-primary fredki-btn-sync fredki-btn-main', 'id' => 'fredki-import-link']
+    );
     $html .= html_writer::link(new moodle_url('/mod/fredkicourseimport/view.php', ['id' => $targetcm->id]), get_string('cancel'), ['class' => 'btn btn-secondary']);
-    $html .= html_writer::div('<span class="fredki-mini-live-dot is-ready" id="fredki-mini-live-dot"></span><span class="fredki-mini-live-text" id="fredki-mini-live-text">' . get_string('ready', 'mod_fredkicourseimport') . '</span>', 'fredki-mini-live-inline');
+    $html .= html_writer::div(
+        '<span class="fredki-mini-live-dot is-ready" id="fredki-mini-live-dot"></span>' .
+        '<span class="fredki-mini-live-text" id="fredki-mini-live-text">' .
+        get_string('ready', 'mod_fredkicourseimport') . '</span>',
+        'fredki-mini-live-inline'
+    );
     $html .= html_writer::end_div();
 
     $html .= html_writer::end_tag('form');
@@ -795,7 +804,11 @@ if (has_capability('mod/fredkicourseimport:sync', $context)) {
         ' <span class="fredki-meta-sep">•</span> ' .
         '<span class="fredki-meta-id">ID: ' . s($activity->knowledgeid ?: '-') . '</span>' .
         ' <span class="fredki-meta-sep">•</span> ' .
-        '<span class="fredki-meta-author">' . get_string('authorizedby', 'mod_fredkicourseimport') . ': ' . s($activity->authorizedbyuserid ? fullname(core_user::get_user($activity->authorizedbyuserid)) : '-') . '</span>',
+        '<span class="fredki-meta-author">' .
+        get_string('authorizedby', 'mod_fredkicourseimport') . ': ' .
+        s($activity->authorizedbyuserid
+            ? fullname(core_user::get_user($activity->authorizedbyuserid)) : '-') .
+        '</span>',
         'fredki-summary-inline'
     );
     echo html_writer::end_div();
@@ -959,7 +972,11 @@ $statcards = [
     [get_string('errordocumentscount', 'mod_fredkicourseimport'), $resultcounts['error']],
 ];
 foreach ($statcards as [$label, $value]) {
-    echo html_writer::div(html_writer::tag('div', $label, ['class' => 'fredki-stat-label']) . html_writer::tag('div', (string)$value, ['class' => 'fredki-stat-value']), 'fredki-stat-card');
+    echo html_writer::div(
+        html_writer::tag('div', $label, ['class' => 'fredki-stat-label']) .
+        html_writer::tag('div', (string)$value, ['class' => 'fredki-stat-value']),
+        'fredki-stat-card'
+    );
 }
 echo html_writer::end_div();
 
@@ -968,7 +985,11 @@ if (empty($files)) {
     $filescontent .= $OUTPUT->notification(get_string('nofiles', 'mod_fredkicourseimport'), 'info');
 } else {
     $table = new html_table();
-    $table->head = [get_string('generatedfilepath', 'mod_fredkicourseimport'), get_string('generatedfilename', 'mod_fredkicourseimport'), get_string('generatedfilesize', 'mod_fredkicourseimport')];
+    $table->head = [
+        get_string('generatedfilepath', 'mod_fredkicourseimport'),
+        get_string('generatedfilename', 'mod_fredkicourseimport'),
+        get_string('generatedfilesize', 'mod_fredkicourseimport'),
+    ];
     foreach ($files as $file) {
         $url = moodle_url::make_pluginfile_url($context->id, 'mod_fredkicourseimport', 'generated_files', 0, $file->get_filepath(), $file->get_filename());
         $table->data[] = [s($file->get_filepath()), html_writer::link($url, s($file->get_filename())), display_size($file->get_filesize())];
@@ -981,10 +1002,28 @@ if (empty($records)) {
     $statuscontent .= $OUTPUT->notification(get_string('nosyncentries', 'mod_fredkicourseimport'), 'info');
 } else {
     $table = new html_table();
-    $table->head = [get_string('file'), get_string('status'), get_string('fredkidocumentid', 'mod_fredkicourseimport'), get_string('lastsync', 'mod_fredkicourseimport'), get_string('error')];
+    $table->head = [
+        get_string('file'),
+        get_string('status'),
+        get_string('fredkidocumentid', 'mod_fredkicourseimport'),
+        get_string('lastsync', 'mod_fredkicourseimport'),
+        get_string('error'),
+    ];
     foreach ($records as $record) {
-        $map = ['pending' => get_string('status_pending', 'mod_fredkicourseimport'), 'synced' => get_string('status_synced', 'mod_fredkicourseimport'), 'deleted' => get_string('status_deleted', 'mod_fredkicourseimport'), 'removed' => get_string('status_removed', 'mod_fredkicourseimport'), 'error' => get_string('status_error', 'mod_fredkicourseimport')];
-        $table->data[] = [s($record->filename), s($map[$record->status] ?? $record->status), s($record->fredki_document_id ?? ''), !empty($record->timesynced) ? userdate($record->timesynced) : '-', !empty($record->lasterror) ? s($record->lasterror) : ''];
+        $map = [
+            'pending' => get_string('status_pending', 'mod_fredkicourseimport'),
+            'synced' => get_string('status_synced', 'mod_fredkicourseimport'),
+            'deleted' => get_string('status_deleted', 'mod_fredkicourseimport'),
+            'removed' => get_string('status_removed', 'mod_fredkicourseimport'),
+            'error' => get_string('status_error', 'mod_fredkicourseimport'),
+        ];
+        $table->data[] = [
+            s($record->filename),
+            s($map[$record->status] ?? $record->status),
+            s($record->fredki_document_id ?? ''),
+            !empty($record->timesynced) ? userdate($record->timesynced) : '-',
+            !empty($record->lasterror) ? s($record->lasterror) : '',
+        ];
     }
     $statuscontent .= html_writer::table($table);
 }

@@ -118,7 +118,15 @@ class course_content_importer {
                         : $this->add_single_metadata_export($course, $sourcecm, $summary, 'glossaries');
                     break;
                 case 'page':
-                    $this->add_single_content_export($course, $sourcecm, $record, $summary, $includecontent ? (string)($record->content ?? '') : '', $record->contentformat ?? FORMAT_HTML, 'pages');
+                    $this->add_single_content_export(
+                        $course,
+                        $sourcecm,
+                        $record,
+                        $summary,
+                        $includecontent ? (string)($record->content ?? '') : '',
+                        $record->contentformat ?? FORMAT_HTML,
+                        'pages'
+                    );
                     $counters['pages']++;
                     break;
                 case 'label':
@@ -388,7 +396,16 @@ class course_content_importer {
      * @param ?string $exporttitle Parameter for this operation.
      * @return void Operation result.
      */
-    protected function add_single_content_export(\stdClass $course, \cm_info $sourcecm, ?\stdClass $record, string $summary, string $rawcontent, int $format, string $folder, ?string $exporttitle = null): void {
+    protected function add_single_content_export(
+        \stdClass $course,
+        \cm_info $sourcecm,
+        ?\stdClass $record,
+        string $summary,
+        string $rawcontent,
+        int $format,
+        string $folder,
+        ?string $exporttitle = null
+    ): void {
         $url = $this->get_activity_url($course, $sourcecm);
         $content = $this->content_to_plain_text($rawcontent, $format, $sourcecm);
         $document = $this->render_document($course, $sourcecm, [
