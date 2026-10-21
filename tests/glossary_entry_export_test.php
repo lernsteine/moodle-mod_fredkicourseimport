@@ -30,6 +30,9 @@ use mod_fredkicourseimport\local\manual_sync_service;
 
 /** Verifies the real Moodle glossary document export and direct-entry routing. */
 final class glossary_entry_export_test extends \advanced_testcase {
+    /**
+     * Test filename and direct url for FredKI CourseImport.
+     */
     public function test_filename_and_direct_url(): void {
         $this->resetAfterTest();
         $filename = glossary_entry_helper::export_filename(42, 789);
@@ -46,6 +49,9 @@ final class glossary_entry_export_test extends \advanced_testcase {
         );
     }
 
+    /**
+     * Test complete mode builds one document per approved entry with direct links for FredKI CourseImport.
+     */
     public function test_complete_mode_builds_one_document_per_approved_entry_with_direct_links(): void {
         global $DB, $USER;
         $this->resetAfterTest();
@@ -74,6 +80,9 @@ final class glossary_entry_export_test extends \advanced_testcase {
         }
 
         $importer = new class extends course_content_importer {
+            /**
+             * Make glossary for FredKI CourseImport.
+             */
             public function make_glossary($course, $sourcecm, $glossary): array {
                 $count = $this->add_glossary_exports($course, $sourcecm, $glossary, '');
                 return ['count' => $count, 'files' => $this->textfiles];

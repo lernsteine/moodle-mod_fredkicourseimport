@@ -23,7 +23,15 @@
  */
 
 namespace mod_fredkicourseimport;
+/**
+ * token_manager_test for FredKI CourseImport.
+ *
+ * @package mod_fredkicourseimport
+ */
 final class token_manager_test extends \advanced_testcase {
+    /**
+     * Test missing token returns null for FredKI CourseImport.
+     */
     public function test_missing_token_returns_null(): void {
         $this->resetAfterTest();
         $this->assertNull(\mod_fredkicourseimport\local\token_manager::get(999, 999));

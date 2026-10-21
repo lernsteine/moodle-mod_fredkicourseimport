@@ -23,11 +23,20 @@
  */
 
 class backup_fredkicourseimport_activity_task extends backup_activity_task {
+    /**
+     * Define my settings for FredKI CourseImport.
+     */
     protected function define_my_settings() {
     }
+    /**
+     * Define my steps for FredKI CourseImport.
+     */
     protected function define_my_steps() {
         $this->add_step(new backup_fredkicourseimport_activity_structure_step('fredkicourseimport_structure', 'fredkicourseimport.xml'));
     }
+    /**
+     * Encode content links for FredKI CourseImport.
+     */
     public static function encode_content_links($content) {
         return $content;
     }

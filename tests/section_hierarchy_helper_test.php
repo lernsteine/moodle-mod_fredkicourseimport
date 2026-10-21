@@ -26,7 +26,15 @@ namespace mod_fredkicourseimport;
 
 use mod_fredkicourseimport\local\section_hierarchy_helper;
 
+/**
+ * section_hierarchy_helper_test for FredKI CourseImport.
+ *
+ * @package mod_fredkicourseimport
+ */
 final class section_hierarchy_helper_test extends \advanced_testcase {
+    /**
+     * Test parent path is compact and ordered for FredKI CourseImport.
+     */
     public function test_parent_path_is_compact_and_ordered(): void {
         $this->assertSame(
             'Büchertipps › Bücher für Grundschulkinder',
@@ -38,6 +46,9 @@ final class section_hierarchy_helper_test extends \advanced_testcase {
         );
     }
 
+    /**
+     * Test empty parent path stays empty for FredKI CourseImport.
+     */
     public function test_empty_parent_path_stays_empty(): void {
         $this->assertSame('', section_hierarchy_helper::format_parents([]));
     }

@@ -23,14 +23,26 @@
  */
 
 class restore_fredkicourseimport_activity_task extends restore_activity_task {
+    /**
+     * Define my settings for FredKI CourseImport.
+     */
     protected function define_my_settings() {
     }
+    /**
+     * Define my steps for FredKI CourseImport.
+     */
     protected function define_my_steps() {
         $this->add_step(new restore_fredkicourseimport_activity_structure_step('fredkicourseimport_structure', 'fredkicourseimport.xml'));
     }
+    /**
+     * Define decode contents for FredKI CourseImport.
+     */
     public static function define_decode_contents() {
         return [];
     }
+    /**
+     * Define decode rules for FredKI CourseImport.
+     */
     public static function define_decode_rules() {
         return [];
     }

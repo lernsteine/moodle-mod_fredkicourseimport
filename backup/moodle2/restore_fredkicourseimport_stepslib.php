@@ -19,12 +19,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_fredkicourseimport_activity_structure_step extends restore_activity_structure_step {
+    /**
+     * Define structure for FredKI CourseImport.
+     */
     protected function define_structure() {
         return [
             new restore_path_element('fredkicourseimport', '/activity/fredkicourseimport'),
             new restore_path_element('fredkicourseimport_map', '/activity/fredkicourseimport/maps/map'),
         ];
     }
+    /**
+     * Process fredkicourseimport for FredKI CourseImport.
+     */
     protected function process_fredkicourseimport($data) {
         global $DB;
         $data = (object)$data;
@@ -43,6 +49,9 @@ class restore_fredkicourseimport_activity_structure_step extends restore_activit
         $newid = $DB->insert_record('fredkicourseimport', $data);
         $this->apply_activity_instance($newid);
     }
+    /**
+     * Process fredkicourseimport map for FredKI CourseImport.
+     */
     protected function process_fredkicourseimport_map($data) {
         global $DB;
         $data = (object)$data;
@@ -58,6 +67,9 @@ class restore_fredkicourseimport_activity_structure_step extends restore_activit
         unset($data->id);
         $DB->insert_record('fredkicourseimport_map', $data);
     }
+    /**
+     * After execute for FredKI CourseImport.
+     */
     protected function after_execute() {
         $this->add_related_files('mod_fredkicourseimport', 'generated_files', null);
     }
