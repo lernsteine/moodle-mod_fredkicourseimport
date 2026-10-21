@@ -208,7 +208,8 @@ final class provider implements core_userlist_provider, metadata_provider, reque
             );
             $userlist->add_from_sql(
                 'userid',
-                'SELECT authorizedbyuserid AS userid FROM {fredkicourseimport} WHERE id = :activityid AND authorizedbyuserid IS NOT NULL',
+                'SELECT authorizedbyuserid AS userid FROM {fredkicourseimport} ' .
+                    'WHERE id = :activityid AND authorizedbyuserid IS NOT NULL',
                 ['activityid' => $cm->instance]
             );
         }

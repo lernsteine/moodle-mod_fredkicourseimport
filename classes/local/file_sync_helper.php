@@ -161,7 +161,10 @@ class file_sync_helper {
 
         $known = $DB->get_records('fredkicourseimport_map', ['activityid' => $activityid]);
         foreach ($known as $record) {
-            if (!in_array($record->pathnamehash, $currenthashes, true) && !in_array($record->status, ['deleted', 'removed'], true)) {
+            if (
+                !in_array($record->pathnamehash, $currenthashes, true) &&
+                !in_array($record->status, ['deleted', 'removed'], true)
+            ) {
                 $record->status = 'deleted';
                 $record->lastresult = 'deleted';
                 $record->timemodified = time();

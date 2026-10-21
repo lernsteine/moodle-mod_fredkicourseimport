@@ -35,7 +35,10 @@ class backup_fredkicourseimport_activity_task extends backup_activity_task {
      * Define my steps for FredKI CourseImport.
      */
     protected function define_my_steps() {
-        $this->add_step(new backup_fredkicourseimport_activity_structure_step('fredkicourseimport_structure', 'fredkicourseimport.xml'));
+        $this->add_step(new backup_fredkicourseimport_activity_structure_step(
+            'fredkicourseimport_structure',
+            'fredkicourseimport.xml'
+        ));
     }
     /**
      * Encode content links for FredKI CourseImport.

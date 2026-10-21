@@ -275,7 +275,10 @@ class course_content_importer {
                 $html .= '<p><strong>' . s($parentlabel) . ':</strong> ' . s($sectionparents) . '</p>';
             }
             $html .= '<p><strong>Kurs:</strong> ' . s(format_string($course->fullname)) . '</p>';
-            $html .= $this->render_html_link_row('Kurslink', (new \moodle_url('/course/view.php', ['id' => $course->id]))->out(false));
+            $html .= $this->render_html_link_row(
+                'Kurslink',
+                (new \moodle_url('/course/view.php', ['id' => $course->id]))->out(false)
+            );
             $html .= '<p><strong>Typ:</strong> Kursabschnitt (section)</p>';
             $html .= $this->render_html_link_row('Aktivitätslink', $url);
             $html .= '</body></html>';
@@ -305,7 +308,13 @@ class course_content_importer {
      * @param bool $includecontent Parameter for this operation.
      * @return int Operation result.
      */
-    protected function add_file_exports(int $targetcontextid, \stdClass $course, \cm_info $sourcecm, string $summary, bool $includecontent): int {
+    protected function add_file_exports(
+        int $targetcontextid,
+        \stdClass $course,
+        \cm_info $sourcecm,
+        string $summary,
+        bool $includecontent
+    ): int {
         $sourcecontext = \context_module::instance($sourcecm->id);
         $component = 'mod_' . $sourcecm->modname;
         $files = get_file_storage()->get_area_files($sourcecontext->id, $component, 'content', 0, 'filepath, filename', false);
@@ -488,7 +497,11 @@ class course_content_importer {
         $chapters = $DB->get_records('book_chapters', ['bookid' => $book->id, 'hidden' => 0], 'pagenum ASC');
         $contentparts = [];
         foreach ($chapters as $chapter) {
-            $chaptercontent = $this->content_to_plain_text((string)$chapter->content, (int)($chapter->contentformat ?? FORMAT_HTML), $sourcecm);
+            $chaptercontent = $this->content_to_plain_text(
+                (string)$chapter->content,
+                (int)($chapter->contentformat ?? FORMAT_HTML),
+                $sourcecm
+            );
             if ($chaptercontent !== '') {
                 $title = trim((string)$chapter->title) ?: ('Kapitel ' . $chapter->id);
                 $contentparts[] = '## ' . $title . "\n\n" . $chaptercontent;
@@ -533,7 +546,11 @@ class course_content_importer {
             'content' => implode("\n\n", $contentparts),
         ]);
         $title = trim((string)$sourcecm->name) ?: 'Lektion';
-        $this->add_text_file('/lessons/', $this->build_safe_filename('cm' . $sourcecm->id . '-lesson-' . $title . '.html'), $document);
+        $this->add_text_file(
+            '/lessons/',
+            $this->build_safe_filename('cm' . $sourcecm->id . '-lesson-' . $title . '.html'),
+            $document
+        );
         return 1;
     }
 

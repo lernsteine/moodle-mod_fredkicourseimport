@@ -37,7 +37,15 @@ class backup_fredkicourseimport_activity_structure_step extends backup_activity_
         ]);
         $maps = new backup_nested_element('maps');
         $map = new backup_nested_element('map', ['id'], [
-            'filename', 'contenthash', 'filesize', 'contentmode', 'status', 'lastresult', 'timecreated', 'timemodified', 'timesynced',
+            'filename',
+            'contenthash',
+            'filesize',
+            'contentmode',
+            'status',
+            'lastresult',
+            'timecreated',
+            'timemodified',
+            'timesynced',
         ]);
         $activity->add_child($maps);
         $maps->add_child($map);

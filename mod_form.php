@@ -80,7 +80,12 @@ class mod_fredkicourseimport_mod_form extends moodleform_mod {
         }
 
         if (!$licensevalid) {
-            $mform->addElement('static', 'fredkisettingsdisabled', '', get_string('licenseconfigurefirst', 'mod_fredkicourseimport'));
+            $mform->addElement(
+                'static',
+                'fredkisettingsdisabled',
+                '',
+                get_string('licenseconfigurefirst', 'mod_fredkicourseimport')
+            );
         } else if ($locked) {
             $lockedinfo = get_string('activitymappinglockedinfo', 'mod_fredkicourseimport');
             if (!empty($current->knowledgebasename)) {
@@ -268,7 +273,12 @@ class mod_fredkicourseimport_mod_form extends moodleform_mod {
             // Wichtig: Das echte Moodle-Select bleibt im Formular. Es wird nur optisch
             // ausgeblendet und per Karten synchronisiert. Dadurch akzeptiert Moodle den
             // gespeicherten Wert genauso wie in der funktionierenden Ausgangsversion.
-            $mform->addElement('select', 'knowledgeid', get_string('availableknowledgebases', 'mod_fredkicourseimport'), $knowledgeoptions);
+            $mform->addElement(
+                'select',
+                'knowledgeid',
+                get_string('availableknowledgebases', 'mod_fredkicourseimport'),
+                $knowledgeoptions
+            );
             $mform->setType('knowledgeid', PARAM_TEXT);
             $mform->addRule('knowledgeid', null, 'required', null, 'client');
             $mform->addElement('hidden', 'knowledgebasename', (string)($current->knowledgebasename ?? ''));

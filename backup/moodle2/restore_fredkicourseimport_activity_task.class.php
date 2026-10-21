@@ -35,7 +35,10 @@ class restore_fredkicourseimport_activity_task extends restore_activity_task {
      * Define my steps for FredKI CourseImport.
      */
     protected function define_my_steps() {
-        $this->add_step(new restore_fredkicourseimport_activity_structure_step('fredkicourseimport_structure', 'fredkicourseimport.xml'));
+        $this->add_step(new restore_fredkicourseimport_activity_structure_step(
+            'fredkicourseimport_structure',
+            'fredkicourseimport.xml'
+        ));
     }
     /**
      * Define decode contents for FredKI CourseImport.

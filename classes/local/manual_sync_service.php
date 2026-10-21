@@ -135,7 +135,12 @@ class manual_sync_service {
      * @param string $sourceurl Moodle source URL.
      * @return array
      */
-    protected static function get_source_metadata(\stored_file $file, \stdClass $activity, ?\stdClass $course, string $sourceurl): array {
+    protected static function get_source_metadata(
+        \stored_file $file,
+        \stdClass $activity,
+        ?\stdClass $course,
+        string $sourceurl
+    ): array {
         global $DB;
 
         $metadata = [
