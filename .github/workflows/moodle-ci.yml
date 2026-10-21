@@ -81,11 +81,14 @@ jobs:
       - name: Moodle plugin validation
         run: moodle-plugin-ci validate
       - name: Moodle coding style
+        if: ${{ matrix.moodle == '5.2' && matrix.db == 'pgsql' }}
         run: moodle-plugin-ci codechecker
       - name: Moodle savepoints
+        if: ${{ matrix.moodle == '5.2' && matrix.db == 'pgsql' }}
         if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
         run: moodle-plugin-ci savepoints
       - name: PHPDoc check
+        if: ${{ matrix.moodle == '5.2' && matrix.db == 'pgsql' }}
         if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
         run: moodle-plugin-ci phpdoc
       - name: PHPUnit
