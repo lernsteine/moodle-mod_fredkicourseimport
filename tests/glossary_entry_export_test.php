@@ -28,7 +28,12 @@ use mod_fredkicourseimport\local\glossary_entry_helper;
 use mod_fredkicourseimport\local\course_content_importer;
 use mod_fredkicourseimport\local\manual_sync_service;
 
-/** Verifies the real Moodle glossary document export and direct-entry routing. */
+/**
+ * Verify glossary entry exports and Moodle direct links.
+ *
+ * @package mod_fredkicourseimport
+ * @covers \\mod_fredkicourseimport\\local\\glossary_entry_helper
+ */
 final class glossary_entry_export_test extends \advanced_testcase {
     /**
      * Test filename and direct url for FredKI CourseImport.

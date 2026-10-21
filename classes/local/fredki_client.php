@@ -129,7 +129,11 @@ class fredki_client {
         $this->tokenrenewalcallback = $callback;
     }
 
-    /** Re-authenticate once and update the in-memory token for this client. */
+    /**
+     * Re-authenticate once and update the in-memory token for this client.
+     *
+     * @return bool Whether reauthentication succeeded.
+     */
     protected function recover_from_unauthorized(): bool {
         if (!$this->tokenrenewalcallback) {
             return false;

@@ -28,7 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_fredkicourseimport\local\deselection_guard;
 
-/** Test that human confirmation is scoped to concrete deselected sources. */
+/**
+ * Verify that explicit deselection affects only confirmed source documents.
+ *
+ * @package mod_fredkicourseimport
+ * @covers \\mod_fredkicourseimport\\local\\deselection_guard
+ */
 final class deselection_guard_test extends \advanced_testcase {
     public function test_deselecting_one_source_does_not_authorise_other_sources(): void {
         $this->assertSame([15], deselection_guard::removed_sources(

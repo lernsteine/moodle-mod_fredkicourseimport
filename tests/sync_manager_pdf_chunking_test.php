@@ -27,7 +27,10 @@ namespace mod_fredkicourseimport;
 use mod_fredkicourseimport\local\sync_manager;
 
 /**
- * PDF chunking tests.
+ * Verify safe PDF content splitting during synchronisation.
+ *
+ * @package mod_fredkicourseimport
+ * @covers \\mod_fredkicourseimport\\local\\sync_manager
  */
 final class sync_manager_pdf_chunking_test extends \advanced_testcase {
     /**

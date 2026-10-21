@@ -27,9 +27,10 @@ namespace mod_fredkicourseimport;
 use mod_fredkicourseimport\local\section_hierarchy_helper;
 
 /**
- * section_hierarchy_helper_test for FredKI CourseImport.
+ * Verify section hierarchy metadata generation.
  *
  * @package mod_fredkicourseimport
+ * @covers \\mod_fredkicourseimport\\local\\section_hierarchy_helper
  */
 final class section_hierarchy_helper_test extends \advanced_testcase {
     /**

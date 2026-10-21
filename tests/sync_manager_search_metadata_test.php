@@ -27,7 +27,10 @@ namespace mod_fredkicourseimport;
 use mod_fredkicourseimport\local\sync_manager;
 
 /**
- * Search metadata tests.
+ * Verify generated search metadata for synced documents.
+ *
+ * @package mod_fredkicourseimport
+ * @covers \\mod_fredkicourseimport\\local\\sync_manager
  */
 final class sync_manager_search_metadata_test extends \advanced_testcase {
     public function test_paragraphs_get_real_titles_without_linked_questions(): void {
