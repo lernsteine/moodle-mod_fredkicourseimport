@@ -216,14 +216,11 @@ function fredkicourseimport_preserve_locked_mapping_fields(stdClass $data): stdC
 
 
 /**
- * Ensures that the FredKI Agent block is present when the activity is configured
- * to show the chatbot on the course page. Auto-created blocks are removed again
- * when no visible FredKI chatbot configuration remains in the course.
+ * Preserve explicitly posted mapping values in the activity configuration.
  *
- * @param int $courseid Course id.
- * @return void
+ * @param stdClass $data Activity form data.
+ * @return stdClass Completed activity settings.
  */
-
 function fredkicourseimport_apply_form_post_fallbacks(stdClass $data): stdClass {
     $postedknowledgeid = optional_param('knowledgeid', '', PARAM_TEXT);
     $postedknowledgename = optional_param('knowledgebasename', '', PARAM_TEXT);

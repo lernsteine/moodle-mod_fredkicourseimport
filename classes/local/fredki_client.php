@@ -32,12 +32,19 @@ defined('MOODLE_INTERNAL') || die();
  * @package mod_fredkicourseimport
  */
 class fredki_client {
+    /** @var string FredKI API base URL. */
     protected $baseurl;
+    /** @var string Target workspace. */
     protected $workspace;
+    /** @var string FredKI account name. */
     protected $username;
+    /** @var string FredKI account password. */
     protected $password;
+    /** @var string Login API route. */
     protected $loginpath;
+    /** @var bool Enable debug output. */
     protected $debuglog;
+    /** @var string|null Current access token. */
     protected $token = null;
     /** @var callable|null Invoked only after an authenticated request returns HTTP 401. */
     protected $tokenrenewalcallback = null;

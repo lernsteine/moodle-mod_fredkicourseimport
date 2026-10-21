@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @package mod_fredkicourseimport
  */
 class sync_manager {
+    /** @var fredki_client FredKI API client. */
     protected $client;
 
     /**

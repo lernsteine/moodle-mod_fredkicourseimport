@@ -623,13 +623,11 @@ function fredkicourseimport_render_activity_selection(
         if (!empty($savedselection[0]->selected)) {
             $sectioncheckboxattrs['checked'] = 'checked';
         }
-    } else if ($hassavedselection) {
-        // Once an explicit selection exists, new/untracked items stay off until selected.
-    } else if (array_key_exists(0, $existingselected)) {
+    } else if (!$hassavedselection && array_key_exists(0, $existingselected)) {
         if (!empty($existingselected[0])) {
             $sectioncheckboxattrs['checked'] = 'checked';
         }
-    } else if ($selectionmode !== 'none') {
+    } else if (!$hassavedselection && $selectionmode !== 'none') {
         $sectioncheckboxattrs['checked'] = 'checked';
     }
     $html .= html_writer::start_div('fredki-section-card fredki-section-card-special');

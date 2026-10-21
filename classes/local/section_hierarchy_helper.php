@@ -181,7 +181,11 @@ class section_hierarchy_helper {
         ];
     }
 
-    /** @return array{current:string,parents:string[],path:string[]} */
+    /**
+     * Return the empty section hierarchy.
+     *
+     * @return array Empty section information.
+     */
     protected static function empty_result(): array {
         return ['current' => '', 'parents' => [], 'path' => []];
     }

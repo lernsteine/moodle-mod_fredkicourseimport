@@ -240,8 +240,8 @@ class manual_sync_service {
                     if ($metadata['section'] === '') {
                         $modinfo = get_fast_modinfo($course);
                         if (isset($modinfo->cms[$sourcecmid])) {
-                            $cm_info = $modinfo->cms[$sourcecmid];
-                            $metadata['section'] = get_section_name($course, $cm_info->sectionnum);
+                            $sourcecm = $modinfo->cms[$sourcecmid];
+                            $metadata['section'] = get_section_name($course, $sourcecm->sectionnum);
                         }
                     }
                 }
