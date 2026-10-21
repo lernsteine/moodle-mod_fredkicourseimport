@@ -24,7 +24,6 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: moodle
         ports:
           - 5432:5432
         options: >-
@@ -34,7 +33,6 @@ jobs:
         image: mariadb:10.11
         env:
           MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
-          MARIADB_DATABASE: moodle
         ports:
           - 3306:3306
         options: >-
@@ -62,7 +60,12 @@ jobs:
         env:
           DB: ${{ matrix.db }}
           MOODLE_BRANCH: MOODLE_502_STABLE
-        run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+        run: |
+          if [ "$DB" = "pgsql" ]; then
+            moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --db-user=postgres --db-pass=postgres
+          else
+            moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --db-user=root
+          fi
       - name: Static checks and upgrade validation
         run: |
           moodle-plugin-ci phplint
