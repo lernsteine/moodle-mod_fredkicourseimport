@@ -60,7 +60,14 @@ class fredki_client {
      * @param string $loginpath Parameter for this operation.
      * @param bool $debuglog Parameter for this operation.
      */
-    public function __construct(string $baseurl, string $workspace, string $username, string $password, string $loginpath = '/admin/api/user/login', bool $debuglog = false) {
+    public function __construct(
+        string $baseurl,
+        string $workspace,
+        string $username,
+        string $password,
+        string $loginpath = '/admin/api/user/login',
+        bool $debuglog = false
+    ) {
         $baseurl = rtrim($baseurl, '/');
         $parts = parse_url($baseurl);
         if (empty($parts['scheme']) || strtolower($parts['scheme']) !== 'https' || empty($parts['host'])) {
@@ -322,8 +329,10 @@ class fredki_client {
                 continue;
             }
 
-            $id = $item['id'] ?? $item['application_id'] ?? $item['applicationId'] ?? $item['agent_id'] ?? $item['agentId'] ?? $item['uuid'] ?? null;
-            $name = $item['name'] ?? $item['title'] ?? $item['app_name'] ?? $item['appName'] ?? $item['agent_name'] ?? $item['agentName'] ?? null;
+            $id = $item['id'] ?? $item['application_id'] ?? $item['applicationId']
+                ?? $item['agent_id'] ?? $item['agentId'] ?? $item['uuid'] ?? null;
+            $name = $item['name'] ?? $item['title'] ?? $item['app_name']
+                ?? $item['appName'] ?? $item['agent_name'] ?? $item['agentName'] ?? null;
 
             if (empty($id)) {
                 continue;
@@ -414,8 +423,10 @@ class fredki_client {
         $paths = [
             '/admin/api/workspace/' . rawurlencode($this->workspace) . '/application/' . rawurlencode($agentid) . '/access_token',
             '/admin/api/workspace/' . rawurlencode($this->workspace) . '/application/' . rawurlencode($agentid) . '/access-token',
-            '/admin/api/workspace/' . rawurlencode($this->workspace) . '/application/' . rawurlencode($agentid) . '/access_token/1/100',
-            '/admin/api/workspace/' . rawurlencode($this->workspace) . '/application/' . rawurlencode($agentid) . '/access-token/1/100',
+            '/admin/api/workspace/' . rawurlencode($this->workspace) .
+                '/application/' . rawurlencode($agentid) . '/access_token/1/100',
+            '/admin/api/workspace/' . rawurlencode($this->workspace) .
+                '/application/' . rawurlencode($agentid) . '/access-token/1/100',
             '/admin/api/workspace/' . rawurlencode($this->workspace) . '/application/' . rawurlencode($agentid) . '/public',
             '/admin/api/workspace/' . rawurlencode($this->workspace) . '/application/' . rawurlencode($agentid) . '/profile',
             '/admin/api/application/' . rawurlencode($agentid) . '/access_token',
@@ -489,7 +500,9 @@ class fredki_client {
 
         $host = strtolower($parts['host']);
         $scheme = 'https';
-        $src = $scheme . '://' . $host . '/chat/api/embed?protocol=' . rawurlencode($scheme) . '&host=' . rawurlencode($host) . '&token=' . rawurlencode($token);
+        $src = $scheme . '://' . $host . '/chat/api/embed?protocol=' .
+            rawurlencode($scheme) . '&host=' . rawurlencode($host) .
+            '&token=' . rawurlencode($token);
 
         return '<script async defer src="' . htmlspecialchars($src, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '"></script>';
     }

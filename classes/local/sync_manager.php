@@ -914,7 +914,9 @@ ENDE EINTRAG";
             $text = trim(html_entity_decode(strip_tags($matches[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             return $text === '' ? '' : '**' . $text . '**';
         }, $html) ?? $html;
-        $html = preg_replace_callback('~<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>~is', static function (array $matches): string {
+        $html = preg_replace_callback(
+            '~<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>~is',
+            static function (array $matches): string {
             $label = trim(html_entity_decode(strip_tags($matches[2]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             $url = html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
             return $label !== '' ? $label : $url;
@@ -1133,7 +1135,9 @@ ENDE EINTRAG";
             if ($line === '') {
                 continue;
             }
-            if (preg_match('/^(tel\.?|telefon|fax|mobil|e-mail|mail|www\.|info@|kontakt|grafenwerthstr\.|straße|strasse|plz|ort,?\s*datum)$/iu', $line)) {
+            $contactpattern = '/^(tel\.?|telefon|fax|mobil|e-mail|mail|www\.|info@|kontakt|' .
+                'grafenwerthstr\.|straße|strasse|plz|ort,?\s*datum)$/iu';
+            if (preg_match($contactpattern, $line)) {
                 continue;
             }
             if (preg_match('/\b(?:Tel\.?|Telefon|Fax|Mobil)\b\s*[:\d]/iu', $line)) {
@@ -1272,7 +1276,11 @@ ENDE EINTRAG";
         if (preg_match('/checkliste|check list|prüfliste/u', $haystack)) {
             return 'Checkliste';
         }
-        if (preg_match('/formular|vorlage|muster|beitrittserklärung|einverständniserklärung|lastschrift|mandat|antrag|datenschutzerklärung|einladung/u', $haystack)) {
+        if (preg_match(
+            '/formular|vorlage|muster|beitrittserklärung|einverständniserklärung|' .
+            'lastschrift|mandat|antrag|datenschutzerklärung|einladung/u',
+            $haystack
+        )) {
             return 'Vorlage';
         }
         if (preg_match('/präsentation|workshop|folien|handout|arbeitsblatt|material/u', $haystack)) {
@@ -1294,8 +1302,12 @@ ENDE EINTRAG";
     protected function derive_category(string $text, string $filename): string {
         $haystack = mb_strtolower($text . ' ' . $filename);
         $categories = [
-            'Mitgliedschaft und Verwaltung' => '/mitglied|mitgliedschaft|beitrag|lastschrift|sepa|datenschutz|einverständnis|formular/u',
-            'Vereinsgründung und Vereinsrecht' => '/vereinsgründ|vereinsrecht|satzung|gemeinnützig|vorstand|gründungsversammlung|register/u',
+            'Mitgliedschaft und Verwaltung' =>
+                '/mitglied|mitgliedschaft|beitrag|lastschrift|sepa|datenschutz|' .
+                'einverständnis|formular/u',
+            'Vereinsgründung und Vereinsrecht' =>
+                '/vereinsgründ|vereinsrecht|satzung|gemeinnützig|vorstand|' .
+                'gründungsversammlung|register/u',
             'Lesestunden gestalten' => '/lesestunde|lesen|mentor|kind|grundschule|buch|emotion|gefühl/u',
             'Organisation und Kommunikation' => '/organisation|kommunikation|versammlung|einladung|protokoll/u',
         ];
@@ -1433,7 +1445,11 @@ ENDE EINTRAG";
             if (mb_strlen($piece) < 35 || mb_strlen($piece) > 260) {
                 continue;
             }
-            if (preg_match('/^(an das|sehr geehrte|mit freundlichen grüßen|ort, datum|name|straße|plz|iban|bic|telefon|fax|mail)/iu', $piece)) {
+            if (preg_match(
+                '/^(an das|sehr geehrte|mit freundlichen grüßen|ort, datum|name|' .
+                'straße|plz|iban|bic|telefon|fax|mail)/iu',
+                $piece
+            )) {
                 continue;
             }
             $sentences[] = $piece;
