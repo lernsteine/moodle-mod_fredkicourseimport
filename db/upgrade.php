@@ -75,7 +75,6 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 20260428006, 'fredkicourseimport');
     }
 
-
     if ($oldversion < 20260428010) {
         $table = new xmldb_table('fredkicourseimport');
         $field = new xmldb_field('fredkichaturl', XMLDB_TYPE_TEXT, null, null, null, null, null, 'fredkiembedcode');
@@ -139,18 +138,15 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 202607290001, 'fredkicourseimport');
     }
 
-
     if ($oldversion < 202607290003) {
         // Regression-recovery release. No database changes are required.
         upgrade_mod_savepoint(true, 202607290003, 'fredkicourseimport');
     }
 
-
     if ($oldversion < 202607310001) {
         // Capability, request validation, and security hardening release.
         upgrade_mod_savepoint(true, 202607310001, 'fredkicourseimport');
     }
-
 
     if ($oldversion < 202607310003) {
         $table = new xmldb_table('fredkicourseimport_map');
@@ -182,7 +178,6 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 202607310003, 'fredkicourseimport');
     }
-
 
     if ($oldversion < 202607310005) {
         // Document titles are localised using the course language. Existing FredKI
@@ -262,10 +257,12 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         }
         $now = time();
         foreach ($states as $state) {
-            if (!$DB->record_exists('fredkicourseimport_selection', [
+            if (
+                !$DB->record_exists('fredkicourseimport_selection', [
                 'activityid' => $state['activityid'],
                 'sourcecmid' => $state['sourcecmid'],
-            ])) {
+                ])
+            ) {
                 $DB->insert_record('fredkicourseimport_selection', (object)[
                     'activityid' => $state['activityid'],
                     'sourcecmid' => $state['sourcecmid'],
@@ -313,7 +310,6 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 202609250800, 'fredkicourseimport');
     }
 
-
     if ($oldversion < 202609260100) {
         // Search-oriented document format v2:
         // - real activity title as paragraph title
@@ -333,7 +329,6 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 202609260300, 'fredkicourseimport');
     }
 
-
     if ($oldversion < 202609270100) {
         // Search precision v5:
         // CourseImport no longer creates MaxKB linked questions (paragraph.problem_list).
@@ -342,7 +337,6 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         // previously importer-generated linked questions together with that old document.
         upgrade_mod_savepoint(true, 202609270100, 'fredkicourseimport');
     }
-
 
     if ($oldversion < 202610050008) {
         // Repair/bridge upgrade for installations that came from the 1.4.x branch.
@@ -505,8 +499,10 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         // Backward-compatible upgrade even from RC7/RC8/RC9. Remove only the
         // deprecated and unsafe automatic visibility deletion tasks.
         $component = 'mod_fredkicourseimport';
-        foreach (['\\mod_fredkicourseimport\\task\\reconcile_visibility',
-                   '\\mod_fredkicourseimport\\task\\delete_revoked_documents'] as $classname) {
+        foreach (
+            ['\\mod_fredkicourseimport\\task\\reconcile_visibility',
+                   '\\mod_fredkicourseimport\\task\\delete_revoked_documents'] as $classname
+        ) {
             foreach ([$classname, ltrim($classname, '\\')] as $variant) {
                 $DB->delete_records('task_scheduled', ['component' => $component, 'classname' => $variant]);
                 $DB->delete_records('task_adhoc', ['component' => $component, 'classname' => $variant]);

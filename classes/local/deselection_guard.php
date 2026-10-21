@@ -41,8 +41,13 @@ final class deselection_guard {
      * @param bool $requestedsections Parameter.
      * @return int[] Source CM ids removed from a saved selection, or 0 for section summaries.
      */
-    public static function removed_sources(array $previous, array $requested, array $available,
-            bool $previoussections, bool $requestedsections): array {
+    public static function removed_sources(
+        array $previous,
+        array $requested,
+        array $available,
+        bool $previoussections,
+        bool $requestedsections
+    ): array {
         $supported = array_fill_keys(array_map('intval', $available), true);
         $requestedset = array_fill_keys(array_map('intval', $requested), true);
         $removed = [];
@@ -91,8 +96,10 @@ final class deselection_guard {
             $id = (int)($map->id ?? 0);
             $source = (int)($map->sourcecmid ?? 0);
             $documentid = (string)($map->fredki_document_id ?? '');
-            if (!$id || !isset($scopes[$source]) || !self::in_manual_scope($map, $removed) ||
-                    $documentid === '' || (string)($map->status ?? '') === 'removed') {
+            if (
+                !$id || !isset($scopes[$source]) || !self::in_manual_scope($map, $removed) ||
+                    $documentid === '' || (string)($map->status ?? '') === 'removed'
+            ) {
                 continue;
             }
             $documents[$id] = $documentid;
@@ -120,11 +127,25 @@ final class deselection_guard {
      * @param array $maps Parameter.
      * @param string $sesskey Parameter.
      */
-    public static function approval_token(int $activityid, int $userid, array $previous,
-            array $requested, array $available, bool $previoussections, bool $requestedsections,
-            array $contentmodes, array $maps, string $sesskey): string {
-        $removed = self::removed_sources($previous, $requested, $available,
-            $previoussections, $requestedsections);
+    public static function approval_token(
+        int $activityid,
+        int $userid,
+        array $previous,
+        array $requested,
+        array $available,
+        bool $previoussections,
+        bool $requestedsections,
+        array $contentmodes,
+        array $maps,
+        string $sesskey
+    ): string {
+        $removed = self::removed_sources(
+            $previous,
+            $requested,
+            $available,
+            $previoussections,
+            $requestedsections
+        );
         $modes = [];
         foreach ($contentmodes as $sourceid => $mode) {
             $modes[(int)$sourceid] = $mode === 'knowledge' ? 'knowledge' : 'reference';

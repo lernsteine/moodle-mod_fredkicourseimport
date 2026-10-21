@@ -56,8 +56,10 @@ class file_sync_helper {
                 ['activityid' => $activityid, 'pathnamehash' => $pathnamehash]
             );
             $sourcecmid = 0;
-            if (preg_match('~^/course-files/cm(\d+)~', $file->get_filepath(), $matches) ||
-                    preg_match('~cm(\d+)~', $file->get_filename(), $matches)) {
+            if (
+                preg_match('~^/course-files/cm(\d+)~', $file->get_filepath(), $matches) ||
+                    preg_match('~cm(\d+)~', $file->get_filename(), $matches)
+            ) {
                 $sourcecmid = (int)$matches[1];
             }
             $contentmode = ($contentmodes[$sourcecmid] ?? 'reference') === 'reference'
@@ -203,7 +205,7 @@ class file_sync_helper {
             }
 
             $tags = self::read_custom_field_tags($sourcecmid);
-            usort($tags, static function(array $a, array $b): int {
+            usort($tags, static function (array $a, array $b): int {
                 return strcmp(($a['key'] ?? '') . "\0" . ($a['value'] ?? ''), ($b['key'] ?? '') . "\0" . ($b['value'] ?? ''));
             });
 
@@ -293,5 +295,4 @@ class file_sync_helper {
             return [];
         }
     }
-
 }

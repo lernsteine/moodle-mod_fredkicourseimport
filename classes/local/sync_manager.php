@@ -59,8 +59,10 @@ class sync_manager {
                 // FredKI's extractor rejects some otherwise valid, text-based PDFs.
                 // In that case, extract the text locally and continue through the same
                 // structured TXT pipeline. No silent metadata-only fallback is used.
-                if ((string)$e->errorcode !== 'documentextractfailed' ||
-                        strtolower(pathinfo($filename, PATHINFO_EXTENSION)) !== 'pdf') {
+                if (
+                    (string)$e->errorcode !== 'documentextractfailed' ||
+                        strtolower(pathinfo($filename, PATHINFO_EXTENSION)) !== 'pdf'
+                ) {
                     throw $e;
                 }
                 $localtext = $this->extract_pdf_text_locally($filepath);
@@ -833,19 +835,19 @@ ENDE EINTRAG";
         $html = preg_replace('~<head\b[^>]*>.*?</head>~is', '', $html) ?? $html;
         $html = preg_replace('~<h1\b[^>]*>.*?</h1>~is', '', $html) ?? $html;
 
-        $html = preg_replace_callback('~<h2\b[^>]*>(.*?)</h2>~is', static function(array $matches): string {
+        $html = preg_replace_callback('~<h2\b[^>]*>(.*?)</h2>~is', static function (array $matches): string {
             $text = trim(html_entity_decode(strip_tags($matches[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             return $text === '' ? '' : "\n\n## " . $text . "\n\n";
         }, $html) ?? $html;
-        $html = preg_replace_callback('~<h3\b[^>]*>(.*?)</h3>~is', static function(array $matches): string {
+        $html = preg_replace_callback('~<h3\b[^>]*>(.*?)</h3>~is', static function (array $matches): string {
             $text = trim(html_entity_decode(strip_tags($matches[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             return $text === '' ? '' : "\n\n### " . $text . "\n\n";
         }, $html) ?? $html;
-        $html = preg_replace_callback('~<strong\b[^>]*>(.*?)</strong>~is', static function(array $matches): string {
+        $html = preg_replace_callback('~<strong\b[^>]*>(.*?)</strong>~is', static function (array $matches): string {
             $text = trim(html_entity_decode(strip_tags($matches[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             return $text === '' ? '' : '**' . $text . '**';
         }, $html) ?? $html;
-        $html = preg_replace_callback('~<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>~is', static function(array $matches): string {
+        $html = preg_replace_callback('~<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>~is', static function (array $matches): string {
             $label = trim(html_entity_decode(strip_tags($matches[2]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             $url = html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
             return $label !== '' ? $label : $url;
@@ -1003,8 +1005,10 @@ ENDE EINTRAG";
                 continue;
             }
             // Promote likely chapter/section headings to Markdown boundaries.
-            if (preg_match('/^(chapter|kapitel)\s+[\pL\d]+\b.*$/iu', $line) ||
-                    preg_match('/^\d+(?:\.\d+){0,3}\s+\p{Lu}.*$/u', $line)) {
+            if (
+                preg_match('/^(chapter|kapitel)\s+[\pL\d]+\b.*$/iu', $line) ||
+                    preg_match('/^\d+(?:\.\d+){0,3}\s+\p{Lu}.*$/u', $line)
+            ) {
                 if (!$previousblank) {
                     $kept[] = '';
                 }

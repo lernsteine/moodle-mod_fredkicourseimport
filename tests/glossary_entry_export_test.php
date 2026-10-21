@@ -34,12 +34,16 @@ final class glossary_entry_export_test extends \advanced_testcase {
         $this->resetAfterTest();
         $filename = glossary_entry_helper::export_filename(42, 789);
         $this->assertSame('cm42-glossary-eid789.html', $filename);
-        $this->assertSame(['cmid' => 42, 'entryid' => 789],
-            glossary_entry_helper::parse_export_filename('/glossaries/', $filename));
+        $this->assertSame(
+            ['cmid' => 42, 'entryid' => 789],
+            glossary_entry_helper::parse_export_filename('/glossaries/', $filename)
+        );
         $this->assertNull(glossary_entry_helper::parse_export_filename('/books/', $filename));
         $this->assertNull(glossary_entry_helper::parse_export_filename('/glossaries/', 'cm42-glossary-Gesamt.html'));
-        $this->assertStringContainsString('/mod/glossary/showentry.php?eid=789',
-            glossary_entry_helper::direct_url(789));
+        $this->assertStringContainsString(
+            '/mod/glossary/showentry.php?eid=789',
+            glossary_entry_helper::direct_url(789)
+        );
     }
 
     public function test_complete_mode_builds_one_document_per_approved_entry_with_direct_links(): void {
@@ -50,11 +54,13 @@ final class glossary_entry_export_test extends \advanced_testcase {
         $glossary = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id]);
         $sourcecm = get_fast_modinfo($course)->cms[$glossary->cmid];
         $approved = [];
-        foreach ([
+        foreach (
+            [
             ['Beitrittserklärung für Mitglieder', '<p>Formular für neue Mitglieder</p>', 1],
             ['Anmeldung', '<p>Formular zur Anmeldung</p>', 1],
             ['Versteckter Entwurf', 'Nicht anzeigen', 0],
-        ] as [$concept, $definition, $approvedflag]) {
+            ] as [$concept, $definition, $approvedflag]
+        ) {
             $approved[] = $DB->insert_record('glossary_entries', (object)[
                 'glossaryid' => $glossary->id,
                 'userid' => $USER->id,

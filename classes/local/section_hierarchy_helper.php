@@ -97,9 +97,9 @@ class section_hierarchy_helper {
      * @return string
      */
     public static function format_parents(array $parents): string {
-        $parents = array_values(array_filter(array_map(static function($value): string {
+        $parents = array_values(array_filter(array_map(static function ($value): string {
             return trim((string)$value);
-        }, $parents), static function(string $value): bool {
+        }, $parents), static function (string $value): bool {
             return $value !== '';
         }));
         return implode(' › ', $parents);

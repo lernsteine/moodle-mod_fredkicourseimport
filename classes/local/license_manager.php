@@ -32,7 +32,6 @@ defined('MOODLE_INTERNAL') || die();
  * The plugin validates the Moodle site domain against the external license server.
  */
 class license_manager {
-
     private const LICENSE_ENDPOINT = 'https://bildungbleibt.de/generator/check.php';
     private const CACHE_TTL = 86400; // 24 hours.
 

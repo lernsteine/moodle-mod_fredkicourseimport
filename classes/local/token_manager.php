@@ -53,8 +53,14 @@ final class token_manager {
      * @param ?string $password Parameter.
      * @param bool $remember Parameter.
      */
-    public static function store(int $activityid, int $userid, string $username, string $token,
-            ?string $password = null, bool $remember = false): void {
+    public static function store(
+        int $activityid,
+        int $userid,
+        string $username,
+        string $token,
+        ?string $password = null,
+        bool $remember = false
+    ): void {
         global $DB;
         $now = time();
         $record = $DB->get_record('fredkicourseimport_auth', ['activityid' => $activityid, 'userid' => $userid]);
@@ -124,8 +130,11 @@ final class token_manager {
      *
      * @param ?string $rejectedtoken Parameter.
      */
-    public static function get_or_renew(\stdClass $activity, bool $force = false,
-            ?string $rejectedtoken = null): ?\stdClass {
+    public static function get_or_renew(
+        \stdClass $activity,
+        bool $force = false,
+        ?string $rejectedtoken = null
+    ): ?\stdClass {
         global $DB;
         $activityid = (int)$activity->id;
         $userid = (int)($activity->authorizedbyuserid ?? 0);
@@ -137,8 +146,10 @@ final class token_manager {
             return null;
         }
         // A concurrent request might already have replaced this rejected token.
-        if ($force && $rejectedtoken !== null && (string)$record->token !== $rejectedtoken
-                && (int)$record->tokenexpires > time()) {
+        if (
+            $force && $rejectedtoken !== null && (string)$record->token !== $rejectedtoken
+                && (int)$record->tokenexpires > time()
+        ) {
             return $record;
         }
         if (!$force && (int)$record->tokenexpires > time() + self::RENEW_BEFORE && !empty($record->token)) {
@@ -159,8 +170,10 @@ final class token_manager {
             if (!$latest) {
                 return null;
             }
-            if ($force && $rejectedtoken !== null && (string)$latest->token !== $rejectedtoken
-                    && (int)$latest->tokenexpires > time()) {
+            if (
+                $force && $rejectedtoken !== null && (string)$latest->token !== $rejectedtoken
+                    && (int)$latest->tokenexpires > time()
+            ) {
                 return $latest;
             }
             if (!$force && (int)$latest->tokenexpires > time() + self::RENEW_BEFORE && !empty($latest->token)) {
@@ -205,8 +218,12 @@ final class token_manager {
      */
     public static function invalidate(int $activityid, int $userid): void {
         global $DB;
-        $DB->set_field('fredkicourseimport_auth', 'tokenexpires', 0,
-            ['activityid' => $activityid, 'userid' => $userid]);
+        $DB->set_field(
+            'fredkicourseimport_auth',
+            'tokenexpires',
+            0,
+            ['activityid' => $activityid, 'userid' => $userid]
+        );
     }
 
     /**
@@ -223,16 +240,17 @@ final class token_manager {
         $client = new fredki_client(
             (string)($config->baseurl ?? ''),
             (string)($activity->workspace ?? 'default'),
-            '', '',
+            '',
+            '',
             (string)($config->loginpath ?? '/admin/api/user/login'),
             !empty($config->debuglog)
         );
         $client->set_token((string)$auth->token);
-        $client->set_auth_failure_callback(function() use ($activity): void {
+        $client->set_auth_failure_callback(function () use ($activity): void {
             self::invalidate((int)$activity->id, (int)$activity->authorizedbyuserid);
         });
         if (self::can_renew((int)$activity->id, (int)$activity->authorizedbyuserid)) {
-            $client->set_token_renewal_callback(function() use ($activity, $auth): string {
+            $client->set_token_renewal_callback(function () use ($activity, $auth): string {
                 $renewed = self::get_or_renew($activity, true, (string)$auth->token);
                 if (!$renewed) {
                     throw new \moodle_exception('missingvalidtoken', 'mod_fredkicourseimport');

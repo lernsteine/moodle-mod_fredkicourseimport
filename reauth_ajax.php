@@ -26,10 +26,12 @@ require_once(__DIR__ . '/../../config.php');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 
-$respond = static function(bool $success, string $message, int $status = 200): void {
+$respond = static function (bool $success, string $message, int $status = 200): void {
     http_response_code($status);
-    echo json_encode(['success' => $success, 'message' => $message],
-        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    echo json_encode(
+        ['success' => $success, 'message' => $message],
+        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+    );
     exit;
 };
 
@@ -62,8 +64,11 @@ try {
 
     $config = get_config('mod_fredkicourseimport');
     $client = new \mod_fredkicourseimport\local\fredki_client(
-        (string)($config->baseurl ?? ''), (string)($activity->workspace ?? 'default'),
-        $username, $password, (string)($config->loginpath ?? '/admin/api/user/login'),
+        (string)($config->baseurl ?? ''),
+        (string)($activity->workspace ?? 'default'),
+        $username,
+        $password,
+        (string)($config->loginpath ?? '/admin/api/user/login'),
         !empty($config->debuglog)
     );
     $found = false;
@@ -84,10 +89,19 @@ try {
     // Update Moodle authorisation only after all remote checks pass.
     $transaction = $DB->start_delegated_transaction();
     \mod_fredkicourseimport\local\token_manager::store(
-        (int)$activity->id, (int)$USER->id, $username, $token, $password, (bool)$remember
+        (int)$activity->id,
+        (int)$USER->id,
+        $username,
+        $token,
+        $password,
+        (bool)$remember
     );
-    $DB->set_field('fredkicourseimport', 'authorizedbyuserid', (int)$USER->id,
-        ['id' => (int)$activity->id]);
+    $DB->set_field(
+        'fredkicourseimport',
+        'authorizedbyuserid',
+        (int)$USER->id,
+        ['id' => (int)$activity->id]
+    );
     if (!empty($activity->authorizedbyuserid) && (int)$activity->authorizedbyuserid !== (int)$USER->id) {
         // Remove only the previous Moodle-side credentials, never remote documents.
         $DB->delete_records('fredkicourseimport_auth', [

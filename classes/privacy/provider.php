@@ -37,7 +37,7 @@ use core_privacy\local\request\transform;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
-final class provider implements metadata_provider, request_provider, core_userlist_provider {
+final class provider implements core_userlist_provider, metadata_provider, request_provider {
     public static function get_metadata(collection $collection): collection {
         $collection->add_database_table('fredkicourseimport', [
             'authorizedbyuserid' => 'privacy:metadata:activity:authorizedbyuserid',
@@ -143,9 +143,13 @@ final class provider implements metadata_provider, request_provider, core_userli
                     'activityid' => $cm->instance,
                     'userid' => $contextlist->get_user()->id,
                 ]);
-                $DB->set_field_select('fredkicourseimport', 'authorizedbyuserid', null,
+                $DB->set_field_select(
+                    'fredkicourseimport',
+                    'authorizedbyuserid',
+                    null,
                     'id = :activityid AND authorizedbyuserid = :userid',
-                    ['activityid' => $cm->instance, 'userid' => $contextlist->get_user()->id]);
+                    ['activityid' => $cm->instance, 'userid' => $contextlist->get_user()->id]
+                );
             }
         }
     }
@@ -189,8 +193,11 @@ final class provider implements metadata_provider, request_provider, core_userli
             $params
         );
         $DB->set_field_select(
-            'fredkicourseimport', 'authorizedbyuserid', null,
-            "id = :activityid AND authorizedbyuserid {$insql}", $params
+            'fredkicourseimport',
+            'authorizedbyuserid',
+            null,
+            "id = :activityid AND authorizedbyuserid {$insql}",
+            $params
         );
     }
 }

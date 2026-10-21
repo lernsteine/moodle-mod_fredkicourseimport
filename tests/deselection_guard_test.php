@@ -31,12 +31,19 @@ use mod_fredkicourseimport\local\deselection_guard;
 /** Test that human confirmation is scoped to concrete deselected sources. */
 final class deselection_guard_test extends \advanced_testcase {
     public function test_deselecting_one_source_does_not_authorise_other_sources(): void {
-        $this->assertSame([15], deselection_guard::removed_sources([14, 15, 16], [14, 16],
-            [14, 15, 16], false, false));
+        $this->assertSame([15], deselection_guard::removed_sources(
+            [14, 15, 16],
+            [14, 16],
+            [14, 15, 16],
+            false,
+            false
+        ));
         $maps = [(object)['id' => 1, 'sourcecmid' => 14, 'fredki_document_id' => 'keep', 'status' => 'synced'],
                  (object)['id' => 2, 'sourcecmid' => 15, 'fredki_document_id' => 'delete', 'status' => 'synced']];
-        $this->assertSame(['2' => 'delete'], array_map('strval',
-            deselection_guard::remote_documents($maps, [15])['documents']));
+        $this->assertSame(['2' => 'delete'], array_map(
+            'strval',
+            deselection_guard::remote_documents($maps, [15])['documents']
+        ));
     }
 
     public function test_missing_course_module_does_not_trigger_manual_deselection(): void {
@@ -57,7 +64,17 @@ final class deselection_guard_test extends \advanced_testcase {
     public function test_approval_rejects_changed_mappings_or_modes(): void {
         $maps = [(object)['id' => 3, 'sourcecmid' => 15, 'fredki_document_id' => 'old', 'status' => 'synced']];
         $create = static fn(array $mappings, array $modes) => deselection_guard::approval_token(
-            2, 7, [14, 15], [14], [14, 15], false, false, $modes, $mappings, 'test-session-key');
+            2,
+            7,
+            [14, 15],
+            [14],
+            [14, 15],
+            false,
+            false,
+            $modes,
+            $mappings,
+            'test-session-key'
+        );
         $expected = $create($maps, [14 => 'reference', 15 => 'knowledge']);
         $this->assertSame($expected, $create($maps, [14 => 'reference', 15 => 'knowledge']));
         $this->assertNotSame($expected, $create($maps, [14 => 'knowledge', 15 => 'knowledge']));

@@ -39,12 +39,17 @@ final class reconcile_deleted_sources extends \core\task\scheduled_task {
         global $DB;
         // Explicit upper bound: if we cannot inspect the whole bounded register,
         // do nothing. This prevents processing a small subset of a mass deletion.
-        $rows = $DB->get_records_select('fredkicourseimport_map',
+        $rows = $DB->get_records_select(
+            'fredkicourseimport_map',
             "fredki_document_id IS NOT NULL AND fredki_document_id <> :empty " .
             "AND status IN (:synced, :deleted, :pending, :error)",
             ['empty' => '', 'synced' => 'synced', 'deleted' => 'deleted',
              'pending' => 'pending', 'error' => 'error'],
-            'activityid ASC, id ASC', '*', 0, 5001);
+            'activityid ASC, id ASC',
+            '*',
+            0,
+            5001
+        );
         if (count($rows) > 5000) {
             debugging('FredKI deletion reconciliation deferred: register exceeds safety limit', DEBUG_DEVELOPER);
             return;
@@ -77,16 +82,22 @@ final class reconcile_deleted_sources extends \core\task\scheduled_task {
             }
         }
         foreach ($candidates as $activityid => $ids) {
-            if (isset($blocked[$activityid]) ||
+            if (
+                isset($blocked[$activityid]) ||
                     !\mod_fredkicourseimport\local\source_deletion_guard::automatic_batch_allowed(
-                        count($ids), count($rows)
-                    )) {
+                        count($ids),
+                        count($rows)
+                    )
+            ) {
                 // Persist a visible warning; all remote IDs and mapping statuses remain intact.
                 foreach ($ids as $mapid) {
                     $DB->set_field('fredkicourseimport_map', 'lastresult', 'error', ['id' => $mapid]);
-                    $DB->set_field('fredkicourseimport_map', 'lasterror',
+                    $DB->set_field(
+                        'fredkicourseimport_map',
+                        'lasterror',
                         get_string('deletionbatchblocked', 'mod_fredkicourseimport', count($ids)),
-                        ['id' => $mapid]);
+                        ['id' => $mapid]
+                    );
                 }
                 debugging('FredKI bulk removal blocked for activity ' . $activityid .
                     ', candidates: ' . count($ids), DEBUG_DEVELOPER);
@@ -101,13 +112,19 @@ final class reconcile_deleted_sources extends \core\task\scheduled_task {
             try {
                 foreach ($ids as $mapid) {
                     $current = $DB->get_record('fredkicourseimport_map', ['id' => $mapid]);
-                    if (!$current || (int)$current->activityid !== $activityid ||
-                            empty($current->fredki_document_id)) {
+                    if (
+                        !$current || (int)$current->activityid !== $activityid ||
+                            empty($current->fredki_document_id)
+                    ) {
                         continue;
                     }
                     try {
-                        if (!\mod_fredkicourseimport\local\source_deletion_guard::original_missing(
-                                $activity, $current)) {
+                        if (
+                            !\mod_fredkicourseimport\local\source_deletion_guard::original_missing(
+                                $activity,
+                                $current
+                            )
+                        ) {
                             continue;
                         }
                         // Only the individual, previously mapped document ID may be removed.

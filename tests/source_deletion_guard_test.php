@@ -38,7 +38,8 @@ final class source_deletion_guard_test extends \advanced_testcase {
         $activity = (object)['course' => 1];
         $section = (object)['sourcecmid' => 0, 'filename' => 'abschnitt-1.html', 'timesynced' => time()];
         $this->assertFalse(\mod_fredkicourseimport\local\source_deletion_guard::original_missing(
-            $activity, $section
+            $activity,
+            $section
         ));
     }
 }

@@ -80,9 +80,13 @@ class course_content_importer {
             // A teacher can explicitly select hidden Moodle materials for the shared bot.
             // Never expand an unrestricted or implicit import this way: it requires an
             // actual selected source and course-management permission.
-            if (!$sourcecm->uservisible && ($selectedmap === null ||
-                    !has_capability('moodle/course:manageactivities',
-                        \context_course::instance((int)$course->id)))) {
+            if (
+                !$sourcecm->uservisible && ($selectedmap === null ||
+                    !has_capability(
+                        'moodle/course:manageactivities',
+                        \context_course::instance((int)$course->id)
+                    ))
+            ) {
                 continue;
             }
 
@@ -220,7 +224,9 @@ class course_content_importer {
                 continue;
             }
             $rawsummary = trim((string)($section->summary ?? ''));
-            if ($rawsummary === '') { continue; }
+            if ($rawsummary === '') {
+                continue;
+            }
             $sectiondescription = $this->section_summary_to_plain_text(
                 $course,
                 $rawsummary,
@@ -270,8 +276,13 @@ class course_content_importer {
                 continue;
             }
             $sourceurl = \moodle_url::make_pluginfile_url(
-                $sourcecontext->id, $component, 'content', 0,
-                $file->get_filepath(), $file->get_filename(), false
+                $sourcecontext->id,
+                $component,
+                'content',
+                0,
+                $file->get_filepath(),
+                $file->get_filename(),
+                false
             )->out(false);
 
             if (!$includecontent) {
@@ -517,7 +528,9 @@ class course_content_importer {
 
     protected function render_html_link_row(string $label, string $url): string {
         $url = trim($url);
-        if ($url === '') { return ''; }
+        if ($url === '') {
+            return '';
+        }
         return '<p><strong>' . s($label) . ':</strong> <a href="' . s($url) . '">' . s($url) . '</a></p>';
     }
 

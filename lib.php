@@ -289,8 +289,12 @@ function fredkicourseimport_add_instance($data, $mform = null) {
     if ($fredkiusername !== '' && $fredkipassword !== '') {
         $config = get_config('mod_fredkicourseimport');
         $client = new \mod_fredkicourseimport\local\fredki_client(
-            $config->baseurl ?? '', $data->workspace ?? 'default', $fredkiusername, $fredkipassword,
-            $config->loginpath ?? '/admin/api/user/login', !empty($config->debuglog)
+            $config->baseurl ?? '',
+            $data->workspace ?? 'default',
+            $fredkiusername,
+            $fredkipassword,
+            $config->loginpath ?? '/admin/api/user/login',
+            !empty($config->debuglog)
         );
         \mod_fredkicourseimport\local\token_manager::store($id, $USER->id, $fredkiusername, $client->login(), $fredkipassword, $autorenew);
     }
@@ -338,8 +342,12 @@ function fredkicourseimport_update_instance($data, $mform = null) {
     if ($fredkiusername !== '' && $fredkipassword !== '') {
         $config = get_config('mod_fredkicourseimport');
         $client = new \mod_fredkicourseimport\local\fredki_client(
-            $config->baseurl ?? '', $data->workspace ?? 'default', $fredkiusername, $fredkipassword,
-            $config->loginpath ?? '/admin/api/user/login', !empty($config->debuglog)
+            $config->baseurl ?? '',
+            $data->workspace ?? 'default',
+            $fredkiusername,
+            $fredkipassword,
+            $config->loginpath ?? '/admin/api/user/login',
+            !empty($config->debuglog)
         );
         \mod_fredkicourseimport\local\token_manager::store($data->id, $USER->id, $fredkiusername, $client->login(), $fredkipassword, $autorenew);
     }
@@ -364,9 +372,11 @@ function fredkicourseimport_delete_instance($id) {
     // Preserve remote IDs before deleting the mappings and user-scoped token.
     // A Moodle activity deletion does not establish that FredKI deleted its documents.
     // This register stores no password, bearer token, or account credentials.
-    $remotemaps = $DB->get_records_select('fredkicourseimport_map',
+    $remotemaps = $DB->get_records_select(
+        'fredkicourseimport_map',
         'activityid = :activityid AND fredki_document_id IS NOT NULL AND fredki_document_id <> :emptyid',
-        ['activityid' => $activity->id, 'emptyid' => '']);
+        ['activityid' => $activity->id, 'emptyid' => '']
+    );
     foreach ($remotemaps as $mapping) {
         $DB->insert_record('fredkicourseimport_cleanup', (object)[
             'courseid' => (int)$activity->course,
