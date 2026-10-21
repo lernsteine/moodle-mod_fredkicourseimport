@@ -1,16 +1,18 @@
 <?php
-// This file is part of FredKI CourseImport for Moodle.
-// Copyright (c) 2026 lernsteine.com
+// This file is part of Moodle - http://moodle.org/
 //
-// This program is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See <https://www.gnu.org/licenses/>.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * FredKI course import plugin file.
@@ -74,7 +76,7 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
     }
 
 
-    if ($oldversion < 2026042810) {
+    if ($oldversion < 20260428010) {
         $table = new xmldb_table('fredkicourseimport');
         $field = new xmldb_field('fredkichaturl', XMLDB_TYPE_TEXT, null, null, null, null, null, 'fredkiembedcode');
 
@@ -82,7 +84,7 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_mod_savepoint(true, 2026042810, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 20260428010, 'fredkicourseimport');
     }
 
     if ($oldversion < 202607290001) {
