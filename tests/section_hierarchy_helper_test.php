@@ -30,7 +30,7 @@ use mod_fredkicourseimport\local\section_hierarchy_helper;
  * Verify section hierarchy metadata generation.
  *
  * @package mod_fredkicourseimport
- * @covers \\mod_fredkicourseimport\\local\\section_hierarchy_helper
+ * @covers \mod_fredkicourseimport\local\section_hierarchy_helper
  */
 final class section_hierarchy_helper_test extends \advanced_testcase {
     /**

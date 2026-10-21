@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * Verify that remote deletion requires a missing Moodle original.
  *
  * @package mod_fredkicourseimport
- * @covers \\mod_fredkicourseimport\\local\\source_deletion_guard
+ * @covers \mod_fredkicourseimport\local\source_deletion_guard
  */
 final class source_deletion_guard_test extends \advanced_testcase {
     public function test_destructive_batch_is_bounded(): void {

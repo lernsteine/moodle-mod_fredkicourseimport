@@ -27,7 +27,7 @@ namespace mod_fredkicourseimport;
  * Verify FredKI token renewal and encrypted credentials.
  *
  * @package mod_fredkicourseimport
- * @covers \\mod_fredkicourseimport\\local\\token_manager
+ * @covers \mod_fredkicourseimport\local\token_manager
  */
 final class token_manager_test extends \advanced_testcase {
     /**

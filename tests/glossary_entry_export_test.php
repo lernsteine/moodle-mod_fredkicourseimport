@@ -32,7 +32,7 @@ use mod_fredkicourseimport\local\manual_sync_service;
  * Verify glossary entry exports and Moodle direct links.
  *
  * @package mod_fredkicourseimport
- * @covers \\mod_fredkicourseimport\\local\\glossary_entry_helper
+ * @covers \mod_fredkicourseimport\local\glossary_entry_helper
  */
 final class glossary_entry_export_test extends \advanced_testcase {
     /**
