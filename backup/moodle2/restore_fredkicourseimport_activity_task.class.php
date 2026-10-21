@@ -22,6 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Defines the FredKI CourseImport restoration task.
+ */
 class restore_fredkicourseimport_activity_task extends restore_activity_task {
     /**
      * Define my settings for FredKI CourseImport.

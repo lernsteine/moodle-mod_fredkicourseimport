@@ -798,7 +798,7 @@ class fredki_client {
         if ($missing) {
             $url = $this->baseurl . '/admin/api/workspace/' . rawurlencode($this->workspace)
                 . '/knowledge/' . rawurlencode($knowledgeid) . '/tags';
-            // FredKI expects a raw JSON list: [{"key":"...","value":"..."}, ...].
+            // FredKI expects a raw list of tag key/value objects, not a wrapper payload.
             $this->request_json('POST', $url, $missing, true);
 
             // The create endpoint intentionally has no useful response payload.

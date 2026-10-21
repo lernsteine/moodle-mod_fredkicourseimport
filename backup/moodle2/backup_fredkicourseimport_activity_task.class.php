@@ -22,6 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Defines the FredKI CourseImport backup task.
+ */
 class backup_fredkicourseimport_activity_task extends backup_activity_task {
     /**
      * Define my settings for FredKI CourseImport.

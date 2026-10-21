@@ -14,10 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/** Restore structure for FredKI course import.
+/**
+ * Restore structure definitions for FredKI CourseImport.
+ *
  * @package mod_fredkicourseimport
  * @copyright 2026 lernsteine.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Defines the FredKI CourseImport restore structure.
  */
 class restore_fredkicourseimport_activity_structure_step extends restore_activity_structure_step {
     /**

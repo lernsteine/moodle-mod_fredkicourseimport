@@ -14,10 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/** Backup structure for FredKI course import.
+/**
+ * Backup structure definitions for FredKI CourseImport.
+ *
  * @package mod_fredkicourseimport
  * @copyright 2026 lernsteine.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Defines the FredKI CourseImport backup structure.
  */
 class backup_fredkicourseimport_activity_structure_step extends backup_activity_structure_step {
     /**
