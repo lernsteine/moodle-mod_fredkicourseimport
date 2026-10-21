@@ -543,7 +543,12 @@ function fredkicourseimport_render_activity_selection(
     $html .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'importall', 'value' => 1]);
     $html .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
     $html .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'selectionsubmitted', 'value' => 1]);
-    $html .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'selectedcmids_serialized', 'value' => '', 'id' => 'fredki-selected-cmids-serialized']);
+    $html .= html_writer::empty_tag('input', [
+        'type' => 'hidden',
+        'name' => 'selectedcmids_serialized',
+        'value' => '',
+        'id' => 'fredki-selected-cmids-serialized',
+    ]);
 
     $html .= html_writer::div(get_string('selectcontentintro', 'mod_fredkicourseimport'), 'fredki-selection-intro');
 
@@ -648,7 +653,11 @@ function fredkicourseimport_render_activity_selection(
             if ((int)$sourcecm->id === (int)$targetcm->id || $sourcecm->deletioninprogress) {
                 continue;
             }
-            if (!in_array($sourcecm->modname, ['resource', 'folder', 'url', 'glossary', 'page', 'label', 'book', 'lesson', 'h5pactivity', 'scorm'], true)) {
+            if (!in_array(
+                $sourcecm->modname,
+                ['resource', 'folder', 'url', 'glossary', 'page', 'label', 'book', 'lesson', 'h5pactivity', 'scorm'],
+                true
+            )) {
                 continue;
             }
             $sectioncms[] = $sourcecm;
@@ -661,14 +670,20 @@ function fredkicourseimport_render_activity_selection(
         $html .= html_writer::start_div('fredki-section-card');
         $html .= html_writer::tag('div', s($sectionname), ['class' => 'fredki-section-heading']);
         foreach ($sectioncms as $sourcecm) {
-            $icon = $sourcecm->get_icon_url() ? html_writer::empty_tag('img', ['src' => $sourcecm->get_icon_url(), 'alt' => '', 'class' => 'fredki-selection-icon']) : '';
+            $icon = $sourcecm->get_icon_url()
+                ? html_writer::empty_tag('img', [
+                    'src' => $sourcecm->get_icon_url(),
+                    'alt' => '',
+                    'class' => 'fredki-selection-icon',
+                ]) : '';
             $modlabel = get_string('pluginname', 'mod_' . $sourcecm->modname);
             $isvisibleforparticipants = !empty($sourcecm->visible);
             $checkboxattrs = [
                 'type' => 'checkbox',
                 'name' => 'selectedcmid[]',
                 'value' => $sourcecm->id,
-                'class' => 'fredki-select-item fredki-select-activity' . ($isvisibleforparticipants ? ' fredki-visible-participant' : ' fredki-hidden-participant'),
+                'class' => 'fredki-select-item fredki-select-activity' .
+                    ($isvisibleforparticipants ? ' fredki-visible-participant' : ' fredki-hidden-participant'),
                 'data-visible-participant' => $isvisibleforparticipants ? '1' : '0',
             ];
             $sourcecmid = (int)$sourcecm->id;
@@ -766,7 +781,11 @@ function fredkicourseimport_render_activity_selection(
         get_string('startselectedimport', 'mod_fredkicourseimport'),
         ['type' => 'submit', 'class' => 'btn btn-primary fredki-btn-sync fredki-btn-main', 'id' => 'fredki-import-link']
     );
-    $html .= html_writer::link(new moodle_url('/mod/fredkicourseimport/view.php', ['id' => $targetcm->id]), get_string('cancel'), ['class' => 'btn btn-secondary']);
+    $html .= html_writer::link(
+        new moodle_url('/mod/fredkicourseimport/view.php', ['id' => $targetcm->id]),
+        get_string('cancel'),
+        ['class' => 'btn btn-secondary']
+    );
     $html .= html_writer::div(
         '<span class="fredki-mini-live-dot is-ready" id="fredki-mini-live-dot"></span>' .
         '<span class="fredki-mini-live-text" id="fredki-mini-live-text">' .
@@ -784,7 +803,11 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($activity->name));
 
 if (!empty($activity->intro)) {
-    echo $OUTPUT->box(format_module_intro('fredkicourseimport', $activity, $cm->id), 'generalbox mod_introbox', 'fredkicourseimportintro');
+    echo $OUTPUT->box(
+        format_module_intro('fredkicourseimport', $activity, $cm->id),
+        'generalbox mod_introbox',
+        'fredkicourseimportintro'
+    );
 }
 
 $fredkiembed = !empty($activity->agentcoursevisible) ? fredkicourseimport_clean_embed_code($activity->fredkiembedcode ?? '') : '';
@@ -991,8 +1014,19 @@ if (empty($files)) {
         get_string('generatedfilesize', 'mod_fredkicourseimport'),
     ];
     foreach ($files as $file) {
-        $url = moodle_url::make_pluginfile_url($context->id, 'mod_fredkicourseimport', 'generated_files', 0, $file->get_filepath(), $file->get_filename());
-        $table->data[] = [s($file->get_filepath()), html_writer::link($url, s($file->get_filename())), display_size($file->get_filesize())];
+        $url = moodle_url::make_pluginfile_url(
+            $context->id,
+            'mod_fredkicourseimport',
+            'generated_files',
+            0,
+            $file->get_filepath(),
+            $file->get_filename()
+        );
+        $table->data[] = [
+            s($file->get_filepath()),
+            html_writer::link($url, s($file->get_filename())),
+            display_size($file->get_filesize()),
+        ];
     }
     $filescontent .= html_writer::table($table);
 }
