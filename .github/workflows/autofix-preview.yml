@@ -1,0 +1,44 @@
+name: Moodle formatting preview
+
+on:
+  pull_request:
+    paths:
+      - '**/*.php'
+      - '.github/workflows/autofix-preview.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: plugin
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          extensions: mbstring, intl, xml, zip
+      - name: Install Moodle code style tools
+        run: composer create-project -n --prefer-dist moodlehq/moodle-plugin-ci ci '^4'
+      - name: Generate PHPCBF preview
+        shell: bash
+        run: |
+          set -o pipefail
+          if [ ! -x "$GITHUB_WORKSPACE/ci/vendor/bin/phpcbf" ]; then
+            echo "PHPCBF executable not available."
+            exit 1
+          fi
+          "$GITHUB_WORKSPACE/ci/vendor/bin/phpcbf" --standard=moodle --extensions=php "$GITHUB_WORKSPACE/plugin" || true
+          git -C "$GITHUB_WORKSPACE/plugin" diff --binary > "$GITHUB_WORKSPACE/moodle-autofix.patch"
+          wc -l "$GITHUB_WORKSPACE/moodle-autofix.patch"
+      - name: Upload formatting patch for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: moodle-autofix-preview
+          path: moodle-autofix.patch
+          if-no-files-found: error
+          retention-days: 7
