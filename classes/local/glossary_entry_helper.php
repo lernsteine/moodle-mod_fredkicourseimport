@@ -41,8 +41,12 @@ final class glossary_entry_helper {
         return 'cm' . $cmid . '-glossary-eid' . $entryid . '.html';
     }
 
-    /** @return array{cmid:int,entryid:int}|null      * @param string $filepath Parameter.
+    /**
+     * Document the parameters and result.
+     *
+     * @param string $filepath Parameter.
      * @param string $filename Parameter.
+     * @return array{cmid:int,entryid:int}|null
      */
     public static function parse_export_filename(string $filepath, string $filename): ?array {
         if ($filepath !== '/glossaries/' ||

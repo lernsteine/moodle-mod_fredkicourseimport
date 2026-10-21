@@ -81,7 +81,10 @@ final class token_manager {
         }
     }
 
-    /** A valid local token; do not delete an expired record because its encrypted credential may be needed.      * @param int $activityid Parameter.
+    /**
+     * A valid local token; do not delete an expired record because its encrypted credential may be needed.
+     *
+     * @param int $activityid Parameter.
      * @param int $userid Parameter.
      */
     public static function get(int $activityid, int $userid): ?\stdClass {
@@ -97,7 +100,10 @@ final class token_manager {
         return $record;
     }
 
-    /** True when the current authorisation can recover without an interactive login.      * @param int $activityid Parameter.
+    /**
+     * True when the current authorisation can recover without an interactive login.
+     *
+     * @param int $activityid Parameter.
      * @param int $userid Parameter.
      */
     public static function can_renew(int $activityid, int $userid): bool {
@@ -191,7 +197,10 @@ final class token_manager {
         }
     }
 
-    /** Invalidate the local expiry on HTTP 401 while keeping encrypted credentials for recovery.      * @param int $activityid Parameter.
+    /**
+     * Invalidate the local expiry on HTTP 401 while keeping encrypted credentials for recovery.
+     *
+     * @param int $activityid Parameter.
      * @param int $userid Parameter.
      */
     public static function invalidate(int $activityid, int $userid): void {
@@ -200,7 +209,10 @@ final class token_manager {
             ['activityid' => $activityid, 'userid' => $userid]);
     }
 
-    /** Client for an activity; renew on a rejected Bearer token exactly once per request.      * @param \stdClass $activity Parameter.
+    /**
+     * Client for an activity; renew on a rejected Bearer token exactly once per request.
+     *
+     * @param \stdClass $activity Parameter.
      */
     public static function client_for_activity(\stdClass $activity): fredki_client {
         $auth = self::get_or_renew($activity);

@@ -428,9 +428,11 @@ class course_content_importer {
         return 1;
     }
 
-    /** Metadata is always rendered before optional learning content.      * @param \stdClass $course Parameter.
-     * @param \cm_info $sourcecm Parameter.
+    /**
+     * Metadata is always rendered before optional learning content.
      *
+     * @param \stdClass $course Parameter.
+     * @param \cm_info $sourcecm Parameter.
      * @param array $data Parameter.
      */
     protected function render_document(\stdClass $course, \cm_info $sourcecm, array $data): string {
@@ -492,7 +494,10 @@ class course_content_importer {
         return $html;
     }
 
-    /** Returns a readable Moodle activity type while preserving the technical module name.      * @param string $modname Parameter.
+    /**
+     * Returns a readable Moodle activity type while preserving the technical module name.
+     *
+     * @param string $modname Parameter.
      */
     protected function get_readable_activity_type(string $modname): string {
         $labels = [
@@ -546,9 +551,11 @@ class course_content_importer {
         return $fallback !== '' ? $fallback : 'Textfeld';
     }
 
-    /** Convert a course section description to clean plain text.      * @param \stdClass $course Parameter.
-     * @param string $summary Parameter.
+    /**
+     * Convert a course section description to clean plain text.
      *
+     * @param \stdClass $course Parameter.
+     * @param string $summary Parameter.
      * @param int $format Parameter.
      */
     protected function section_summary_to_plain_text(\stdClass $course, string $summary, int $format): string {
