@@ -31,7 +31,12 @@ defined('MOODLE_INTERNAL') || die();
  * A missing generated export or an unrelated deleted mapping never grants deletion consent.
  */
 final class deselection_guard {
-    /** @return int[] Source CM ids removed from a saved selection, or 0 for section summaries. */
+    /** @return int[] Source CM ids removed from a saved selection, or 0 for section summaries.      * @param array $previous Parameter.
+     * @param array $requested Parameter.
+     * @param array $available Parameter.
+     * @param bool $previoussections Parameter.
+     * @param bool $requestedsections Parameter.
+*/
     public static function removed_sources(array $previous, array $requested, array $available,
             bool $previoussections, bool $requestedsections): array {
         $supported = array_fill_keys(array_map('intval', $available), true);
@@ -53,7 +58,9 @@ final class deselection_guard {
     /**
      * A sourcecmid of zero is reserved for section summaries, but legacy imports can
      * contain unmapped files with the same value. Never approve those by accident.
-     */
+          * @param \stdClass $map Parameter.
+     * @param array $removed Parameter.
+*/
     public static function in_manual_scope(\stdClass $map, array $removed): bool {
         $sourceid = (int)($map->sourcecmid ?? 0);
         if (!in_array($sourceid, $removed, true)) {
@@ -65,7 +72,9 @@ final class deselection_guard {
         return true;
     }
 
-    /** @return array{count:int,documents:array<int,string>} */
+    /** @return array{count:int,documents:array<int,string>}      * @param array $maps Parameter.
+     * @param array $removed Parameter.
+*/
     public static function remote_documents(array $maps, array $removed): array {
         $scopes = array_fill_keys(array_map('intval', $removed), true);
         $documents = [];
@@ -86,7 +95,17 @@ final class deselection_guard {
     /**
      * Bound confirmation to the course activity, user, previous and requested selection,
      * content modes, and specific remote document identifiers. Prevents stale approvals.
-     */
+          * @param int $activityid Parameter.
+     * @param int $userid Parameter.
+     * @param array $previous Parameter.
+     * @param array $requested Parameter.
+     * @param array $available Parameter.
+     * @param bool $previoussections Parameter.
+     * @param bool $requestedsections Parameter.
+     * @param array $contentmodes Parameter.
+     * @param array $maps Parameter.
+     * @param string $sesskey Parameter.
+*/
     public static function approval_token(int $activityid, int $userid, array $previous,
             array $requested, array $available, bool $previoussections, bool $requestedsections,
             array $contentmodes, array $maps, string $sesskey): string {

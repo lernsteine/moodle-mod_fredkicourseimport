@@ -43,7 +43,13 @@ final class token_manager {
      * Persist a newly authenticated token and, optionally, an encrypted password.
      * Empty passwords are never stored. A manual reconnection without opt-in
      * removes any previously stored automatic-reconnection credentials.
-     */
+          * @param int $activityid Parameter.
+     * @param int $userid Parameter.
+     * @param string $username Parameter.
+     * @param string $token Parameter.
+     * @param ?string $password Parameter.
+     * @param bool $remember Parameter.
+*/
     public static function store(int $activityid, int $userid, string $username, string $token,
             ?string $password = null, bool $remember = false): void {
         global $DB;
@@ -72,7 +78,9 @@ final class token_manager {
         }
     }
 
-    /** A valid local token; do not delete an expired record because its encrypted credential may be needed. */
+    /** A valid local token; do not delete an expired record because its encrypted credential may be needed.      * @param int $activityid Parameter.
+     * @param int $userid Parameter.
+*/
     public static function get(int $activityid, int $userid): ?\stdClass {
         global $DB;
         if ($userid <= 0) {
@@ -86,7 +94,9 @@ final class token_manager {
         return $record;
     }
 
-    /** True when the current authorisation can recover without an interactive login. */
+    /** True when the current authorisation can recover without an interactive login.      * @param int $activityid Parameter.
+     * @param int $userid Parameter.
+*/
     public static function can_renew(int $activityid, int $userid): bool {
         global $DB;
         if ($userid <= 0) {
@@ -99,7 +109,10 @@ final class token_manager {
     /**
      * Re-login shortly before token expiry, with a lock to reduce concurrent logins.
      * Never fall back to an expired token after a failed login.
-     */
+          * @param \stdClass $activity Parameter.
+     * @param bool $force Parameter.
+     * @param ?string $rejectedtoken Parameter.
+*/
     public static function get_or_renew(\stdClass $activity, bool $force = false,
             ?string $rejectedtoken = null): ?\stdClass {
         global $DB;
@@ -173,14 +186,17 @@ final class token_manager {
         }
     }
 
-    /** Invalidate the local expiry on HTTP 401 while keeping encrypted credentials for recovery. */
+    /** Invalidate the local expiry on HTTP 401 while keeping encrypted credentials for recovery.      * @param int $activityid Parameter.
+     * @param int $userid Parameter.
+*/
     public static function invalidate(int $activityid, int $userid): void {
         global $DB;
         $DB->set_field('fredkicourseimport_auth', 'tokenexpires', 0,
             ['activityid' => $activityid, 'userid' => $userid]);
     }
 
-    /** Client for an activity; renew on a rejected Bearer token exactly once per request. */
+    /** Client for an activity; renew on a rejected Bearer token exactly once per request.      * @param \stdClass $activity Parameter.
+*/
     public static function client_for_activity(\stdClass $activity): fredki_client {
         $auth = self::get_or_renew($activity);
         if (!$auth) {

@@ -40,6 +40,8 @@ class selection_manager {
     /**
      * Return all selectable source course-module IDs for the course.
      *
+     * @param \stdClass $course Parameter.
+     * @param int $targetcmid Parameter.
      * @return int[]
      */
     public static function get_supported_source_cmids(\stdClass $course, int $targetcmid): array {
@@ -60,6 +62,7 @@ class selection_manager {
     /**
      * Records keyed by sourcecmid. An empty result means no explicit selection has been saved yet.
      *
+     * @param int $activityid Parameter.
      * @return array<int,\stdClass>
      */
     public static function get_records(int $activityid): array {
@@ -74,7 +77,13 @@ class selection_manager {
 
     /**
      * Persist every selectable checkbox, including unchecked items.
-     */
+          * @param \stdClass $course Parameter.
+     * @param int $targetcmid Parameter.
+     * @param int $activityid Parameter.
+     * @param array $selectedcmids Parameter.
+     * @param bool $includesectiontexts Parameter.
+     * @param array $contentmodes Parameter.
+*/
     public static function save(
         \stdClass $course,
         int $targetcmid,
@@ -113,6 +122,7 @@ class selection_manager {
      * Explicit selection records take precedence. For upgraded installations that have not
      * saved a selection yet, active mapping records are used as a conservative fallback.
      *
+     * @param int $activityid Parameter.
      * @return array{selectedcmids:int[],includesectiontexts:bool,contentmodes:array<int,string>}
      */
     public static function get_current_selection(int $activityid): array {
