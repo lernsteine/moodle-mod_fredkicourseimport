@@ -16,7 +16,13 @@
 // Copyright (c) 2026 lernsteine.com
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-/** Version metadata for the FredKI CourseImport activity. */
+/**
+ * Version metadata for FredKI Course Import.
+ *
+ * @package    mod_fredkicourseimport
+ * @copyright  2026 lernsteine.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'mod_fredkicourseimport';
 $plugin->version = 202610210015;
