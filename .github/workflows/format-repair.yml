@@ -1,0 +1,51 @@
+name: FredKI — Formatierung auf Prüfzweig
+
+on:
+  push:
+    branches:
+      - fix/moodle-style-cleanup-20261022
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repair branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          extensions: mbstring, intl, zip, gd, xml
+      - name: Install official Moodle Plugin CI formatter
+        run: |
+          composer create-project -n --prefer-dist moodlehq/moodle-plugin-ci "$RUNNER_TEMP/moodle-ci" '^4'
+          echo "$RUNNER_TEMP/moodle-ci/bin" >> "$GITHUB_PATH"
+          echo "$RUNNER_TEMP/moodle-ci/vendor/bin" >> "$GITHUB_PATH"
+      - name: Apply Moodle Coding Style automatic fixes
+        run: |
+          moodle-plugin-ci phpcbf . || true
+          git diff --check
+      - name: Commit formatting only on the isolated branch
+        run: |
+          if git diff --quiet; then
+            echo "No automatic formatting changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- '*.php'
+          if git diff --cached --quiet; then
+            echo "No PHP changes to commit."
+            exit 0
+          fi
+          git commit -m "style: apply Moodle's automatic PHP formatting"
+          git push origin HEAD:fix/moodle-style-cleanup-20261022
