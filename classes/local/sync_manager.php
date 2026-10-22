@@ -468,7 +468,7 @@ class sync_manager {
      * This must happen after splitting, otherwise only the first chunk carries the source.
      *
      * @param mixed $paragraphs Paragraph list as returned by FredKI.
-     * @param string|null $sourceurl Source URL.
+     * @param ?string $sourceurl Source URL.
      * @return mixed Paragraph list with source appended to each paragraph.
      */
     protected function add_source_to_each_paragraph($paragraphs, ?string $sourceurl) {
@@ -577,7 +577,7 @@ ENDE EINTRAG";
      * FredKI's batch_create endpoint is sensitive to the paragraph schema. Therefore we do not
      * send a plain arbitrary structure, but reuse the first extracted paragraph object if present.
      * @param mixed $originalparagraphs originalparagraphs parameter.
-     * @param mixed $text text parameter.
+     * @param string $text text parameter.
      */
     protected function make_single_paragraph_like_original($originalparagraphs, string $text) {
         $text = trim($text);
@@ -819,7 +819,7 @@ ENDE EINTRAG";
      * Convert importer-generated HTML into the same Markdown structure used for
      * PDF and Office files. This keeps books, lessons, pages, glossaries and
      * section texts visually consistent in FredKI without duplicating the title.
-     * @param mixed $html html parameter.
+     * @param string $html html parameter.
      */
     protected function generated_html_to_markdown(string $html): string {
         // The document title is transported separately as the FredKI document name.
@@ -893,7 +893,7 @@ ENDE EINTRAG";
      *
      * @param string $text Markdown generated from the HTML import document.
      * @param mixed $tags FredKI tag metadata.
-     * @param mixed $activityname activityname parameter.
+     * @param string $activityname activityname parameter.
      * @return string
      */
     protected function inject_fredki_tags_into_search_header(
