@@ -124,8 +124,8 @@ final class source_deletion_guard {
     /**
      * Guard against mass deletion caused by broken imports or unexpected mappings.
      * Applies to entire remote-delete batch, not per record. Maximum 3 without review.
-     * @param mixed $candidatecount candidatecount parameter.
-     * @param mixed $activecount activecount parameter.
+     * @param int $candidatecount candidatecount parameter.
+     * @param int $activecount activecount parameter.
      */
     public static function automatic_batch_allowed(int $candidatecount, int $activecount): bool {
         return $candidatecount >= 0 && $candidatecount <= 3;
