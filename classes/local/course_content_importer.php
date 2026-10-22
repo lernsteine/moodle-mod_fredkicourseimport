@@ -20,6 +20,9 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Creates FredKI documents with metadata first and optional activity content.
+  * @param \stdClass $course course parameter.
+ * @param \cm_info $sourcecm sourcecm parameter.
+ * @param array $data data parameter.
  */
 class course_content_importer {
     /** @var array<string,array{filepath:string,filename:string,content:string}> */
