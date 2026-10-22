@@ -20,6 +20,7 @@
  * @package    mod_fredkicourseimport
  * @copyright  2026 lernsteine.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+  * @param string $filepath filepath parameter.
  */
 
 namespace mod_fredkicourseimport\local;
