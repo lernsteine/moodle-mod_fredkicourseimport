@@ -3,6 +3,7 @@ name: FredKI original RC15 — Moodle 5.2 baseline
 on:
   push:
     branches:
+      - main
       - review/original-rc15-clean-baseline
   pull_request:
   workflow_dispatch:
