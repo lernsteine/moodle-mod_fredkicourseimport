@@ -531,6 +531,8 @@ class course_content_importer {
      * Determine a useful title for a Moodle text field. Moodle may not have a
      * separately maintained title, so the first four content words are used as
      * a stable fallback.
+     * @param \cm_info $sourcecm sourcecm parameter.
+     * @param mixed $plaincontent plaincontent parameter.
      */
     protected function get_label_export_title(\cm_info $sourcecm, string $plaincontent): string {
         $title = trim(format_string((string)($sourcecm->name ?? '')));
