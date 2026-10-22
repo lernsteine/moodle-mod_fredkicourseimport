@@ -233,7 +233,7 @@ class file_sync_helper {
     /**
      * Read visible custom fields in a stable, serialisable form.
      *
-     * @param mixed $cmid cmid parameter.
+     * @param int $cmid cmid parameter.
      * @return array<int,array{key:string,value:string,label:string}>
      */
     private static function read_custom_field_tags(int $cmid): array {
