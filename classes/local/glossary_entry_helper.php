@@ -24,6 +24,8 @@ defined('MOODLE_INTERNAL') || die();
  * One generated file is mapped to exactly one entry. The entry concept is deliberately
  * NOT part of the filename: edits then refresh the same FredKI mapping rather than
  * creating a new one with a different pathname hash.
+  * @param string $filepath filepath parameter.
+ * @param string $filename filename parameter.
  */
 final class glossary_entry_helper {
     public static function export_filename(int $cmid, int $entryid): string {
