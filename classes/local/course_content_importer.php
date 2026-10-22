@@ -431,7 +431,13 @@ class course_content_importer {
         return 1;
     }
 
-    /** Metadata is always rendered before optional learning content. */
+    /**
+     * Metadata is always rendered before optional learning content.
+     *
+     * @param \stdClass $course course parameter.
+     * @param \cm_info $sourcecm sourcecm parameter.
+     * @param array $data data parameter.
+     */
     protected function render_document(\stdClass $course, \cm_info $sourcecm, array $data): string {
         $title = trim((string)($data['title'] ?? format_string($sourcecm->name ?: $sourcecm->modname)));
         $filename = trim((string)($data['filename'] ?? ''));
@@ -491,7 +497,11 @@ class course_content_importer {
         return $html;
     }
 
-    /** Returns a readable Moodle activity type while preserving the technical module name. */
+    /**
+     * Returns a readable Moodle activity type while preserving the technical module name.
+     *
+     * @param string $modname modname parameter.
+     */
     protected function get_readable_activity_type(string $modname): string {
         $labels = [
             'resource' => 'Datei (resource)',
@@ -545,7 +555,13 @@ class course_content_importer {
         return $fallback !== '' ? $fallback : 'Textfeld';
     }
 
-    /** Convert a course section description to clean plain text. */
+    /**
+     * Convert a course section description to clean plain text.
+     *
+     * @param \stdClass $course course parameter.
+     * @param string $summary summary parameter.
+     * @param int $format format parameter.
+     */
     protected function section_summary_to_plain_text(\stdClass $course, string $summary, int $format): string {
         if (trim($summary) === '') {
             return '';
