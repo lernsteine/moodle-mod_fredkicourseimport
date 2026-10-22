@@ -310,6 +310,7 @@ class fredki_client {
     /**
      * Try known FredKI/MaxKB public access endpoints. Some installations do not expose
      * the public chat token in the normal application list/detail response.
+     * @param mixed $agentid agentid parameter.
      */
     protected function get_agent_public_access_for_embed(string $agentid): array {
         if ($agentid === '') {
