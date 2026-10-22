@@ -33,7 +33,7 @@ class selection_manager {
      * Return all selectable source course-module IDs for the course.
      *
      * @param \stdClass $course course parameter.
-     * @param mixed $targetcmid targetcmid parameter.
+     * @param int $targetcmid ID of the current Course Import activity module.
      * @return int[]
      */
     public static function get_supported_source_cmids(\stdClass $course, int $targetcmid): array {
