@@ -121,6 +121,21 @@ if ($isconfigured) {
     }
 }
 
+/**
+ * Execute the selected course content synchronisation with FredKI.
+ *
+ * @param stdClass $course course value.
+ * @param stdClass $cm cm value.
+ * @param stdClass $activity activity value.
+ * @param array $selectedcmids selectedcmids value.
+ * @param bool $includesectiontexts includesectiontexts value.
+ * @param array $contentmodes contentmodes value.
+ * @param bool $persistselection persistselection value.
+ * @param bool $reloadselection reloadselection value.
+ * @param bool $confirmunselect confirmunselect value.
+ * @param string $approvaltoken approvaltoken value.
+ * @return array Result of the operation.
+ */
 function fredkicourseimport_execute_sync(
     stdClass $course,
     stdClass $cm,
@@ -473,6 +488,15 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->requires->css('/mod/fredkicourseimport/styles.css');
 $targetcm = get_fast_modinfo($course)->get_cm($cm->id);
 
+/**
+ * Render the course content selection interface.
+ *
+ * @param stdClass $course course value.
+ * @param cm_info $targetcm targetcm value.
+ * @param stdClass $activity activity value.
+ * @param string $selectionmode selectionmode value.
+ * @return string Result of the operation.
+ */
 function fredkicourseimport_render_activity_selection(
     stdClass $course,
     cm_info $targetcm,
