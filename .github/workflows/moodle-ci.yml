@@ -1,4 +1,4 @@
-name: FredKI original RC15 — Moodle 5.2 baseline
+name: FredKI Course Import - Moodle quality gate
 
 # Repair branch: run full checks manually after a reviewed correction batch.
 # Main retains its own independently triggered workflow.
