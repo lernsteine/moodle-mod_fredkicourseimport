@@ -22,6 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_fredkicourseimport_activity_structure_step extends backup_activity_structure_step {
+    /**
+     * Define the Moodle backup or restore structure.
+     * @return mixed Result of the operation.
+     */
     protected function define_structure() {
         $activity = new backup_nested_element('fredkicourseimport', ['id'], [
             // Never copy external knowledge mappings or public chat tokens to another course/site.
