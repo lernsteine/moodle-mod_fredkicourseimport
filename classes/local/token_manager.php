@@ -24,6 +24,12 @@
  * is used only after an editor explicitly opts in to credential retention.
  *
  * @package mod_fredkicourseimport
+  * @param int $activityid activityid parameter.
+ * @param int $userid userid parameter.
+ * @param string $username username parameter.
+ * @param string $token token parameter.
+ * @param ?string $password password parameter.
+ * @param bool $remember remember parameter.
  */
 namespace mod_fredkicourseimport\local;
 
