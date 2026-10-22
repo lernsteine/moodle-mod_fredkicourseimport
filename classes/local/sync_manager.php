@@ -576,6 +576,8 @@ ENDE EINTRAG";
      * Build one FredKI paragraph while preserving the paragraph shape returned by split_upload.
      * FredKI's batch_create endpoint is sensitive to the paragraph schema. Therefore we do not
      * send a plain arbitrary structure, but reuse the first extracted paragraph object if present.
+     * @param mixed $originalparagraphs originalparagraphs parameter.
+     * @param mixed $text text parameter.
      */
     protected function make_single_paragraph_like_original($originalparagraphs, string $text) {
         $text = trim($text);
@@ -817,6 +819,7 @@ ENDE EINTRAG";
      * Convert importer-generated HTML into the same Markdown structure used for
      * PDF and Office files. This keeps books, lessons, pages, glossaries and
      * section texts visually consistent in FredKI without duplicating the title.
+     * @param mixed $html html parameter.
      */
     protected function generated_html_to_markdown(string $html): string {
         // The document title is transported separately as the FredKI document name.
@@ -890,6 +893,7 @@ ENDE EINTRAG";
      *
      * @param string $text Markdown generated from the HTML import document.
      * @param mixed $tags FredKI tag metadata.
+     * @param mixed $activityname activityname parameter.
      * @return string
      */
     protected function inject_fredki_tags_into_search_header(
