@@ -50,6 +50,8 @@ final class deselection_guard {
     /**
      * A sourcecmid of zero is reserved for section summaries, but legacy imports can
      * contain unmapped files with the same value. Never approve those by accident.
+     * @param \stdClass $map map parameter.
+     * @param mixed $removed removed parameter.
      */
     public static function in_manual_scope(\stdClass $map, array $removed): bool {
         $sourceid = (int)($map->sourcecmid ?? 0);
@@ -85,6 +87,16 @@ final class deselection_guard {
     /**
      * Bound confirmation to the course activity, user, previous and requested selection,
      * content modes, and specific remote document identifiers. Prevents stale approvals.
+     * @param mixed $activityid activityid parameter.
+     * @param mixed $userid userid parameter.
+     * @param mixed $previous previous parameter.
+     * @param mixed $requested requested parameter.
+     * @param mixed $available available parameter.
+     * @param mixed $previoussections previoussections parameter.
+     * @param mixed $requestedsections requestedsections parameter.
+     * @param mixed $contentmodes contentmodes parameter.
+     * @param mixed $maps maps parameter.
+     * @param mixed $sesskey sesskey parameter.
      */
     public static function approval_token(
         int $activityid,
