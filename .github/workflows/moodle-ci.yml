@@ -1,4 +1,4 @@
-name: FredKI Course Import - Moodle quality gate
+name: FredKI Course Import - final Moodle 5.2 verification
 
 # Repair branch: run full checks manually after a reviewed correction batch.
 # Main retains its own independently triggered workflow.
