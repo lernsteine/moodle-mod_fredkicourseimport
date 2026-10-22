@@ -22,8 +22,6 @@ defined('MOODLE_INTERNAL') || die();
  * Persists the trainer's course-content selection independently from generated files.
  *
  * sourcecmid = 0 is reserved for the course section texts option.
-  * @param \stdClass $course course parameter.
- * @param int $targetcmid targetcmid parameter.
  */
 class selection_manager {
     private const SUPPORTED_MODNAMES = [
