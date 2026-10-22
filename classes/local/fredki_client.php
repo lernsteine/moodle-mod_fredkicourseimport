@@ -1,16 +1,18 @@
 <?php
 // This file is part of FredKI CourseImport for Moodle.
-// Copyright (c) 2026 lernsteine.com
 //
-// This program is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See <https://www.gnu.org/licenses/>.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * FredKI course import plugin file.
@@ -274,7 +276,7 @@ class fredki_client {
             ];
         }
 
-        usort($result, function($a, $b) {
+        usort($result, function ($a, $b) {
             return strcasecmp($a['name'], $b['name']);
         });
 
@@ -391,7 +393,7 @@ class fredki_client {
             'chat_token', 'chatToken', 'access_token', 'accessToken', 'token',
             'client_id', 'clientId', 'public_client_id', 'publicClientId',
             'public_access_client_id', 'publicAccessClientId', 'access_token_value', 'accessTokenValue',
-            'access_num', 'accessNum', 'access_id', 'accessId', 'key'
+            'access_num', 'accessNum', 'access_id', 'accessId', 'key',
         ];
 
         foreach ($directkeys as $key) {
@@ -406,7 +408,7 @@ class fredki_client {
         $urlkeys = [
             'public_url', 'publicUrl', 'share_url', 'shareUrl', 'chat_url', 'chatUrl', 'url',
             'web_url', 'webUrl', 'embed_url', 'embedUrl', 'client_url', 'clientUrl',
-            'access_url', 'accessUrl', 'public_access_url', 'publicAccessUrl'
+            'access_url', 'accessUrl', 'public_access_url', 'publicAccessUrl',
         ];
 
         foreach ($urlkeys as $key) {
@@ -755,8 +757,13 @@ class fredki_client {
         return is_array($response) ? $response : [];
     }
 
-    protected function request_json(string $method, string $url, ?array $payload = null, bool $withauth = true,
-            bool $replayed = false): array {
+    protected function request_json(
+        string $method,
+        string $url,
+        ?array $payload = null,
+        bool $withauth = true,
+        bool $replayed = false
+    ): array {
         global $CFG;
         require_once($CFG->libdir . '/filelib.php');
         $curl = new \curl();

@@ -1,7 +1,18 @@
 <?php
 // This file is part of FredKI CourseImport for Moodle.
-// Copyright (c) 2026 lernsteine.com
-// SPDX-License-Identifier: GPL-3.0-or-later
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace mod_fredkicourseimport\local;
 
@@ -13,8 +24,13 @@ defined('MOODLE_INTERNAL') || die();
  */
 final class deselection_guard {
     /** @return int[] Source CM ids removed from a saved selection, or 0 for section summaries. */
-    public static function removed_sources(array $previous, array $requested, array $available,
-            bool $previoussections, bool $requestedsections): array {
+    public static function removed_sources(
+        array $previous,
+        array $requested,
+        array $available,
+        bool $previoussections,
+        bool $requestedsections
+    ): array {
         $supported = array_fill_keys(array_map('intval', $available), true);
         $requestedset = array_fill_keys(array_map('intval', $requested), true);
         $removed = [];
@@ -54,8 +70,10 @@ final class deselection_guard {
             $id = (int)($map->id ?? 0);
             $source = (int)($map->sourcecmid ?? 0);
             $documentid = (string)($map->fredki_document_id ?? '');
-            if (!$id || !isset($scopes[$source]) || !self::in_manual_scope($map, $removed) ||
-                    $documentid === '' || (string)($map->status ?? '') === 'removed') {
+            if (
+                !$id || !isset($scopes[$source]) || !self::in_manual_scope($map, $removed) ||
+                    $documentid === '' || (string)($map->status ?? '') === 'removed'
+            ) {
                 continue;
             }
             $documents[$id] = $documentid;
@@ -68,11 +86,25 @@ final class deselection_guard {
      * Bound confirmation to the course activity, user, previous and requested selection,
      * content modes, and specific remote document identifiers. Prevents stale approvals.
      */
-    public static function approval_token(int $activityid, int $userid, array $previous,
-            array $requested, array $available, bool $previoussections, bool $requestedsections,
-            array $contentmodes, array $maps, string $sesskey): string {
-        $removed = self::removed_sources($previous, $requested, $available,
-            $previoussections, $requestedsections);
+    public static function approval_token(
+        int $activityid,
+        int $userid,
+        array $previous,
+        array $requested,
+        array $available,
+        bool $previoussections,
+        bool $requestedsections,
+        array $contentmodes,
+        array $maps,
+        string $sesskey
+    ): string {
+        $removed = self::removed_sources(
+            $previous,
+            $requested,
+            $available,
+            $previoussections,
+            $requestedsections
+        );
         $modes = [];
         foreach ($contentmodes as $sourceid => $mode) {
             $modes[(int)$sourceid] = $mode === 'knowledge' ? 'knowledge' : 'reference';

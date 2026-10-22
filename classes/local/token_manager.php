@@ -1,7 +1,22 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 // Copyright (c) 2026 lernsteine.com
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Access to the external FredKI service is separately licensed.
+
 /**
  * FredKI token and optional encrypted credential storage.
  *
@@ -23,8 +38,14 @@ final class token_manager {
      * Empty passwords are never stored. A manual reconnection without opt-in
      * removes any previously stored automatic-reconnection credentials.
      */
-    public static function store(int $activityid, int $userid, string $username, string $token,
-            ?string $password = null, bool $remember = false): void {
+    public static function store(
+        int $activityid,
+        int $userid,
+        string $username,
+        string $token,
+        ?string $password = null,
+        bool $remember = false
+    ): void {
         global $DB;
         $now = time();
         $record = $DB->get_record('fredkicourseimport_auth', ['activityid' => $activityid, 'userid' => $userid]);
@@ -79,8 +100,11 @@ final class token_manager {
      * Re-login shortly before token expiry, with a lock to reduce concurrent logins.
      * Never fall back to an expired token after a failed login.
      */
-    public static function get_or_renew(\stdClass $activity, bool $force = false,
-            ?string $rejectedtoken = null): ?\stdClass {
+    public static function get_or_renew(
+        \stdClass $activity,
+        bool $force = false,
+        ?string $rejectedtoken = null
+    ): ?\stdClass {
         global $DB;
         $activityid = (int)$activity->id;
         $userid = (int)($activity->authorizedbyuserid ?? 0);
@@ -92,8 +116,10 @@ final class token_manager {
             return null;
         }
         // A concurrent request might already have replaced this rejected token.
-        if ($force && $rejectedtoken !== null && (string)$record->token !== $rejectedtoken
-                && (int)$record->tokenexpires > time()) {
+        if (
+            $force && $rejectedtoken !== null && (string)$record->token !== $rejectedtoken
+                && (int)$record->tokenexpires > time()
+        ) {
             return $record;
         }
         if (!$force && (int)$record->tokenexpires > time() + self::RENEW_BEFORE && !empty($record->token)) {
@@ -114,8 +140,10 @@ final class token_manager {
             if (!$latest) {
                 return null;
             }
-            if ($force && $rejectedtoken !== null && (string)$latest->token !== $rejectedtoken
-                    && (int)$latest->tokenexpires > time()) {
+            if (
+                $force && $rejectedtoken !== null && (string)$latest->token !== $rejectedtoken
+                    && (int)$latest->tokenexpires > time()
+            ) {
                 return $latest;
             }
             if (!$force && (int)$latest->tokenexpires > time() + self::RENEW_BEFORE && !empty($latest->token)) {
@@ -155,8 +183,12 @@ final class token_manager {
     /** Invalidate the local expiry on HTTP 401 while keeping encrypted credentials for recovery. */
     public static function invalidate(int $activityid, int $userid): void {
         global $DB;
-        $DB->set_field('fredkicourseimport_auth', 'tokenexpires', 0,
-            ['activityid' => $activityid, 'userid' => $userid]);
+        $DB->set_field(
+            'fredkicourseimport_auth',
+            'tokenexpires',
+            0,
+            ['activityid' => $activityid, 'userid' => $userid]
+        );
     }
 
     /** Client for an activity; renew on a rejected Bearer token exactly once per request. */
@@ -169,16 +201,17 @@ final class token_manager {
         $client = new fredki_client(
             (string)($config->baseurl ?? ''),
             (string)($activity->workspace ?? 'default'),
-            '', '',
+            '',
+            '',
             (string)($config->loginpath ?? '/admin/api/user/login'),
             !empty($config->debuglog)
         );
         $client->set_token((string)$auth->token);
-        $client->set_auth_failure_callback(function() use ($activity): void {
+        $client->set_auth_failure_callback(function () use ($activity): void {
             self::invalidate((int)$activity->id, (int)$activity->authorizedbyuserid);
         });
         if (self::can_renew((int)$activity->id, (int)$activity->authorizedbyuserid)) {
-            $client->set_token_renewal_callback(function() use ($activity, $auth): string {
+            $client->set_token_renewal_callback(function () use ($activity, $auth): string {
                 $renewed = self::get_or_renew($activity, true, (string)$auth->token);
                 if (!$renewed) {
                     throw new \moodle_exception('missingvalidtoken', 'mod_fredkicourseimport');

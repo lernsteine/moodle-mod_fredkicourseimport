@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
  * Privacy provider for the FredKI course import activity.
  *
@@ -22,7 +37,7 @@ use core_privacy\local\request\transform;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
-final class provider implements metadata_provider, request_provider, core_userlist_provider {
+final class provider implements core_userlist_provider, metadata_provider, request_provider {
     public static function get_metadata(collection $collection): collection {
         $collection->add_database_table('fredkicourseimport', [
             'authorizedbyuserid' => 'privacy:metadata:activity:authorizedbyuserid',
@@ -128,9 +143,13 @@ final class provider implements metadata_provider, request_provider, core_userli
                     'activityid' => $cm->instance,
                     'userid' => $contextlist->get_user()->id,
                 ]);
-                $DB->set_field_select('fredkicourseimport', 'authorizedbyuserid', null,
+                $DB->set_field_select(
+                    'fredkicourseimport',
+                    'authorizedbyuserid',
+                    null,
                     'id = :activityid AND authorizedbyuserid = :userid',
-                    ['activityid' => $cm->instance, 'userid' => $contextlist->get_user()->id]);
+                    ['activityid' => $cm->instance, 'userid' => $contextlist->get_user()->id]
+                );
             }
         }
     }
@@ -174,8 +193,11 @@ final class provider implements metadata_provider, request_provider, core_userli
             $params
         );
         $DB->set_field_select(
-            'fredkicourseimport', 'authorizedbyuserid', null,
-            "id = :activityid AND authorizedbyuserid {$insql}", $params
+            'fredkicourseimport',
+            'authorizedbyuserid',
+            null,
+            "id = :activityid AND authorizedbyuserid {$insql}",
+            $params
         );
     }
 }

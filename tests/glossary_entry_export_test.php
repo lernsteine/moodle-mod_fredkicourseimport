@@ -1,16 +1,18 @@
 <?php
 // This file is part of FredKI CourseImport for Moodle.
-// Copyright (c) 2026 lernsteine.com
 //
-// This program is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See <https://www.gnu.org/licenses/>.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace mod_fredkicourseimport;
 
@@ -24,12 +26,16 @@ final class glossary_entry_export_test extends \advanced_testcase {
         $this->resetAfterTest();
         $filename = glossary_entry_helper::export_filename(42, 789);
         $this->assertSame('cm42-glossary-eid789.html', $filename);
-        $this->assertSame(['cmid' => 42, 'entryid' => 789],
-            glossary_entry_helper::parse_export_filename('/glossaries/', $filename));
+        $this->assertSame(
+            ['cmid' => 42, 'entryid' => 789],
+            glossary_entry_helper::parse_export_filename('/glossaries/', $filename)
+        );
         $this->assertNull(glossary_entry_helper::parse_export_filename('/books/', $filename));
         $this->assertNull(glossary_entry_helper::parse_export_filename('/glossaries/', 'cm42-glossary-Gesamt.html'));
-        $this->assertStringContainsString('/mod/glossary/showentry.php?eid=789',
-            glossary_entry_helper::direct_url(789));
+        $this->assertStringContainsString(
+            '/mod/glossary/showentry.php?eid=789',
+            glossary_entry_helper::direct_url(789)
+        );
     }
 
     public function test_complete_mode_builds_one_document_per_approved_entry_with_direct_links(): void {
@@ -40,11 +46,13 @@ final class glossary_entry_export_test extends \advanced_testcase {
         $glossary = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id]);
         $sourcecm = get_fast_modinfo($course)->cms[$glossary->cmid];
         $approved = [];
-        foreach ([
+        foreach (
+            [
             ['Beitrittserklärung für Mitglieder', '<p>Formular für neue Mitglieder</p>', 1],
             ['Anmeldung', '<p>Formular zur Anmeldung</p>', 1],
             ['Versteckter Entwurf', 'Nicht anzeigen', 0],
-        ] as [$concept, $definition, $approvedflag]) {
+            ] as [$concept, $definition, $approvedflag]
+        ) {
             $approved[] = $DB->insert_record('glossary_entries', (object)[
                 'glossaryid' => $glossary->id,
                 'userid' => $USER->id,

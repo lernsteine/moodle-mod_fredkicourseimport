@@ -1,16 +1,18 @@
 <?php
 // This file is part of FredKI CourseImport for Moodle.
-// Copyright (c) 2026 lernsteine.com
 //
-// This program is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See <https://www.gnu.org/licenses/>.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * FredKI course import plugin file.
@@ -140,12 +142,15 @@ class manual_sync_service {
         ];
 
         $sourcecmid = 0;
-        if (preg_match('~^/course-files/cm(\d+)~', $file->get_filepath(), $matches) ||
-                preg_match('~cm(\d+)~', $file->get_filename(), $matches)) {
+        if (
+            preg_match('~^/course-files/cm(\d+)~', $file->get_filepath(), $matches) ||
+                preg_match('~cm(\d+)~', $file->get_filename(), $matches)
+        ) {
             $sourcecmid = (int)$matches[1];
         }
         $requestedglossaryentry = glossary_entry_helper::parse_export_filename(
-            $file->get_filepath(), $file->get_filename()
+            $file->get_filepath(),
+            $file->get_filename()
         );
         if ($requestedglossaryentry !== null) {
             // A removed course module must not lead to exporting stale generated content.
@@ -167,8 +172,10 @@ class manual_sync_service {
                 // Every file from a Moodle folder must have its own FredKI document name.
                 // Keep the folder activity name in the Basisinformationen, but use
                 // "Verzeichnis: <Dateiname>" as the knowledge-base document title.
-                if ($sourcecm->modname === 'folder' &&
-                        preg_match('~^cm\d+-folder-(.+)-info\.html$~u', $file->get_filename(), $foldermatches)) {
+                if (
+                    $sourcecm->modname === 'folder' &&
+                        preg_match('~^cm\d+-folder-(.+)-info\.html$~u', $file->get_filename(), $foldermatches)
+                ) {
                     $folderfilename = clean_filename($foldermatches[1]);
                     if ($folderfilename !== '') {
                         $metadata['documenttitle'] = self::get_module_type_prefix('folder', $course) . ': ' . $folderfilename;
@@ -180,8 +187,10 @@ class manual_sync_service {
                 // FredKI document name, never the shared glossary activity title.
                 $glossaryentry = $requestedglossaryentry;
                 if ($glossaryentry !== null) {
-                    if ($sourcecm->modname !== 'glossary' ||
-                            (int)$sourcecm->id !== $glossaryentry['cmid']) {
+                    if (
+                        $sourcecm->modname !== 'glossary' ||
+                            (int)$sourcecm->id !== $glossaryentry['cmid']
+                    ) {
                         throw new \moodle_exception('invalidglossaryentry', 'mod_fredkicourseimport');
                     }
                     // Revalidate at upload time: an entry might have been deleted
@@ -225,8 +234,10 @@ class manual_sync_service {
                     }
                 }
             }
-        } else if ($file->get_filepath() === '/section-texts/' &&
-                preg_match('~abschnitt-(\d+)\.html$~', $file->get_filename(), $matches) && $course) {
+        } else if (
+            $file->get_filepath() === '/section-texts/' &&
+                preg_match('~abschnitt-(\d+)\.html$~', $file->get_filename(), $matches) && $course
+        ) {
             $sectionnum = (int)$matches[1];
             $hierarchy = section_hierarchy_helper::for_section_number($course, $sectionnum);
             $metadata['title'] = trim((string)($hierarchy['current'] ?? ''));

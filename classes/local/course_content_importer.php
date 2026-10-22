@@ -1,16 +1,18 @@
 <?php
 // This file is part of FredKI CourseImport for Moodle.
-// Copyright (c) 2026 lernsteine.com
 //
-// This program is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See <https://www.gnu.org/licenses/>.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace mod_fredkicourseimport\local;
 
@@ -70,9 +72,13 @@ class course_content_importer {
             // A teacher can explicitly select hidden Moodle materials for the shared bot.
             // Never expand an unrestricted or implicit import this way: it requires an
             // actual selected source and course-management permission.
-            if (!$sourcecm->uservisible && ($selectedmap === null ||
-                    !has_capability('moodle/course:manageactivities',
-                        \context_course::instance((int)$course->id)))) {
+            if (
+                !$sourcecm->uservisible && ($selectedmap === null ||
+                    !has_capability(
+                        'moodle/course:manageactivities',
+                        \context_course::instance((int)$course->id)
+                    ))
+            ) {
                 continue;
             }
 
@@ -210,7 +216,9 @@ class course_content_importer {
                 continue;
             }
             $rawsummary = trim((string)($section->summary ?? ''));
-            if ($rawsummary === '') { continue; }
+            if ($rawsummary === '') {
+                continue;
+            }
             $sectiondescription = $this->section_summary_to_plain_text(
                 $course,
                 $rawsummary,
@@ -260,8 +268,13 @@ class course_content_importer {
                 continue;
             }
             $sourceurl = \moodle_url::make_pluginfile_url(
-                $sourcecontext->id, $component, 'content', 0,
-                $file->get_filepath(), $file->get_filename(), false
+                $sourcecontext->id,
+                $component,
+                'content',
+                0,
+                $file->get_filepath(),
+                $file->get_filename(),
+                false
             )->out(false);
 
             if (!$includecontent) {
@@ -497,7 +510,9 @@ class course_content_importer {
 
     protected function render_html_link_row(string $label, string $url): string {
         $url = trim($url);
-        if ($url === '') { return ''; }
+        if ($url === '') {
+            return '';
+        }
         return '<p><strong>' . s($label) . ':</strong> <a href="' . s($url) . '">' . s($url) . '</a></p>';
     }
 

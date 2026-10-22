@@ -1,7 +1,18 @@
 <?php
 // This file is part of FredKI CourseImport for Moodle.
-// Copyright (c) 2026 lernsteine.com
-// SPDX-License-Identifier: GPL-3.0-or-later
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace mod_fredkicourseimport\local;
 
@@ -36,8 +47,10 @@ final class source_deletion_guard {
             return false; // Mismatch is not permission to delete any FredKI document.
         }
         $filename = (string)($map->filename ?? '');
-        if (preg_match('/^cm([1-9][0-9]*)-glossary-eid([1-9][0-9]*)\.html$/D', $filename, $parts)
-                && (int)$parts[1] === $sourcecmid) {
+        if (
+            preg_match('/^cm([1-9][0-9]*)-glossary-eid([1-9][0-9]*)\.html$/D', $filename, $parts)
+                && (int)$parts[1] === $sourcecmid
+        ) {
             // Check an individual entry independently of the generated glossary export.
             $glossary = $DB->get_record('glossary', ['id' => (int)$cm->instance], 'id', IGNORE_MISSING);
             if (!$glossary) {
@@ -57,8 +70,10 @@ final class source_deletion_guard {
         }
         // Determine the exact original filename. Reference mode uses a generated HTML name.
         $originalname = null;
-        if (preg_match('/^cm([1-9][0-9]*)-(resource|folder)-(.+)-info\.html$/D', $filename, $parts)
-                && (int)$parts[1] === $sourcecmid && $parts[2] === $module) {
+        if (
+            preg_match('/^cm([1-9][0-9]*)-(resource|folder)-(.+)-info\.html$/D', $filename, $parts)
+                && (int)$parts[1] === $sourcecmid && $parts[2] === $module
+        ) {
             $originalname = $parts[3];
         } else if ((string)($map->contentmode ?? '') === 'knowledge' && $filename !== '') {
             $originalname = $filename;
@@ -71,13 +86,20 @@ final class source_deletion_guard {
             return false; // No reliable storage context -> no remote deletion.
         }
         $files = get_file_storage()->get_area_files(
-            $context->id, 'mod_' . $module, 'content', 0, 'filepath, filename', false
+            $context->id,
+            'mod_' . $module,
+            'content',
+            0,
+            'filepath, filename',
+            false
         );
         // Deletion of a file in a still-existing activity must follow a Moodle edit.
         // Without a newer source timestamp, absence could reflect storage trouble.
         $originalrecord = $DB->get_record($module, ['id' => (int)$cm->instance], '*', IGNORE_MISSING);
-        if (!$originalrecord || empty($originalrecord->timemodified) || empty($map->timesynced) ||
-                (int)$originalrecord->timemodified < (int)$map->timesynced) {
+        if (
+            !$originalrecord || empty($originalrecord->timemodified) || empty($map->timesynced) ||
+                (int)$originalrecord->timemodified < (int)$map->timesynced
+        ) {
             return false;
         }
         foreach ($files as $file) {

@@ -1,16 +1,18 @@
 <?php
 // This file is part of FredKI CourseImport for Moodle.
-// Copyright (c) 2026 lernsteine.com
 //
-// This program is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See <https://www.gnu.org/licenses/>.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * FredKI course import plugin file.
@@ -57,8 +59,10 @@ class sync_manager {
                 // FredKI's extractor rejects some otherwise valid, text-based PDFs.
                 // In that case, extract the text locally and continue through the same
                 // structured TXT pipeline. No silent metadata-only fallback is used.
-                if ((string)$e->errorcode !== 'documentextractfailed' ||
-                        strtolower(pathinfo($filename, PATHINFO_EXTENSION)) !== 'pdf') {
+                if (
+                    (string)$e->errorcode !== 'documentextractfailed' ||
+                        strtolower(pathinfo($filename, PATHINFO_EXTENSION)) !== 'pdf'
+                ) {
                     throw $e;
                 }
                 $localtext = $this->extract_pdf_text_locally($filepath);
@@ -820,19 +824,19 @@ ENDE EINTRAG";
         $html = preg_replace('~<head\b[^>]*>.*?</head>~is', '', $html) ?? $html;
         $html = preg_replace('~<h1\b[^>]*>.*?</h1>~is', '', $html) ?? $html;
 
-        $html = preg_replace_callback('~<h2\b[^>]*>(.*?)</h2>~is', static function(array $matches): string {
+        $html = preg_replace_callback('~<h2\b[^>]*>(.*?)</h2>~is', static function (array $matches): string {
             $text = trim(html_entity_decode(strip_tags($matches[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             return $text === '' ? '' : "\n\n## " . $text . "\n\n";
         }, $html) ?? $html;
-        $html = preg_replace_callback('~<h3\b[^>]*>(.*?)</h3>~is', static function(array $matches): string {
+        $html = preg_replace_callback('~<h3\b[^>]*>(.*?)</h3>~is', static function (array $matches): string {
             $text = trim(html_entity_decode(strip_tags($matches[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             return $text === '' ? '' : "\n\n### " . $text . "\n\n";
         }, $html) ?? $html;
-        $html = preg_replace_callback('~<strong\b[^>]*>(.*?)</strong>~is', static function(array $matches): string {
+        $html = preg_replace_callback('~<strong\b[^>]*>(.*?)</strong>~is', static function (array $matches): string {
             $text = trim(html_entity_decode(strip_tags($matches[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             return $text === '' ? '' : '**' . $text . '**';
         }, $html) ?? $html;
-        $html = preg_replace_callback('~<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>~is', static function(array $matches): string {
+        $html = preg_replace_callback('~<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>~is', static function (array $matches): string {
             $label = trim(html_entity_decode(strip_tags($matches[2]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             $url = html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
             return $label !== '' ? $label : $url;
@@ -987,8 +991,10 @@ ENDE EINTRAG";
                 continue;
             }
             // Promote likely chapter/section headings to Markdown boundaries.
-            if (preg_match('/^(chapter|kapitel)\s+[\pL\d]+\b.*$/iu', $line) ||
-                    preg_match('/^\d+(?:\.\d+){0,3}\s+\p{Lu}.*$/u', $line)) {
+            if (
+                preg_match('/^(chapter|kapitel)\s+[\pL\d]+\b.*$/iu', $line) ||
+                    preg_match('/^\d+(?:\.\d+){0,3}\s+\p{Lu}.*$/u', $line)
+            ) {
                 if (!$previousblank) {
                     $kept[] = '';
                 }

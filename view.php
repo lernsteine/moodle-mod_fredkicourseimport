@@ -1,16 +1,18 @@
 <?php
 // This file is part of FredKI CourseImport for Moodle.
-// Copyright (c) 2026 lernsteine.com
 //
-// This program is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See <https://www.gnu.org/licenses/>.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * FredKI course import plugin file.
@@ -63,7 +65,8 @@ if (optional_param('reauthorize', 0, PARAM_BOOL)) {
     $client = new \mod_fredkicourseimport\local\fredki_client(
         (string)($config->baseurl ?? ''),
         (string)($activity->workspace ?? 'default'),
-        $username, $password,
+        $username,
+        $password,
         (string)($config->loginpath ?? '/admin/api/user/login'),
         !empty($config->debuglog)
     );
@@ -80,7 +83,12 @@ if (optional_param('reauthorize', 0, PARAM_BOOL)) {
         throw new moodle_exception('reauthknowledgeinaccessible', 'mod_fredkicourseimport');
     }
     \mod_fredkicourseimport\local\token_manager::store(
-        (int)$activity->id, (int)$USER->id, $username, $token, $password, (bool)$remember
+        (int)$activity->id,
+        (int)$USER->id,
+        $username,
+        $token,
+        $password,
+        (bool)$remember
     );
     $DB->set_field('fredkicourseimport', 'authorizedbyuserid', (int)$USER->id, ['id' => $activity->id]);
     if (!empty($activity->authorizedbyuserid) && (int)$activity->authorizedbyuserid !== (int)$USER->id) {
@@ -90,15 +98,18 @@ if (optional_param('reauthorize', 0, PARAM_BOOL)) {
             'userid' => (int)$activity->authorizedbyuserid,
         ]);
     }
-    redirect(new moodle_url('/mod/fredkicourseimport/view.php', ['id' => $cm->id]),
-        get_string('reauthsuccess', 'mod_fredkicourseimport'));
+    redirect(
+        new moodle_url('/mod/fredkicourseimport/view.php', ['id' => $cm->id]),
+        get_string('reauthsuccess', 'mod_fredkicourseimport')
+    );
 }
 
 // Auto-renewal is an existing per-activity, per-authorising-user opt-in.
 // Never infer consent from another Moodle user's credentials.
 $autorenewenabled = !empty($activity->authorizedbyuserid) &&
     \mod_fredkicourseimport\local\token_manager::can_renew(
-        (int)$activity->id, (int)$activity->authorizedbyuserid
+        (int)$activity->id,
+        (int)$activity->authorizedbyuserid
     );
 $isconfigured = !empty($activity->knowledgeid);
 if ($isconfigured) {
@@ -150,23 +161,36 @@ function fredkicourseimport_execute_sync(
                 (int)$activity->id
             );
             $available = \mod_fredkicourseimport\local\selection_manager::get_supported_source_cmids(
-                $course, (int)$cm->id
+                $course,
+                (int)$cm->id
             );
             $removedselection = \mod_fredkicourseimport\local\deselection_guard::removed_sources(
-                $previous['selectedcmids'], $selectedcmids, $available,
-                $previous['includesectiontexts'], $includesectiontexts
+                $previous['selectedcmids'],
+                $selectedcmids,
+                $available,
+                $previous['includesectiontexts'],
+                $includesectiontexts
             );
             if ($removedselection) {
                 // Recheck the exact approval under the same lock as the sync. No side effects
                 // are allowed if another trainer has changed the selection or document mapping.
                 $maps = $DB->get_records('fredkicourseimport_map', ['activityid' => $activity->id]);
                 $expected = \mod_fredkicourseimport\local\deselection_guard::approval_token(
-                    (int)$activity->id, (int)$USER->id, $previous['selectedcmids'],
-                    $selectedcmids, $available, $previous['includesectiontexts'],
-                    $includesectiontexts, $contentmodes, $maps, sesskey()
+                    (int)$activity->id,
+                    (int)$USER->id,
+                    $previous['selectedcmids'],
+                    $selectedcmids,
+                    $available,
+                    $previous['includesectiontexts'],
+                    $includesectiontexts,
+                    $contentmodes,
+                    $maps,
+                    sesskey()
                 );
-                if (!$confirmunselect || $approvaltoken === '' ||
-                        !hash_equals($expected, $approvaltoken)) {
+                if (
+                    !$confirmunselect || $approvaltoken === '' ||
+                        !hash_equals($expected, $approvaltoken)
+                ) {
                     throw new moodle_exception('deselectionapprovalexpired', 'mod_fredkicourseimport');
                 }
             }
@@ -182,7 +206,7 @@ function fredkicourseimport_execute_sync(
 
         // Result counters describe only this synchronization run.
         $DB->set_field('fredkicourseimport_map', 'lastresult', null, ['activityid' => $activity->id]);
-    
+
         $importer = new \mod_fredkicourseimport\local\course_content_importer();
         $counts = $importer->import_course_content(
             $course,
@@ -192,11 +216,11 @@ function fredkicourseimport_execute_sync(
             $includesectiontexts,
             $contentmodes
         );
-    
+
         // Changed Moodle metadata (including custom-field tags) is detected by
         // file_sync_helper via its metadata fingerprint. Only genuinely changed
         // source activities are therefore queued for FredKI.
-    
+
         $pending = $DB->get_records(
             'fredkicourseimport_map',
             ['activityid' => $activity->id, 'status' => 'pending'],
@@ -205,7 +229,7 @@ function fredkicourseimport_execute_sync(
         foreach ($pending as $record) {
             \mod_fredkicourseimport\local\manual_sync_service::sync_record($activity, $record);
         }
-    
+
         $deleted = $DB->get_records(
             'fredkicourseimport_map',
             ['activityid' => $activity->id, 'status' => 'deleted'],
@@ -219,19 +243,26 @@ function fredkicourseimport_execute_sync(
         if ($persistselection && $confirmunselect) {
             // Consent covers ONLY sources that changed from selected to unselected.
             $explicitremoved = \mod_fredkicourseimport\local\deselection_guard::removed_sources(
-                $previous['selectedcmids'], $selectedcmids, $available,
-                $previous['includesectiontexts'], $includesectiontexts
+                $previous['selectedcmids'],
+                $selectedcmids,
+                $available,
+                $previous['includesectiontexts'],
+                $includesectiontexts
             );
         }
         foreach ($deleted as $record) {
             $removedinmoodle = \mod_fredkicourseimport\local\source_deletion_guard::original_missing(
-                $activity, $record
+                $activity,
+                $record
             );
             if ($removedinmoodle) {
                 $confirmedautomatic[] = $record;
-            } else if (\mod_fredkicourseimport\local\deselection_guard::in_manual_scope(
-                $record, $explicitremoved
-            )) {
+            } else if (
+                \mod_fredkicourseimport\local\deselection_guard::in_manual_scope(
+                    $record,
+                    $explicitremoved
+                )
+            ) {
                 $confirmedmanual[] = $record;
             } else {
                 // Temporary missing generated files, visibility changes and old unselected
@@ -243,24 +274,34 @@ function fredkicourseimport_execute_sync(
                 $DB->update_record('fredkicourseimport_map', $record);
             }
         }
-        if (!\mod_fredkicourseimport\local\source_deletion_guard::automatic_batch_allowed(
-            count($confirmedautomatic), count($deleted)
-        )) {
+        if (
+            !\mod_fredkicourseimport\local\source_deletion_guard::automatic_batch_allowed(
+                count($confirmedautomatic),
+                count($deleted)
+            )
+        ) {
             // The three-document bound is for AUTOMATIC missing-original checks. Manually
             // confirmed deselections have a separately previewed source/document snapshot.
             foreach ($confirmedautomatic as $record) {
                 $DB->set_field('fredkicourseimport_map', 'lastresult', 'error', ['id' => $record->id]);
-                $DB->set_field('fredkicourseimport_map', 'lasterror',
+                $DB->set_field(
+                    'fredkicourseimport_map',
+                    'lasterror',
                     get_string('deletionbatchblocked', 'mod_fredkicourseimport', count($confirmedautomatic)),
-                    ['id' => $record->id]);
+                    ['id' => $record->id]
+                );
             }
-            throw new moodle_exception('deletionbatchblocked', 'mod_fredkicourseimport', '',
-                count($confirmedautomatic));
+            throw new moodle_exception(
+                'deletionbatchblocked',
+                'mod_fredkicourseimport',
+                '',
+                count($confirmedautomatic)
+            );
         }
         foreach (array_merge($confirmedautomatic, $confirmedmanual) as $record) {
             \mod_fredkicourseimport\local\manual_sync_service::delete_record($activity, $record);
         }
-    
+
         return $counts;
     } finally {
         $lock->release();
@@ -305,15 +346,25 @@ if ($importall) {
     // No persistent selection or generated file is changed when this preview is displayed.
     $previous = \mod_fredkicourseimport\local\selection_manager::get_current_selection((int)$activity->id);
     $removed = \mod_fredkicourseimport\local\deselection_guard::removed_sources(
-        $previous['selectedcmids'], $selectedcmids, $allsupportedcmids,
-        $previous['includesectiontexts'], !empty($includesectiontexts)
+        $previous['selectedcmids'],
+        $selectedcmids,
+        $allsupportedcmids,
+        $previous['includesectiontexts'],
+        !empty($includesectiontexts)
     );
     if ($removed) {
         $maps = $DB->get_records('fredkicourseimport_map', ['activityid' => $activity->id]);
         $expected = \mod_fredkicourseimport\local\deselection_guard::approval_token(
-            (int)$activity->id, (int)$USER->id, $previous['selectedcmids'],
-            $selectedcmids, $allsupportedcmids, $previous['includesectiontexts'],
-            !empty($includesectiontexts), $contentmodes, $maps, sesskey()
+            (int)$activity->id,
+            (int)$USER->id,
+            $previous['selectedcmids'],
+            $selectedcmids,
+            $allsupportedcmids,
+            $previous['includesectiontexts'],
+            !empty($includesectiontexts),
+            $contentmodes,
+            $maps,
+            sesskey()
         );
         if (!$confirmunselect || $approvaltoken === '' || !hash_equals($expected, $approvaltoken)) {
             $PAGE->set_url('/mod/fredkicourseimport/view.php', ['id' => $cm->id]);
@@ -336,13 +387,18 @@ if ($importall) {
             }
             echo html_writer::tag('ul', implode('', $items), ['class' => 'list-group mb-3']);
             $remote = \mod_fredkicourseimport\local\deselection_guard::remote_documents($maps, $removed);
-            echo html_writer::tag('p', get_string('deselectionremotecount', 'mod_fredkicourseimport', $remote['count']),
-                ['class' => 'font-weight-bold']);
+            echo html_writer::tag(
+                'p',
+                get_string('deselectionremotecount', 'mod_fredkicourseimport', $remote['count']),
+                ['class' => 'font-weight-bold']
+            );
             echo html_writer::start_tag('form', [
                 'method' => 'post', 'action' => new moodle_url('/mod/fredkicourseimport/view.php'),
             ]);
-            foreach (['id' => (int)$cm->id, 'importall' => 1, 'sesskey' => sesskey(),
-                    'confirmunselect' => 1, 'unselectapproval' => $expected] as $field => $value) {
+            foreach (
+                ['id' => (int)$cm->id, 'importall' => 1, 'sesskey' => sesskey(),
+                    'confirmunselect' => 1, 'unselectapproval' => $expected] as $field => $value
+            ) {
                 echo html_writer::empty_tag('input', [
                     'type' => 'hidden', 'name' => $field, 'value' => $value,
                 ]);
@@ -363,8 +419,11 @@ if ($importall) {
                     'value' => $mode,
                 ]);
             }
-            echo html_writer::tag('button', get_string('deselectionconfirmbutton', 'mod_fredkicourseimport'),
-                ['type' => 'submit', 'class' => 'btn btn-danger mr-2']);
+            echo html_writer::tag(
+                'button',
+                get_string('deselectionconfirmbutton', 'mod_fredkicourseimport'),
+                ['type' => 'submit', 'class' => 'btn btn-danger mr-2']
+            );
             echo html_writer::link(new moodle_url('/mod/fredkicourseimport/view.php', [
                 'id' => $cm->id, 'selectcontent' => 1,
             ]), get_string('cancel'), ['class' => 'btn btn-secondary']);
@@ -474,11 +533,13 @@ function fredkicourseimport_render_activity_selection(
         get_string('selection', 'mod_fredkicourseimport') . ':',
         ['class' => 'fredki-selection-toolbar-label']
     );
-    foreach ([
+    foreach (
+        [
         'visible' => get_string('selectvisible', 'mod_fredkicourseimport'),
         'all' => get_string('selectall', 'mod_fredkicourseimport'),
         'none' => get_string('deselectall', 'mod_fredkicourseimport'),
-    ] as $mode => $label) {
+        ] as $mode => $label
+    ) {
         if ($mode !== 'visible') {
             $html .= html_writer::tag('span', '|', ['class' => 'fredki-selection-separator']);
         }
@@ -548,7 +609,8 @@ function fredkicourseimport_render_activity_selection(
         $sectioncheckboxattrs['checked'] = 'checked';
     }
     $html .= html_writer::start_div('fredki-section-card fredki-section-card-special');
-    $html .= html_writer::tag('label',
+    $html .= html_writer::tag(
+        'label',
         html_writer::empty_tag('input', $sectioncheckboxattrs) .
         html_writer::tag('span', get_string('coursesectiontexts', 'mod_fredkicourseimport'), ['class' => 'fredki-selection-title']),
         ['class' => 'fredki-selection-row fredki-selection-row-section']
@@ -640,7 +702,8 @@ function fredkicourseimport_render_activity_selection(
                 $knowledgeid = 'fredki-contentmode-knowledge-' . $sourcecm->id;
                 $referenceid = 'fredki-contentmode-reference-' . $sourcecm->id;
                 $radioname = 'contentmode_' . $sourcecm->id;
-                $modecontrols = html_writer::tag('label',
+                $modecontrols = html_writer::tag(
+                    'label',
                     html_writer::empty_tag('input', [
                         'type' => 'radio',
                         'name' => $radioname,
@@ -651,7 +714,8 @@ function fredkicourseimport_render_activity_selection(
                     ]) . ' ' . get_string('contentmodeknowledge', 'mod_fredkicourseimport'),
                     ['for' => $knowledgeid, 'class' => 'fredki-contentmode-option']
                 ) .
-                html_writer::tag('label',
+                html_writer::tag(
+                    'label',
                     html_writer::empty_tag('input', [
                         'type' => 'radio',
                         'name' => $radioname,
@@ -669,8 +733,11 @@ function fredkicourseimport_render_activity_selection(
         $html .= html_writer::end_div();
     }
 
-    $html .= html_writer::tag('p', get_string('deselectionreviewhint', 'mod_fredkicourseimport'),
-        ['class' => 'text-muted fredki-unselect-confirmation']);
+    $html .= html_writer::tag(
+        'p',
+        get_string('deselectionreviewhint', 'mod_fredkicourseimport'),
+        ['class' => 'text-muted fredki-unselect-confirmation']
+    );
     $html .= html_writer::start_div('fredki-actions-inline');
     $html .= html_writer::tag('button', get_string('startselectedimport', 'mod_fredkicourseimport'), ['type' => 'submit', 'class' => 'btn btn-primary fredki-btn-sync fredki-btn-main', 'id' => 'fredki-import-link']);
     $html .= html_writer::link(new moodle_url('/mod/fredkicourseimport/view.php', ['id' => $targetcm->id]), get_string('cancel'), ['class' => 'btn btn-secondary']);
@@ -699,20 +766,20 @@ if ($fredkiembed !== '') {
 }
 
 if (has_capability('mod/fredkicourseimport:sync', $context)) {
-echo html_writer::start_div('fredki-summary');
-echo html_writer::div(
-    '<span class="fredki-meta-label">' . get_string('knowledgebase', 'mod_fredkicourseimport') . ':</span> ' .
-    '<span class="fredki-meta-main">' . s($activity->knowledgebasename ?: '-') . '</span>' .
-    ' <span class="fredki-meta-sep">•</span> ' .
-    '<span class="fredki-meta-id">ID: ' . s($activity->knowledgeid ?: '-') . '</span>' .
-    ' <span class="fredki-meta-sep">•</span> ' .
-    '<span class="fredki-meta-author">' . get_string('authorizedby', 'mod_fredkicourseimport') . ': ' . s($activity->authorizedbyuserid ? fullname(core_user::get_user($activity->authorizedbyuserid)) : '-') . '</span>',
-    'fredki-summary-inline'
-);
-echo html_writer::end_div();
-// Connection management is available from this activity's Settings form.
-// Keep automatic token renewal in token_manager; do not advertise its status
-// or display a reconnection button on the normal course view.
+    echo html_writer::start_div('fredki-summary');
+    echo html_writer::div(
+        '<span class="fredki-meta-label">' . get_string('knowledgebase', 'mod_fredkicourseimport') . ':</span> ' .
+        '<span class="fredki-meta-main">' . s($activity->knowledgebasename ?: '-') . '</span>' .
+        ' <span class="fredki-meta-sep">•</span> ' .
+        '<span class="fredki-meta-id">ID: ' . s($activity->knowledgeid ?: '-') . '</span>' .
+        ' <span class="fredki-meta-sep">•</span> ' .
+        '<span class="fredki-meta-author">' . get_string('authorizedby', 'mod_fredkicourseimport') . ': ' . s($activity->authorizedbyuserid ? fullname(core_user::get_user($activity->authorizedbyuserid)) : '-') . '</span>',
+        'fredki-summary-inline'
+    );
+    echo html_writer::end_div();
+    // Connection management is available from this activity's Settings form.
+    // Keep automatic token renewal in token_manager; do not advertise its status
+    // or display a reconnection button on the normal course view.
 }
 
 if (!$isconfigured || $showreconnect) {
@@ -736,8 +803,11 @@ if (!$isconfigured || $showreconnect) {
         echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'reauthorize', 'value' => 1]);
         echo html_writer::tag('h3', get_string('reauthheading', 'mod_fredkicourseimport'));
         echo html_writer::tag('p', get_string('reauthhelp', 'mod_fredkicourseimport'));
-        echo html_writer::tag('label', get_string('fredkiusername', 'mod_fredkicourseimport'),
-            ['for' => 'fredki-reauth-user']);
+        echo html_writer::tag(
+            'label',
+            get_string('fredkiusername', 'mod_fredkicourseimport'),
+            ['for' => 'fredki-reauth-user']
+        );
         // Suggest the current owner's username; never prefill or expose a saved password.
         $reauthusername = '';
         if (!empty($activity->authorizedbyuserid) && (int)$activity->authorizedbyuserid === (int)$USER->id) {
@@ -751,8 +821,11 @@ if (!$isconfigured || $showreconnect) {
             'value' => $reauthusername,
             'class' => 'form-control mb-3', 'required' => 'required', 'autocomplete' => 'username',
         ]);
-        echo html_writer::tag('label', get_string('fredkipassword', 'mod_fredkicourseimport'),
-            ['for' => 'fredki-reauth-password']);
+        echo html_writer::tag(
+            'label',
+            get_string('fredkipassword', 'mod_fredkicourseimport'),
+            ['for' => 'fredki-reauth-password']
+        );
         echo html_writer::empty_tag('input', [
             'type' => 'password', 'id' => 'fredki-reauth-password', 'name' => 'fredkipassword',
             'class' => 'form-control mb-3', 'required' => 'required', 'autocomplete' => 'current-password',
@@ -761,18 +834,26 @@ if (!$isconfigured || $showreconnect) {
         // carry forward the previous Moodle editor's remembered preference.
         $autorenewforcurrentuser = $autorenewenabled &&
             (int)$activity->authorizedbyuserid === (int)$USER->id;
-        echo html_writer::tag('label',
+        echo html_writer::tag(
+            'label',
             html_writer::empty_tag('input', [
                 'type' => 'checkbox', 'name' => 'fredkiautorenew', 'value' => 1,
                 'checked' => $autorenewforcurrentuser ? 'checked' : null,
             ]) . ' ' . get_string('reauthremember', 'mod_fredkicourseimport'),
-            ['class' => 'd-block mb-3']);
+            ['class' => 'd-block mb-3']
+        );
         if ($autorenewforcurrentuser) {
-            echo html_writer::tag('p', get_string('autorenewretained', 'mod_fredkicourseimport'),
-                ['class' => 'text-muted']);
+            echo html_writer::tag(
+                'p',
+                get_string('autorenewretained', 'mod_fredkicourseimport'),
+                ['class' => 'text-muted']
+            );
         }
-        echo html_writer::tag('button', get_string('reauthbutton', 'mod_fredkicourseimport'),
-            ['type' => 'submit', 'class' => 'btn btn-primary']);
+        echo html_writer::tag(
+            'button',
+            get_string('reauthbutton', 'mod_fredkicourseimport'),
+            ['type' => 'submit', 'class' => 'btn btn-primary']
+        );
         echo html_writer::end_tag('form');
     }
 
@@ -838,8 +919,12 @@ $records = $DB->get_records('fredkicourseimport_map', ['activityid' => $activity
 $statuscounts = ['pending' => 0, 'synced' => 0, 'deleted' => 0, 'removed' => 0, 'error' => 0];
 $resultcounts = ['created' => 0, 'updated' => 0, 'skipped' => 0, 'deleted' => 0, 'error' => 0];
 foreach ($records as $record) {
-    if (array_key_exists($record->status, $statuscounts)) { $statuscounts[$record->status]++; }
-    if (!empty($record->lastresult) && array_key_exists($record->lastresult, $resultcounts)) { $resultcounts[$record->lastresult]++; }
+    if (array_key_exists($record->status, $statuscounts)) {
+        $statuscounts[$record->status]++;
+    }
+    if (!empty($record->lastresult) && array_key_exists($record->lastresult, $resultcounts)) {
+        $resultcounts[$record->lastresult]++;
+    }
 }
 
 echo html_writer::start_div('fredki-overview-grid');

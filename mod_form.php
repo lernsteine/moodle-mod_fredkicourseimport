@@ -1,16 +1,18 @@
 <?php
 // This file is part of FredKI CourseImport for Moodle.
-// Copyright (c) 2026 lernsteine.com
 //
-// This program is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See <https://www.gnu.org/licenses/>.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * FredKI course import plugin file.
@@ -27,7 +29,6 @@ require_once($CFG->dirroot . '/mod/fredkicourseimport/classes/local/fredki_clien
 require_once($CFG->dirroot . '/mod/fredkicourseimport/classes/local/license_manager.php');
 
 class mod_fredkicourseimport_mod_form extends moodleform_mod {
-
     public function definition() {
         $mform = $this->_form;
         $config = get_config('mod_fredkicourseimport');
@@ -73,13 +74,15 @@ class mod_fredkicourseimport_mod_form extends moodleform_mod {
         } else if ($locked) {
             $lockedinfo = get_string('activitymappinglockedinfo', 'mod_fredkicourseimport');
             if (!empty($current->knowledgebasename)) {
-                $lockedinfo .= html_writer::tag('p',
+                $lockedinfo .= html_writer::tag(
+                    'p',
                     get_string('selectedknowledgebase', 'mod_fredkicourseimport') . ' ' .
                     html_writer::tag('strong', s($current->knowledgebasename)),
                     ['class' => 'mt-2 mb-0']
                 );
             } else if (!empty($current->knowledgeid)) {
-                $lockedinfo .= html_writer::tag('p',
+                $lockedinfo .= html_writer::tag(
+                    'p',
                     get_string('selectedknowledgebase', 'mod_fredkicourseimport') . ' ' .
                     html_writer::tag('strong', s($current->knowledgeid)),
                     ['class' => 'mt-2 mb-0']
@@ -92,17 +95,28 @@ class mod_fredkicourseimport_mod_form extends moodleform_mod {
             // inadvertently re-authorise, revoke consent or touch the knowledge base.
             $targetcmid = (int)($current->coursemodule ?? 0);
             if (!$targetcmid && !empty($current->id)) {
-                $targetcm = get_coursemodule_from_instance('fredkicourseimport',
-                    (int)$current->id, $courseid, false, IGNORE_MISSING);
+                $targetcm = get_coursemodule_from_instance(
+                    'fredkicourseimport',
+                    (int)$current->id,
+                    $courseid,
+                    false,
+                    IGNORE_MISSING
+                );
                 $targetcmid = $targetcm ? (int)$targetcm->id : 0;
             }
-            if ($targetcmid && has_capability('mod/fredkicourseimport:sync',
-                    \context_module::instance($targetcmid))) {
+            if (
+                $targetcmid && has_capability(
+                    'mod/fredkicourseimport:sync',
+                    \context_module::instance($targetcmid)
+                )
+            ) {
                 global $DB, $USER, $PAGE;
                 $reauthusername = '';
                 $remember = false;
-                if (!empty($current->authorizedbyuserid) &&
-                        (int)$current->authorizedbyuserid === (int)$USER->id) {
+                if (
+                    !empty($current->authorizedbyuserid) &&
+                        (int)$current->authorizedbyuserid === (int)$USER->id
+                ) {
                     $auth = $DB->get_record('fredkicourseimport_auth', [
                         'activityid' => (int)$current->id,
                         'userid' => (int)$USER->id,
@@ -123,31 +137,44 @@ class mod_fredkicourseimport_mod_form extends moodleform_mod {
                     'data-message-failed' => get_string('reauthajaxfailed', 'mod_fredkicourseimport'),
                 ];
                 $panel = \html_writer::start_tag('details', $panelattrs);
-                $panel .= \html_writer::tag('summary',
-                    get_string('reauthsettingssummary', 'mod_fredkicourseimport'));
+                $panel .= \html_writer::tag(
+                    'summary',
+                    get_string('reauthsettingssummary', 'mod_fredkicourseimport')
+                );
                 $panel .= \html_writer::start_div('fredki-credentials-fields');
-                $panel .= \html_writer::tag('p', get_string('reauthhelp', 'mod_fredkicourseimport'),
-                    ['class' => 'text-muted']);
-                $panel .= \html_writer::tag('label', get_string('fredkiusername', 'mod_fredkicourseimport'),
-                    ['for' => 'fredki-settings-user']);
+                $panel .= \html_writer::tag(
+                    'p',
+                    get_string('reauthhelp', 'mod_fredkicourseimport'),
+                    ['class' => 'text-muted']
+                );
+                $panel .= \html_writer::tag(
+                    'label',
+                    get_string('fredkiusername', 'mod_fredkicourseimport'),
+                    ['for' => 'fredki-settings-user']
+                );
                 $panel .= \html_writer::empty_tag('input', [
                     'type' => 'text', 'id' => 'fredki-settings-user',
                     'value' => $reauthusername, 'autocomplete' => 'username',
                     'class' => 'form-control',
                 ]);
-                $panel .= \html_writer::tag('label', get_string('fredkipassword', 'mod_fredkicourseimport'),
-                    ['for' => 'fredki-settings-password']);
+                $panel .= \html_writer::tag(
+                    'label',
+                    get_string('fredkipassword', 'mod_fredkicourseimport'),
+                    ['for' => 'fredki-settings-password']
+                );
                 $panel .= \html_writer::empty_tag('input', [
                     'type' => 'password', 'id' => 'fredki-settings-password',
                     'autocomplete' => 'current-password', 'class' => 'form-control',
                 ]);
                 // The new authoriser must always grant their own opt-in.
-                $panel .= \html_writer::tag('label',
+                $panel .= \html_writer::tag(
+                    'label',
                     \html_writer::empty_tag('input', [
                         'type' => 'checkbox', 'id' => 'fredki-settings-remember',
                         'checked' => $remember ? 'checked' : null,
                     ]) . ' ' . get_string('reauthremember', 'mod_fredkicourseimport'),
-                    ['class' => 'fredki-credentials-remember']);
+                    ['class' => 'fredki-credentials-remember']
+                );
                 $panel .= \html_writer::tag('button', get_string('reauthbutton', 'mod_fredkicourseimport'), [
                     'type' => 'button', 'class' => 'btn btn-primary', 'id' => 'fredki-settings-submit',
                 ]);
@@ -156,11 +183,14 @@ class mod_fredkicourseimport_mod_form extends moodleform_mod {
                 ]);
                 $panel .= \html_writer::end_div();
                 $panel .= \html_writer::end_tag('details');
-                $mform->addElement('static', 'fredkireconnectsettings',
-                    get_string('reauthsettingslabel', 'mod_fredkicourseimport'), $panel);
+                $mform->addElement(
+                    'static',
+                    'fredkireconnectsettings',
+                    get_string('reauthsettingslabel', 'mod_fredkicourseimport'),
+                    $panel
+                );
                 $PAGE->requires->js(new \moodle_url('/mod/fredkicourseimport/reconnect.js'));
             }
-
         } else {
             $mform->addElement('text', 'fredkiusername', get_string('fredkiusername', 'mod_fredkicourseimport'), [
                 'size' => 40,
@@ -247,7 +277,8 @@ class mod_fredkicourseimport_mod_form extends moodleform_mod {
             $selectedbutton = addslashes(get_string('selectedknowledgebasebutton', 'mod_fredkicourseimport'));
 
             $mform->addElement('html', html_writer::div(
-                html_writer::div($selectedlabel !== ''
+                html_writer::div(
+                    $selectedlabel !== ''
                     ? $selectedprefix . ' ' . html_writer::tag('strong', s($selectedlabel))
                     : $none,
                     'fredki-kb-selected-text',

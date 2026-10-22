@@ -1,6 +1,21 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 // Copyright (c) 2026 lernsteine.com
 // SPDX-License-Identifier: GPL-3.0-or-later
+
 /**
  * Reauthorise a configured FredKI knowledge base without leaving activity settings.
  * The endpoint never creates, uploads, synchronises or deletes FredKI documents.
@@ -13,10 +28,12 @@ require_once(__DIR__ . '/../../config.php');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 
-$respond = static function(bool $success, string $message, int $status = 200): void {
+$respond = static function (bool $success, string $message, int $status = 200): void {
     http_response_code($status);
-    echo json_encode(['success' => $success, 'message' => $message],
-        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    echo json_encode(
+        ['success' => $success, 'message' => $message],
+        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+    );
     exit;
 };
 
@@ -49,8 +66,11 @@ try {
 
     $config = get_config('mod_fredkicourseimport');
     $client = new \mod_fredkicourseimport\local\fredki_client(
-        (string)($config->baseurl ?? ''), (string)($activity->workspace ?? 'default'),
-        $username, $password, (string)($config->loginpath ?? '/admin/api/user/login'),
+        (string)($config->baseurl ?? ''),
+        (string)($activity->workspace ?? 'default'),
+        $username,
+        $password,
+        (string)($config->loginpath ?? '/admin/api/user/login'),
         !empty($config->debuglog)
     );
     $found = false;
@@ -71,10 +91,19 @@ try {
     // Update Moodle authorisation only after all remote checks pass.
     $transaction = $DB->start_delegated_transaction();
     \mod_fredkicourseimport\local\token_manager::store(
-        (int)$activity->id, (int)$USER->id, $username, $token, $password, (bool)$remember
+        (int)$activity->id,
+        (int)$USER->id,
+        $username,
+        $token,
+        $password,
+        (bool)$remember
     );
-    $DB->set_field('fredkicourseimport', 'authorizedbyuserid', (int)$USER->id,
-        ['id' => (int)$activity->id]);
+    $DB->set_field(
+        'fredkicourseimport',
+        'authorizedbyuserid',
+        (int)$USER->id,
+        ['id' => (int)$activity->id]
+    );
     if (!empty($activity->authorizedbyuserid) && (int)$activity->authorizedbyuserid !== (int)$USER->id) {
         // Remove only the previous Moodle-side credentials, never remote documents.
         $DB->delete_records('fredkicourseimport_auth', [

@@ -1,16 +1,18 @@
 <?php
 // This file is part of FredKI CourseImport for Moodle.
-// Copyright (c) 2026 lernsteine.com
 //
-// This program is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See <https://www.gnu.org/licenses/>.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * FredKI course import plugin file.
@@ -54,8 +56,10 @@ class file_sync_helper {
                 ['activityid' => $activityid, 'pathnamehash' => $pathnamehash]
             );
             $sourcecmid = 0;
-            if (preg_match('~^/course-files/cm(\d+)~', $file->get_filepath(), $matches) ||
-                    preg_match('~cm(\d+)~', $file->get_filename(), $matches)) {
+            if (
+                preg_match('~^/course-files/cm(\d+)~', $file->get_filepath(), $matches) ||
+                    preg_match('~cm(\d+)~', $file->get_filename(), $matches)
+            ) {
                 $sourcecmid = (int)$matches[1];
             }
             $contentmode = ($contentmodes[$sourcecmid] ?? 'reference') === 'reference'
@@ -199,7 +203,7 @@ class file_sync_helper {
             }
 
             $tags = self::read_custom_field_tags($sourcecmid);
-            usort($tags, static function(array $a, array $b): int {
+            usort($tags, static function (array $a, array $b): int {
                 return strcmp(($a['key'] ?? '') . "\0" . ($a['value'] ?? ''), ($b['key'] ?? '') . "\0" . ($b['value'] ?? ''));
             });
 
@@ -288,5 +292,4 @@ class file_sync_helper {
             return [];
         }
     }
-
 }
