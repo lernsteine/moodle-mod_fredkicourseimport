@@ -37,12 +37,12 @@ final class token_manager {
      * Persist a newly authenticated token and, optionally, an encrypted password.
      * Empty passwords are never stored. A manual reconnection without opt-in
      * removes any previously stored automatic-reconnection credentials.
-     * @param mixed $activityid activityid parameter.
-     * @param mixed $userid userid parameter.
-     * @param mixed $username username parameter.
-     * @param mixed $token token parameter.
-     * @param mixed $password password parameter.
-     * @param mixed $remember remember parameter.
+     * @param int $activityid Course Import activity ID.
+     * @param int $userid Moodle user ID.
+     * @param string $username FredKI username.
+     * @param string $token FredKI access token.
+     * @param ?string $password Optional password, stored only with explicit consent.
+     * @param bool $remember Whether to retain encrypted credentials for reconnection.
      */
     public static function store(
         int $activityid,
