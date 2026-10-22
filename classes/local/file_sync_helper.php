@@ -166,6 +166,7 @@ class file_sync_helper {
      * A tag/custom-field change must be detectable even for complete uploads where
      * the original PDF/file bytes are unchanged. The fingerprint intentionally
      * includes the activity metadata used by FredKI and all visible custom fields.
+     * @param mixed $sourcecmid sourcecmid parameter.
      */
     public static function calculate_source_metadata_hash(int $sourcecmid): string {
         global $DB;
@@ -232,6 +233,7 @@ class file_sync_helper {
     /**
      * Read visible custom fields in a stable, serialisable form.
      *
+     * @param mixed $cmid cmid parameter.
      * @return array<int,array{key:string,value:string,label:string}>
      */
     private static function read_custom_field_tags(int $cmid): array {
