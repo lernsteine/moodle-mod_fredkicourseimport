@@ -29,6 +29,10 @@ require_once($CFG->dirroot . '/mod/fredkicourseimport/classes/local/fredki_clien
 require_once($CFG->dirroot . '/mod/fredkicourseimport/classes/local/license_manager.php');
 
 class mod_fredkicourseimport_mod_form extends moodleform_mod {
+    /**
+     * Define the FredKI activity settings form.
+     * @return mixed Result of the operation.
+     */
     public function definition() {
         $mform = $this->_form;
         $config = get_config('mod_fredkicourseimport');
@@ -688,6 +692,15 @@ JS;
         $this->add_action_buttons();
     }
 
+    /**
+     * Load the available FredKI knowledge bases for the form.
+     *
+     * @param mixed $config config value.
+     * @param string $username username value.
+     * @param string $password password value.
+     * @param string $workspace workspace value.
+     * @return array Result of the operation.
+     */
     protected function load_knowledge_base_options($config, string $username, string $password, string $workspace): array {
         $options = [];
 
@@ -715,6 +728,15 @@ JS;
         return $options;
     }
 
+    /**
+     * Load available FredKI agents for the form.
+     *
+     * @param mixed $config config value.
+     * @param string $username username value.
+     * @param string $password password value.
+     * @param string $workspace workspace value.
+     * @return array Result of the operation.
+     */
     protected function load_agent_options($config, string $username, string $password, string $workspace): array {
         $options = [];
 
@@ -742,6 +764,13 @@ JS;
         return $options;
     }
 
+    /**
+     * Validate submitted FredKI activity settings.
+     *
+     * @param mixed $data data value.
+     * @param mixed $files files value.
+     * @return mixed Result of the operation.
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
