@@ -1,7 +1,9 @@
-name: Moodle Plugin CI
+name: FredKI original RC15 — Moodle 5.2 baseline
 
 on:
   push:
+    branches:
+      - review/original-rc15-clean-baseline
   pull_request:
   workflow_dispatch:
 
@@ -12,19 +14,17 @@ jobs:
   test:
     name: Moodle 5.2 / PHP 8.3 / ${{ matrix.db }}
     runs-on: ubuntu-24.04
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - db: pgsql
-          - db: mysqli
+        db: [pgsql, mariadb]
     services:
       postgres:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: moodle
         ports:
           - 5432:5432
         options: >-
@@ -34,7 +34,6 @@ jobs:
         image: mariadb:10.11
         env:
           MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
-          MARIADB_DATABASE: moodle
         ports:
           - 3306:3306
         options: >-
@@ -59,16 +58,28 @@ jobs:
           echo "$GITHUB_WORKSPACE/ci/vendor/bin" >> "$GITHUB_PATH"
           sudo locale-gen en_AU.UTF-8
       - name: Install Moodle 5.2 test environment
+        id: moodle_install
         env:
           DB: ${{ matrix.db }}
           MOODLE_BRANCH: MOODLE_502_STABLE
-        run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
-      - name: Static checks and upgrade validation
         run: |
-          moodle-plugin-ci phplint
-          moodle-plugin-ci validate
-          moodle-plugin-ci codechecker
-          moodle-plugin-ci savepoints
-          moodle-plugin-ci phpdoc
+          if [ "$DB" = "pgsql" ]; then
+            moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --db-user=postgres --db-pass=postgres
+          else
+            moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --db-user=root
+          fi
+      - name: PHP syntax check
+        run: moodle-plugin-ci phplint
+      - name: Moodle plugin validation
+        run: moodle-plugin-ci validate
+      - name: Moodle coding style
+        run: moodle-plugin-ci codechecker
+      - name: Moodle upgrade savepoints
+        if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
+        run: moodle-plugin-ci savepoints
+      - name: PHPDoc check
+        if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
+        run: moodle-plugin-ci phpdoc
       - name: PHPUnit
+        if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
         run: moodle-plugin-ci phpunit
