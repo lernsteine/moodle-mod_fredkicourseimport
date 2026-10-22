@@ -16,6 +16,14 @@
 // Copyright (c) 2026 lernsteine.com
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+/**
+ * Scheduled task definitions for FredKI Course Import.
+ *
+ * @package    mod_fredkicourseimport
+ * @copyright  2026 lernsteine.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 $tasks = [
