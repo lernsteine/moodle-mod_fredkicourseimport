@@ -1,4 +1,4 @@
-# FredKI-Kursdaten
+# FredKI Course Import
 
 Moodle activity module for synchronising selected Moodle course content with a FredKI knowledge base and optionally displaying a FredKI chatbot on the course page.
 
@@ -65,48 +65,43 @@ original plugin and does not constitute evidence of testing older Moodle version
 Installation, upgrade, access checks, backup/restore and FredKI API interactions
 must be verified on a real Moodle 5.2 test instance before production use.
 
-## Search-optimierter Import (ab 1.6.0)
+## Search-optimised import (since 1.6.0)
 
-FredKI-Einträge werden so aufgebaut, dass MaxKB Volltext-, Vektor- und Hybridsuche
-stärker von den unterscheidenden Moodle-Metadaten profitieren:
+FredKI documents are structured so that FredKI full-text, vector and hybrid search can take
+better advantage of distinctive Moodle metadata:
 
-- Abschnittstitel = tatsächlicher Aktivitäts-/Materialname
-- Custom Fields/Tags (`Materialtyp`, `Zielgruppe`, `Thema` usw.) direkt am Anfang
-- kompaktere Metadaten ohne doppelte Moodle-Quellangaben
-- direkter Aktivitätslink und Kurslink bleiben erhalten
+- Section title = actual activity or resource name.
+- Custom fields and tags (`Material type`, `Audience`, `Topic`, etc.) are placed at the beginning.
+- More compact metadata without duplicated Moodle source references.
+- Direct links to the activity and the course are preserved.
 
-Generische Fragen wie `Welche Buchtipps gibt es?` werden bewusst **nicht** mehr an
-jedes Material gehängt. MaxKB indexiert verknüpfte Fragen separat; identische Fragen
-an vielen Dokumenten können sonst unterschiedliche Materialien künstlich ähnlich
-machen. Materialtyp, Zielgruppe, Thema und Abschnittshierarchie bleiben stattdessen
-im normalen Abschnittstext und als echte FredKI-Tags durchsuchbar.
+Generic questions such as `Which books do you recommend?` are deliberately **not**
+attached to every resource. FredKI indexes linked questions separately; reusing an
+identical question across many documents can make unrelated resources look artificially
+similar. Material type, audience, topic and section hierarchy remain searchable in the
+normal content and as FredKI tags instead.
 
+## Section hierarchy (since 1.6.1)
 
-## Abschnittshierarchie (ab 1.6.1)
-
-Bei Moodle-Unterabschnitten (`mod_subsection`, ab Moodle 4.5) übernimmt FredKI nicht
-mehr nur den unmittelbar zugeordneten Abschnitt. Der Import rekonstruiert auch die
-übergeordneten Moodle-Abschnitte. Ein Material kann dadurch beispielsweise so
-erscheinen:
+For Moodle subsections (`mod_subsection`, available since Moodle 4.5), FredKI does
+not only import the immediate section. The import also reconstructs the parent
+section hierarchy. For example, a resource may appear as:
 
 ```text
-Wo ist mein Hut?
-Materialtyp: Buch
-Übergeordneter Abschnitt: Büchertipps – Spannend bis lustig – Lesestoff, der motiviert
-Unterabschnitt: Bücher für jüngere Grundschulkinder
-Beschreibung: ...
+Where Is My Hat?
+Material type: Book
+Parent sections: Book recommendations – Engaging reading – Reading for motivation
+Subsection: Books for younger primary-school children
+Description: ...
 ```
 
-Bei normalen, nicht verschachtelten Kursabschnitten wird weiterhin nur
-`Abschnitt: ...` ausgegeben. Die Hierarchie fließt auch in die Metadaten-Fingerprints
-ein, damit Änderungen an Abschnittsüberschriften über „nur Änderungen aktualisieren“
-erkannt werden.
+For ordinary, non-nested sections, the output still uses only `Section: ...`.
+The hierarchy is also included in metadata fingerprints so that changes to section
+headings are detected when running an update of changed content only.
 
+## Search behaviour
 
-## Suchverhalten
-
-CourseImport erzeugt **keine verknüpften Fragen (`problem_list`)**.
-
+Course Import does **not** generate linked questions (`problem_list`).
 
 ## Verified-deletion synchronization (1.6.8-rc11)
 
