@@ -15,11 +15,25 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 class backup_fredkicourseimport_activity_task extends backup_activity_task {
+    /**
+     * Define activity backup or restore settings.
+     * @return mixed Result of the operation.
+     */
     protected function define_my_settings() {
     }
+    /**
+     * Register the activity backup or restore processing steps.
+     * @return mixed Result of the operation.
+     */
     protected function define_my_steps() {
         $this->add_step(new backup_fredkicourseimport_activity_structure_step('fredkicourseimport_structure', 'fredkicourseimport.xml'));
     }
+    /**
+     * Encode activity links in backed-up content.
+     *
+     * @param mixed $content content value.
+     * @return mixed Result of the operation.
+     */
     public static function encode_content_links($content) {
         return $content;
     }
