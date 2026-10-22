@@ -22,12 +22,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_fredkicourseimport_activity_structure_step extends restore_activity_structure_step {
+    /**
+     * Define the Moodle backup or restore structure.
+     * @return mixed Result of the operation.
+     */
     protected function define_structure() {
         return [
             new restore_path_element('fredkicourseimport', '/activity/fredkicourseimport'),
             new restore_path_element('fredkicourseimport_map', '/activity/fredkicourseimport/maps/map'),
         ];
     }
+    /**
+     * Restore the FredKI activity without retaining service credentials.
+     *
+     * @param mixed $data data value.
+     * @return mixed Result of the operation.
+     */
     protected function process_fredkicourseimport($data) {
         global $DB;
         $data = (object)$data;
@@ -46,6 +56,12 @@ class restore_fredkicourseimport_activity_structure_step extends restore_activit
         $newid = $DB->insert_record('fredkicourseimport', $data);
         $this->apply_activity_instance($newid);
     }
+    /**
+     * Restore an imported document mapping in a pending state.
+     *
+     * @param mixed $data data value.
+     * @return mixed Result of the operation.
+     */
     protected function process_fredkicourseimport_map($data) {
         global $DB;
         $data = (object)$data;
@@ -61,6 +77,10 @@ class restore_fredkicourseimport_activity_structure_step extends restore_activit
         unset($data->id);
         $DB->insert_record('fredkicourseimport_map', $data);
     }
+    /**
+     * Restore the activity's associated files.
+     * @return mixed Result of the operation.
+     */
     protected function after_execute() {
         $this->add_related_files('mod_fredkicourseimport', 'generated_files', null);
     }
