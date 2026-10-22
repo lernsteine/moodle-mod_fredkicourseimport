@@ -166,7 +166,7 @@ class file_sync_helper {
      * A tag/custom-field change must be detectable even for complete uploads where
      * the original PDF/file bytes are unchanged. The fingerprint intentionally
      * includes the activity metadata used by FredKI and all visible custom fields.
-     * @param mixed $sourcecmid sourcecmid parameter.
+     * @param int $sourcecmid Moodle source course-module ID.
      */
     public static function calculate_source_metadata_hash(int $sourcecmid): string {
         global $DB;
