@@ -21,6 +21,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Verifies that one concrete Moodle source has really ceased to exist.
  * A missing generated FredKI export is NEVER proof of deletion.
+  * @param \stdClass $activity activity parameter.
+ * @param \stdClass $map map parameter.
  */
 final class source_deletion_guard {
     /**
