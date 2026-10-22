@@ -26,6 +26,8 @@ final class source_deletion_guard {
     /**
      * Return true only for positively identified and now physically absent Moodle originals.
      * Hiding activities, changing groups, access conditions or exporting zero files never qualifies.
+     * @param \stdClass $activity activity parameter.
+     * @param \stdClass $map map parameter.
      */
     public static function original_missing(\stdClass $activity, \stdClass $map): bool {
         global $DB;
@@ -122,6 +124,8 @@ final class source_deletion_guard {
     /**
      * Guard against mass deletion caused by broken imports or unexpected mappings.
      * Applies to entire remote-delete batch, not per record. Maximum 3 without review.
+     * @param mixed $candidatecount candidatecount parameter.
+     * @param mixed $activecount activecount parameter.
      */
     public static function automatic_batch_allowed(int $candidatecount, int $activecount): bool {
         return $candidatecount >= 0 && $candidatecount <= 3;
