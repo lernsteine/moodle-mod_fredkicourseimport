@@ -11,6 +11,13 @@ Status: **Release candidate, not yet approved for stable release**.
 - Proposed stable release **after all checks pass**: `1.7.0`
 - First declared compatibility target: Moodle 5.2 only
 
+## Static preflight review — 22 October 2026
+
+- The saved user-tested branch and current repair branch differ only by this release checklist (verified by GitHub commit comparison).
+- Reviewed PHPDoc parameter presence in nine affected `classes/local/` files. No missing named parameters detected in methods with adjacent docblocks by this targeted source inspection.
+- This is **not** a successful Moodle `codechecker`, `phpdoc`, or runtime test. Other files, documentation types, and coding-standard violations may remain.
+- Do not release, merge or claim Marketplace readiness without the complete automated checks and remaining staged functional confirmations.
+
 ## Required automated verification (must all pass)
 
 Run the manual workflow `.github/workflows/moodle-ci.yml` against the exact final commit of the repair branch once all source checks are complete:
