@@ -21,11 +21,6 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Explicitly confirm the exact source selection (and remote mapping snapshot) being revoked.
  * A missing generated export or an unrelated deleted mapping never grants deletion consent.
-  * @param array $previous previous parameter.
- * @param array $requested requested parameter.
- * @param array $available available parameter.
- * @param bool $previoussections previoussections parameter.
- * @param bool $requestedsections requestedsections parameter.
  */
 final class deselection_guard {
     /**
