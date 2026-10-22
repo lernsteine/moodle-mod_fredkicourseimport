@@ -1,12 +1,8 @@
 name: FredKI original RC15 — Moodle 5.2 baseline
 
+# Repair branch: run full checks manually after a reviewed correction batch.
+# Main retains its own independently triggered workflow.
 on:
-  push:
-    branches:
-      - main
-      - review/original-rc15-clean-baseline
-      - fix/moodle-style-cleanup-20261022
-  pull_request:
   workflow_dispatch:
 
 permissions:
