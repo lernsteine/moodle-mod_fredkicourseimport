@@ -78,7 +78,12 @@ final class token_manager {
         }
     }
 
-    /** A valid local token; do not delete an expired record because its encrypted credential may be needed. */
+    /**
+     * A valid local token; do not delete an expired record because its encrypted credential may be needed.
+     *
+     * @param int $activityid activityid parameter.
+     * @param int $userid userid parameter.
+     */
     public static function get(int $activityid, int $userid): ?\stdClass {
         global $DB;
         if ($userid <= 0) {
@@ -92,7 +97,12 @@ final class token_manager {
         return $record;
     }
 
-    /** True when the current authorisation can recover without an interactive login. */
+    /**
+     * True when the current authorisation can recover without an interactive login.
+     *
+     * @param int $activityid activityid parameter.
+     * @param int $userid userid parameter.
+     */
     public static function can_renew(int $activityid, int $userid): bool {
         global $DB;
         if ($userid <= 0) {
@@ -189,7 +199,12 @@ final class token_manager {
         }
     }
 
-    /** Invalidate the local expiry on HTTP 401 while keeping encrypted credentials for recovery. */
+    /**
+     * Invalidate the local expiry on HTTP 401 while keeping encrypted credentials for recovery.
+     *
+     * @param int $activityid activityid parameter.
+     * @param int $userid userid parameter.
+     */
     public static function invalidate(int $activityid, int $userid): void {
         global $DB;
         $DB->set_field(
@@ -200,7 +215,11 @@ final class token_manager {
         );
     }
 
-    /** Client for an activity; renew on a rejected Bearer token exactly once per request. */
+    /**
+     * Client for an activity; renew on a rejected Bearer token exactly once per request.
+     *
+     * @param \stdClass $activity activity parameter.
+     */
     public static function client_for_activity(\stdClass $activity): fredki_client {
         $auth = self::get_or_renew($activity);
         if (!$auth) {
