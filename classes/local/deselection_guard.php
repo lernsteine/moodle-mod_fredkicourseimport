@@ -23,7 +23,15 @@ defined('MOODLE_INTERNAL') || die();
  * A missing generated export or an unrelated deleted mapping never grants deletion consent.
  */
 final class deselection_guard {
-    /** @return int[] Source CM ids removed from a saved selection, or 0 for section summaries. */
+    /**
+     * @return int[] Source CM ids removed from a saved selection, or 0 for section summaries.
+     *
+     * @param array $previous previous parameter.
+     * @param array $requested requested parameter.
+     * @param array $available available parameter.
+     * @param bool $previoussections previoussections parameter.
+     * @param bool $requestedsections requestedsections parameter.
+     */
     public static function removed_sources(
         array $previous,
         array $requested,
@@ -64,7 +72,12 @@ final class deselection_guard {
         return true;
     }
 
-    /** @return array{count:int,documents:array<int,string>} */
+    /**
+     * @return array{count:int,documents:array<int,string>}
+     *
+     * @param array $maps maps parameter.
+     * @param array $removed removed parameter.
+     */
     public static function remote_documents(array $maps, array $removed): array {
         $scopes = array_fill_keys(array_map('intval', $removed), true);
         $documents = [];
