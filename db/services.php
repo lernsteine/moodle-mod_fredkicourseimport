@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * External AJAX services provided by FredKI Course Import.
+ *
+ * @package    mod_fredkicourseimport
+ * @copyright  2026 lernsteine.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
 $functions = [
     'mod_fredkicourseimport_get_knowledge_bases' => [
         'classname' => 'mod_fredkicourseimport\external\get_knowledge_bases',
