@@ -37,6 +37,12 @@ final class token_manager {
      * Persist a newly authenticated token and, optionally, an encrypted password.
      * Empty passwords are never stored. A manual reconnection without opt-in
      * removes any previously stored automatic-reconnection credentials.
+     * @param mixed $activityid activityid parameter.
+     * @param mixed $userid userid parameter.
+     * @param mixed $username username parameter.
+     * @param mixed $token token parameter.
+     * @param mixed $password password parameter.
+     * @param mixed $remember remember parameter.
      */
     public static function store(
         int $activityid,
@@ -99,6 +105,9 @@ final class token_manager {
     /**
      * Re-login shortly before token expiry, with a lock to reduce concurrent logins.
      * Never fall back to an expired token after a failed login.
+     * @param \stdClass $activity activity parameter.
+     * @param mixed $force force parameter.
+     * @param mixed $rejectedtoken rejectedtoken parameter.
      */
     public static function get_or_renew(
         \stdClass $activity,
