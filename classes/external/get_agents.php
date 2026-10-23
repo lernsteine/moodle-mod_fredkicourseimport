@@ -15,14 +15,24 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace mod_fredkicourseimport\external;
-defined('MOODLE_INTERNAL') || die();
 use external_api;
 use external_function_parameters;
 use external_multiple_structure;
 use external_single_structure;
 use external_value;
 
+/**
+ * External service for listing FredKI agents accessible to a course editor.
+ *
+ * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 final class get_agents extends external_api {
+    /**
+     * Describe parameters required to list FredKI agents.
+     *
+     * @return external_function_parameters Input schema.
+     */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'courseid' => new external_value(PARAM_INT),
@@ -31,6 +41,15 @@ final class get_agents extends external_api {
             'workspace' => new external_value(PARAM_TEXT),
         ]);
     }
+    /**
+     * Fetch FredKI agents after validating course access.
+     *
+     * @param int $courseid Moodle course identifier.
+     * @param string $username FredKI account username.
+     * @param string $password FredKI account password.
+     * @param string $workspace FredKI workspace.
+     * @return array Accessible FredKI agents.
+     */
     public static function execute(int $courseid, string $username, string $password, string $workspace): array {
         $params = self::validate_parameters(self::execute_parameters(), compact('courseid', 'username', 'password', 'workspace'));
         $context = \context_course::instance($params['courseid']);
@@ -47,6 +66,11 @@ final class get_agents extends external_api {
         );
         return $client->list_agents();
     }
+    /**
+     * Describe the returned FredKI agents list.
+     *
+     * @return external_multiple_structure Response schema.
+     */
     public static function execute_returns(): external_multiple_structure {
         return new external_multiple_structure(new external_single_structure([
             'id' => new external_value(PARAM_TEXT),
