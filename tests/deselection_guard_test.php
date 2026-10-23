@@ -21,7 +21,13 @@ defined('MOODLE_INTERNAL') || die();
 use mod_fredkicourseimport\local\deselection_guard;
 
 /** Test that human confirmation is scoped to concrete deselected sources. */
-final class deselection_guard_test extends \advanced_testcase {
+final /**
+ * Regression tests for deselection guard test.
+ *
+ * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class deselection_guard_test extends \advanced_testcase {
     public function test_deselecting_one_source_does_not_authorise_other_sources(): void {
         $this->assertSame([15], deselection_guard::removed_sources(
             [14, 15, 16],
