@@ -15,7 +15,13 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace mod_fredkicourseimport;
-final class token_manager_test extends \advanced_testcase {
+final /**
+ * Regression tests for token manager test.
+ *
+ * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class token_manager_test extends \advanced_testcase {
     public function test_missing_token_returns_null(): void {
         $this->resetAfterTest();
         $this->assertNull(\mod_fredkicourseimport\local\token_manager::get(999, 999));
