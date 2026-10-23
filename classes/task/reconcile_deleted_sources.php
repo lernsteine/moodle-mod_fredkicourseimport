@@ -21,6 +21,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Conservative reconciliation of physical Moodle deletions, never visibility.
  * Fail-closed for uncertain sources and bulk deletions.
+  * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class reconcile_deleted_sources extends \core\task\scheduled_task {
     public function get_name(): string {
