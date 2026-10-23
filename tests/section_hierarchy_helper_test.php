@@ -26,7 +26,13 @@ namespace mod_fredkicourseimport;
 
 use mod_fredkicourseimport\local\section_hierarchy_helper;
 
-final class section_hierarchy_helper_test extends \advanced_testcase {
+final /**
+ * Regression tests for section hierarchy helper test.
+ *
+ * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class section_hierarchy_helper_test extends \advanced_testcase {
     public function test_parent_path_is_compact_and_ordered(): void {
         $this->assertSame(
             'Büchertipps › Bücher für Grundschulkinder',
