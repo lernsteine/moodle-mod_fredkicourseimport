@@ -26,6 +26,12 @@ namespace mod_fredkicourseimport\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Handles Moodle resource file synchronization.
+ *
+ * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class file_sync_helper {
     public static function scan_generated_files(
         int $cmid,
