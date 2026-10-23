@@ -20,6 +20,8 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Creates FredKI documents with metadata first and optional activity content.
+  * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_content_importer {
     /** @var array<string,array{filepath:string,filename:string,content:string}> */
