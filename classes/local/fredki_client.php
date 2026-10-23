@@ -26,6 +26,12 @@ namespace mod_fredkicourseimport\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Provides authenticated requests to the FredKI service.
+ *
+ * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class fredki_client {
     protected $baseurl;
     protected $workspace;
