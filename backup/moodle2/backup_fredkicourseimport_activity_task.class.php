@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Defines FredKI activity backup processing.
+ *
+ * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class backup_fredkicourseimport_activity_task extends backup_activity_task {
     /**
      * Define activity backup or restore settings.
