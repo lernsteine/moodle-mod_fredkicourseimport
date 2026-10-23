@@ -29,6 +29,12 @@ namespace mod_fredkicourseimport\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Manages user-bound FredKI access tokens and optional credentials.
+ *
+ * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 final class token_manager {
     public const DEFAULT_LIFETIME = 28800;
     private const RENEW_BEFORE = 300;
