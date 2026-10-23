@@ -21,6 +21,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Verifies that one concrete Moodle source has really ceased to exist.
  * A missing generated FredKI export is NEVER proof of deletion.
+  * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class source_deletion_guard {
     /**
