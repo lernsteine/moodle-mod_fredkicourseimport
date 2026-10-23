@@ -28,6 +28,12 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/fredkicourseimport/classes/local/fredki_client.php');
 require_once($CFG->dirroot . '/mod/fredkicourseimport/classes/local/license_manager.php');
 
+/**
+ * Defines the Moodle settings form for the FredKI Course Import activity.
+ *
+ * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mod_fredkicourseimport_mod_form extends moodleform_mod {
     /**
      * Define the FredKI activity settings form.
