@@ -21,6 +21,12 @@
  * @package mod_fredkicourseimport
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+/**
+ * Defines the content included in a FredKI activity backup.
+ *
+ * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class backup_fredkicourseimport_activity_structure_step extends backup_activity_structure_step {
     /**
      * Define the Moodle backup or restore structure.
