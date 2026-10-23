@@ -21,6 +21,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Explicitly confirm the exact source selection (and remote mapping snapshot) being revoked.
  * A missing generated export or an unrelated deleted mapping never grants deletion consent.
+  * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class deselection_guard {
     /**
