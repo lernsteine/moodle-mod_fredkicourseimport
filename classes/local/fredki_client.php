@@ -624,7 +624,7 @@ class fredki_client {
      * Ensure tag key/value pairs exist and return their FredKI tag ids.
      *
      * @param string $knowledgeid Knowledge base id.
-     * @param array<int,array{key:string,value:string}> $tags Tags to create/find.
+     * @param array $tags List of FredKI tag key/value pairs.
      * @return string[] Tag ids.
      */
     public function ensure_tags(string $knowledgeid, array $tags): array {
