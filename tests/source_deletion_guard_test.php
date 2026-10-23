@@ -21,7 +21,13 @@ namespace mod_fredkicourseimport;
 defined('MOODLE_INTERNAL') || die();
 
 /** The default protection must never authorise a 112-document mass deletion. */
-final class source_deletion_guard_test extends \advanced_testcase {
+final /**
+ * Regression tests for source deletion guard test.
+ *
+ * @copyright 2026 lernsteine.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class source_deletion_guard_test extends \advanced_testcase {
     public function test_destructive_batch_is_bounded(): void {
         $this->assertTrue(\mod_fredkicourseimport\local\source_deletion_guard::automatic_batch_allowed(1, 112));
         $this->assertTrue(\mod_fredkicourseimport\local\source_deletion_guard::automatic_batch_allowed(3, 112));
