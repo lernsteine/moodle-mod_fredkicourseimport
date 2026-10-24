@@ -3,6 +3,7 @@
 - **Reife:** Von Release Candidate (`MATURITY_RC`) auf stabil (`MATURITY_STABLE`) umgestellt; funktional identisch mit 1.7.0-rc7.
 - **Upgrade:** Reihenfolge der Upgrade-Savepoints korrigiert (`2026042810` → `20260428010`).
 - **Sprachdateien:** Doppelt definierten String `configureactivityfirst` entfernt (der wirksame, spätere Text bleibt unverändert).
+- **Marketplace:** Nur noch englische Sprachdatei im Plugin (Deutsch folgt über AMOS/lang.moodle.org), deutsche Code-Kommentare übersetzt, README auf Englisch neu geschrieben.
 - **Dokumentation:** Fehlende `@param`/`@return`-Angaben in `classes/local` ergänzt; Moodle-CI (Codestil, Savepoints, PHPDoc, PHPUnit) läuft fehlerfrei.
 
 ---

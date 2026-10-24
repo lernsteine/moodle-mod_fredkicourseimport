@@ -1,121 +1,75 @@
-# FredKI-Kursdaten
+# FredKI course data (mod_fredkicourseimport)
 
-Moodle activity module for synchronising selected Moodle course content with a FredKI knowledge base and optionally displaying a FredKI chatbot on the course page.
+Moodle activity module that synchronises selected Moodle course content with a
+FredKI knowledge base, so that a FredKI chatbot can answer questions based on the
+course material.
 
-## Main features
+## Requirements
 
-- FredKI login inside the activity settings.
-- Knowledge base selection from FredKI.
-- Agent selection from FredKI.
-- Course-content synchronisation into the selected knowledge base.
-- Optional chatbot display on the course page.
+- Moodle 4.5 or later (tested with Moodle 5.2 on PostgreSQL and MariaDB).
+- A FredKI account (username and password) and at least one FredKI knowledge base.
+  FredKI is an external service with its own terms of use and is not part of this
+  plugin. To obtain an account, please contact lernsteine.com.
+- The HTTPS base URL of your FredKI installation (configured by the site administrator).
+
+## Features
+
+- FredKI login inside the activity settings, with an optional "remember login"
+  checkbox. Remembered passwords are encrypted with Moodle `core\encryption`.
+- Selection of the target FredKI knowledge base.
+- Selection of the course content to synchronise: files (PDF, Office documents),
+  section texts, activity descriptions, pages, text areas, books, lessons, glossaries,
+  URLs, H5P and SCORM activities.
+- "Update changes" action that only transfers new, changed or deleted content.
+- Moodle section hierarchy (including subsections) and custom fields are added as
+  searchable metadata and FredKI tags.
 
 ## Installation
 
-Copy the plugin directory to:
+1. Copy the plugin directory to `mod/fredkicourseimport` (or install the ZIP via
+   *Site administration > Plugins > Install plugins*).
+2. Run the Moodle upgrade from *Site administration > Notifications*.
+3. Go to *Site administration > Plugins > Activity modules > FredKI course data* and
+   enter the FredKI base URL.
 
-```text
-mod/fredkicourseimport
-```
+## Usage
 
-Then run the Moodle upgrade process from Site administration.
+1. Add the activity "FredKI course data" to a course.
+2. In the activity settings, log in with your FredKI account and choose the knowledge base.
+3. Open the activity, select the course content to transfer and start the import.
+4. Later, use "Update changes" to keep the knowledge base in sync with the course.
 
-## Licensing
+## Privacy and security
 
-This plugin is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License v3 or (at your option) any later version, as published by the Free Software Foundation. No license key is required. The FredKI service the plugin connects to is a separate service with its own terms.
+- The plugin declares all stored and externally transmitted data through the Moodle
+  Privacy API, including the transfer of course content and login data to FredKI.
+- FredKI passwords are never stored in the activity record or in course backups.
+  If "remember login" is used, the password is stored encrypted in the
+  `fredkicourseimport_auth` table together with a short-lived, user-bound access token.
+- All configuration endpoints require a logged-in user, a valid session key and the
+  relevant capabilities. Import actions require `mod/fredkicourseimport:sync`.
+- Course backups exclude passwords, tokens, user authorisations and external FredKI
+  document identifiers. After a restore, the FredKI connection must be set up again.
+- Debug logging should not be enabled on production sites.
+- The Moodle data directory and encryption key must be preserved when moving a site;
+  otherwise users need to log in to FredKI again.
 
-## Notes
+## Bug reports and support
 
-The chatbot is displayed through the public FredKI embed script. Agent configuration itself remains in FredKI.
+Please report issues at
+https://github.com/lernsteine/moodle-mod_fredkicourseimport/issues
 
+## License
 
-## Security and privacy
+2026 lernsteine.com
 
-AJAX configuration endpoints require valid Moodle login, session keys and appropriate
-capabilities. The import actions require `mod/fredkicourseimport:sync` and POST with a
-valid session key. FredKI login passwords are not stored in activity records. Since 1.6.7-rc2,
-renewal credentials are stored *encrypted* via Moodle core\encryption in the
-`fredkicourseimport_auth` table, alongside a user-bound temporary access token. The plugin declares its stored and externally
-transmitted data through the Moodle Privacy API. Debug logging should not remain
-enabled on production sites.
+This program is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software Foundation,
+either version 3 of the License, or (at your option) any later version.
 
-## Backup and restore
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-The plugin implements Moodle activity backup and restore. Credentials and tokens are excluded, and restored mappings are prepared for a fresh FredKI synchronization.
-
-
-## 1.4.0-rc2 regression recovery
-
-This release restores the proven synchronous import and credential-list workflow from 1.3.0 after the experimental RC1 AMD and ad-hoc-task conversion caused runtime regressions. The secure token model, Privacy API, database migration, HTTP wrapper, and backup/restore improvements remain in place. A future background-processing conversion must be introduced only after full Moodle runtime testing and correctly compiled AMD assets are available.
-
-
-## Security and privacy notes
-
-- Since 1.6.7-rc2, FredKI passwords are encrypted at rest for automatic re-login, outside the activity table. Existing passwords cannot be migrated because they were never stored.
-- The plugin stores a user-scoped FredKI access token with a short local expiry; expiring tokens are renewed instead of deleting authorisation. Passwords and tokens are excluded from course backups and privacy exports.
-- Configuration AJAX endpoints require POST, a valid Moodle session key, the relevant course context, and `mod/fredkicourseimport:addinstance`.
-- User-facing errors are neutral; complete external API responses are not stored or displayed.
-- Course backups exclude passwords, tokens, user authorisations, and external FredKI document identifiers.
-- Removing a file schedules or performs its FredKI document deletion through the normal plugin workflow. If an entire activity is deleted before that workflow completes, external cleanup may need to be completed administratively in FredKI.
-
-## Supported versions
-
-This test candidate targets Moodle **5.2**. Moodle **5.1** is a secondary test goal;
-Moodle 5.3 is not verified. The `requires` declaration is inherited from the
-original plugin and does not constitute evidence of testing older Moodle versions.
-Installation, upgrade, access checks, backup/restore and FredKI API interactions
-must be verified on a real Moodle 5.2 test instance before production use.
-
-## Search-optimierter Import (ab 1.6.0)
-
-FredKI-Einträge werden so aufgebaut, dass MaxKB Volltext-, Vektor- und Hybridsuche
-stärker von den unterscheidenden Moodle-Metadaten profitieren:
-
-- Abschnittstitel = tatsächlicher Aktivitäts-/Materialname
-- Custom Fields/Tags (`Materialtyp`, `Zielgruppe`, `Thema` usw.) direkt am Anfang
-- kompaktere Metadaten ohne doppelte Moodle-Quellangaben
-- direkter Aktivitätslink und Kurslink bleiben erhalten
-
-Generische Fragen wie `Welche Buchtipps gibt es?` werden bewusst **nicht** mehr an
-jedes Material gehängt. MaxKB indexiert verknüpfte Fragen separat; identische Fragen
-an vielen Dokumenten können sonst unterschiedliche Materialien künstlich ähnlich
-machen. Materialtyp, Zielgruppe, Thema und Abschnittshierarchie bleiben stattdessen
-im normalen Abschnittstext und als echte FredKI-Tags durchsuchbar.
-
-
-## Abschnittshierarchie (ab 1.6.1)
-
-Bei Moodle-Unterabschnitten (`mod_subsection`, ab Moodle 4.5) übernimmt FredKI nicht
-mehr nur den unmittelbar zugeordneten Abschnitt. Der Import rekonstruiert auch die
-übergeordneten Moodle-Abschnitte. Ein Material kann dadurch beispielsweise so
-erscheinen:
-
-```text
-Wo ist mein Hut?
-Materialtyp: Buch
-Übergeordneter Abschnitt: Büchertipps – Spannend bis lustig – Lesestoff, der motiviert
-Unterabschnitt: Bücher für jüngere Grundschulkinder
-Beschreibung: ...
-```
-
-Bei normalen, nicht verschachtelten Kursabschnitten wird weiterhin nur
-`Abschnitt: ...` ausgegeben. Die Hierarchie fließt auch in die Metadaten-Fingerprints
-ein, damit Änderungen an Abschnittsüberschriften über „nur Änderungen aktualisieren“
-erkannt werden.
-
-
-## Suchverhalten
-
-CourseImport erzeugt **keine verknüpften Fragen (`problem_list`)**.
-
-## 1.6.7-rc2: Verbindung und Backup-Korrektur (Moodle 5.2)
-
-- Aktivitäts-Backup lädt `backup_fredkicourseimport_stepslib.php` explizit; gleicher Fix für Restore.
-- Kurze FredKI-Zugriffstokens werden automatisch durch eine Neuanmeldung erneuert.
-- Das FredKI-Kennwort wird für diese Erneuerung verschlüsselt mit `core\encryption` und dem schreibgeschützten Moodle-Server-Schlüssel in der Auth-Tabelle gespeichert, nie in der Aktivität oder im Kursbackup.
-- Bei bereits installierten Versionen sind die alten Passwörter **nicht wiederherstellbar**. Nach dem Upgrade einmalig über die Einstellungen der bestehenden Aktivität Benutzername und Kennwort neu eingeben. Wissensbasis-ID, Kurszuordnung und FredKI-Dokumente nicht neu anlegen.
-- Mit gültiger gespeicherter Authentifizierung bleiben alle Zuordnungen bei Codeupdates erhalten (normales Moodle Plugin-Upgrade, **keine Deinstallation**).
-- Bei einem vollständigen Kurs-Restore bleiben FredKI-Zugangsdaten bewusst aus Sicherheitsgründen ausgeschlossen und die Ziel-Wissensbasis wird nicht automatisch übernommen.
-- Moodle-Dataroot und Verschlüsselungsschlüssel dürfen bei Serverumzügen nicht verlorengehen; sonst muss erneut autorisiert werden.
-
-Diese Version ist ein RC-/Testkandidat und benötigt einen Integrationstest in einer echten Moodle-5.2-Umgebung.
+You should have received a copy of the GNU General Public License along with this
+program. If not, see https://www.gnu.org/licenses/.

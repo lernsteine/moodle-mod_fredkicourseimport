@@ -1153,8 +1153,8 @@ ENDE EINTRAG";
      * @return string The result.
      */
     protected function derive_title(string $text, string $filename): string {
-        // Für PDF/DOCX niemals zufällige OCR-/PDF-Zeilen als Titel verwenden.
-        // Der Dateiname ist bei Moodle-Materialien meist die stabilste Quelle.
+        // Never use random OCR/PDF lines as the title for PDF/DOCX files.
+        // For Moodle materials, the file name is usually the most stable source.
         $filetitle = $this->clean_title(pathinfo($filename, PATHINFO_FILENAME));
         $lower = mb_strtolower($filetitle);
 
@@ -1180,7 +1180,7 @@ ENDE EINTRAG";
             return $filetitle;
         }
 
-        // Fallback: nur sehr starke Kandidaten aus dem Text verwenden.
+        // Fallback: only use very strong candidates from the text.
         foreach (preg_split('/\n+|(?<=[.!?])\s+/u', $text) as $line) {
             $line = $this->clean_title($line);
             if ($line === '' || mb_strlen($line) < 8 || mb_strlen($line) > 90) {

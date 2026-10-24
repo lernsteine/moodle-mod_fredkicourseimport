@@ -233,9 +233,9 @@ class mod_fredkicourseimport_mod_form extends moodleform_mod {
                 'mb-3'
             ));
 
-            // Wichtig: Das echte Moodle-Select bleibt im Formular. Es wird nur optisch
-            // ausgeblendet und per Karten synchronisiert. Dadurch akzeptiert Moodle den
-            // gespeicherten Wert genauso wie in der funktionierenden Ausgangsversion.
+            // Important: the real Moodle select element stays in the form. It is only hidden
+            // visually and kept in sync with the cards, so Moodle accepts the saved value
+            // exactly as in the original working version.
             $mform->addElement(
                 'select',
                 'knowledgeid',
@@ -297,8 +297,8 @@ class mod_fredkicourseimport_mod_form extends moodleform_mod {
             ]]);
         }
 
-        // Agentenauswahl ist deaktiviert. Hidden-Felder verhindern undefinierte Werte
-        // in der bestehenden Speicherlogik.
+        // Agent selection is disabled. Hidden fields prevent undefined values
+        // in the existing save logic.
         $mform->addElement('hidden', 'agentid', '');
         $mform->setType('agentid', PARAM_TEXT);
         $mform->addElement('hidden', 'fredkichaturl', '');
