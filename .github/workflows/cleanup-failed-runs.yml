@@ -1,0 +1,35 @@
+name: Cleanup completed failed GitHub Actions runs
+
+on:
+  push:
+    paths:
+      - .github/workflows/cleanup-failed-runs.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Remove completed non-success runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          CURRENT_RUN_ID: ${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --paginate "repos/$REPO/actions/runs?per_page=100" --jq '.workflow_runs[] | [.id, .status, .conclusion] | @tsv' > "$RUNNER_TEMP/non-success-runs.tsv"
+          removed=0
+          while IFS=$'\t' read -r id status conclusion; do
+            if [[ "$id" == "$CURRENT_RUN_ID" || "$status" != "completed" || ! "$conclusion" =~ ^(failure|cancelled|action_required|timed_out|startup_failure)$ ]]; then
+              continue
+            fi
+            gh api -X DELETE "repos/$REPO/actions/runs/$id"
+            removed=$((removed + 1))
+          done < "$RUNNER_TEMP/non-success-runs.tsv"
+          echo "Deleted $removed completed non-success runs."

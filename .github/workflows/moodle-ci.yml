@@ -1,0 +1,86 @@
+name: FredKI original RC15 — Moodle 5.2 baseline
+
+on:
+  push:
+    branches:
+      - main
+      - review/original-rc15-clean-baseline
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Moodle 5.2 / PHP 8.3 / ${{ matrix.db }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        db: [pgsql, mariadb]
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mariadb-admin ping --host=127.0.0.1 --user=root --silent"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: plugin
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          extensions: mbstring, intl, zip, gd, xml, pgsql, pdo_pgsql, mysqli, pdo_mysql, sodium
+          ini-values: max_input_vars=5000, opcache.enable_cli=1
+          coverage: none
+      - name: Install Moodle plugin CI
+        run: |
+          composer create-project -n --prefer-dist moodlehq/moodle-plugin-ci ci '^4'
+          echo "$GITHUB_WORKSPACE/ci/bin" >> "$GITHUB_PATH"
+          echo "$GITHUB_WORKSPACE/ci/vendor/bin" >> "$GITHUB_PATH"
+          sudo locale-gen en_AU.UTF-8
+      - name: Install Moodle 5.2 test environment
+        id: moodle_install
+        env:
+          DB: ${{ matrix.db }}
+          MOODLE_BRANCH: MOODLE_502_STABLE
+        run: |
+          if [ "$DB" = "pgsql" ]; then
+            moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --db-user=postgres --db-pass=postgres
+          else
+            moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --db-user=root
+          fi
+      - name: PHP syntax check
+        run: moodle-plugin-ci phplint
+      - name: Moodle plugin validation
+        run: moodle-plugin-ci validate
+      - name: Moodle coding style
+        run: moodle-plugin-ci codechecker
+      - name: Moodle upgrade savepoints
+        if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
+        run: moodle-plugin-ci savepoints
+      - name: PHPDoc check
+        if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
+        run: moodle-plugin-ci phpdoc
+      - name: PHPUnit
+        if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
+        run: moodle-plugin-ci phpunit
