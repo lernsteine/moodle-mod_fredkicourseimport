@@ -39,11 +39,11 @@ final class section_hierarchy_helper_test extends \advanced_testcase {
      */
     public function test_parent_path_is_compact_and_ordered(): void {
         $this->assertSame(
-            'Büchertipps › Bücher für Grundschulkinder',
+            'Module 1 › Unit 2',
             section_hierarchy_helper::format_parents([
-                ' Büchertipps ',
+                ' Module 1 ',
                 '',
-                'Bücher für Grundschulkinder',
+                'Unit 2',
             ])
         );
     }

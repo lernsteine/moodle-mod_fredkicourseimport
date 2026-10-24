@@ -4,6 +4,7 @@
 - **Upgrade:** Reihenfolge der Upgrade-Savepoints korrigiert (`2026042810` → `20260428010`).
 - **Sprachdateien:** Doppelt definierten String `configureactivityfirst` entfernt (der wirksame, spätere Text bleibt unverändert).
 - **Marketplace:** Nur noch englische Sprachdatei im Plugin (Deutsch folgt über AMOS/lang.moodle.org), deutsche Code-Kommentare übersetzt, README auf Englisch neu geschrieben.
+- **Allgemein ausgerichtet:** Ungenutzte, themenspezifische Hilfsfunktionen in `sync_manager` entfernt (feste Kategorien und Schlagwörter wie „Vereinsgründung und Vereinsrecht“ oder „Lesestunden gestalten“); keine Auswirkung auf den Import.
 - **Dokumentation:** Fehlende `@param`/`@return`-Angaben in `classes/local` ergänzt; Moodle-CI (Codestil, Savepoints, PHPDoc, PHPUnit) läuft fehlerfrei.
 
 ---
