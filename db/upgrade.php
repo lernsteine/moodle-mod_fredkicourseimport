@@ -78,7 +78,7 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 20260428006, 'fredkicourseimport');
     }
 
-    if ($oldversion < 2026042810) {
+    if ($oldversion < 20260428010) {
         $table = new xmldb_table('fredkicourseimport');
         $field = new xmldb_field('fredkichaturl', XMLDB_TYPE_TEXT, null, null, null, null, null, 'fredkiembedcode');
 
@@ -86,7 +86,7 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_mod_savepoint(true, 2026042810, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 20260428010, 'fredkicourseimport');
     }
 
     if ($oldversion < 202607290001) {

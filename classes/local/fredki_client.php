@@ -359,6 +359,9 @@ class fredki_client {
     /**
      * Try known FredKI/MaxKB public access endpoints. Some installations do not expose
      * the public chat token in the normal application list/detail response.
+     *
+     * @param string $agentid FredKI agent id.
+     * @return array
      */
     protected function get_agent_public_access_for_embed(string $agentid): array {
         if ($agentid === '') {
@@ -696,7 +699,7 @@ class fredki_client {
      * Ensure tag key/value pairs exist and return their FredKI tag ids.
      *
      * @param string $knowledgeid Knowledge base id.
-     * @param array<int,array{key:string,value:string}> $tags Tags to create/find.
+     * @param array $tags Tags to create/find.
      * @return string[] Tag ids.
      */
     public function ensure_tags(string $knowledgeid, array $tags): array {

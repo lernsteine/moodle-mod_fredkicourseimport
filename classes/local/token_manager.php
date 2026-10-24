@@ -92,6 +92,10 @@ final class token_manager {
     /**
      * Check whether this activity can authenticate without contacting FredKI.
      * Used for rendering view.php without a network request on page load.
+     *
+     * @param int $activityid FredKI course import activity instance id.
+     * @param int $userid User id.
+     * @return bool
      */
     public static function has_credentials(int $activityid, int $userid): bool {
         global $DB;
@@ -110,6 +114,10 @@ final class token_manager {
      * Return a valid access token, renewing it when possible. Older installations
      * have no encrypted password yet: preserve their records so users can reconnect
      * without losing the target knowledge base or synchronized mapping data.
+     *
+     * @param int $activityid FredKI course import activity instance id.
+     * @param int $userid User id.
+     * @return \stdClass|null
      */
     public static function get(int $activityid, int $userid): ?\stdClass {
         global $DB;
@@ -129,6 +137,10 @@ final class token_manager {
 
     /**
      * Force a new FredKI login (e.g. to recover an unexpectedly revoked token).
+     *
+     * @param int $activityid FredKI course import activity instance id.
+     * @param int $userid User id.
+     * @return \stdClass|null
      */
     public static function renew(int $activityid, int $userid): ?\stdClass {
         global $DB;

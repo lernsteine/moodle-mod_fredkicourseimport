@@ -60,7 +60,6 @@ $string['availableknowledgebases'] = 'Available:';
 $string['chooseknowledgebase'] = 'Please select a knowledge base';
 $string['loadknowledgebases'] = 'Load knowledge base';
 $string['knowledgeidrequired'] = 'Please select a knowledge base.';
-$string['configureactivityfirst'] = 'Please first save FredKI username, password and knowledge base in this activity settings page.';
 $string['activitymappinglockedinfo'] = 'The mapping has already been set up and can no longer be changed. Create the activity again if needed.';
 $string['authorizedby'] = 'Authorized by';
 $string['importallcoursecontent'] = 'Send all course data to FredKI';

@@ -60,7 +60,6 @@ $string['availableknowledgebases'] = 'Verfügbar:';
 $string['chooseknowledgebase'] = 'Bitte Wissensbasis auswählen';
 $string['loadknowledgebases'] = 'Wissensbasis laden';
 $string['knowledgeidrequired'] = 'Bitte eine Wissensbasis auswählen.';
-$string['configureactivityfirst'] = 'Bitte zuerst in den Einstellungen dieser Aktivität FredKI-Benutzername, Kennwort und Wissensbasis speichern.';
 $string['activitymappinglockedinfo'] = 'Die Zuordnung wurde bereits eingerichtet und kann nicht mehr geändert werden. Erstellen Sie bei Bedarf die Aktivität neu.';
 $string['authorizedby'] = 'Autorisiert durch';
 $string['importallcoursecontent'] = 'Alle Kursdaten zu FredKI';
