@@ -1,3 +1,12 @@
+# 1.7.0 (2026-10-24) – Stabile Version
+
+- **Reife:** Von Release Candidate (`MATURITY_RC`) auf stabil (`MATURITY_STABLE`) umgestellt; funktional identisch mit 1.7.0-rc7.
+- **Upgrade:** Reihenfolge der Upgrade-Savepoints korrigiert (`2026042810` → `20260428010`).
+- **Sprachdateien:** Doppelt definierten String `configureactivityfirst` entfernt (der wirksame, spätere Text bleibt unverändert).
+- **Dokumentation:** Fehlende `@param`/`@return`-Angaben in `classes/local` ergänzt; Moodle-CI (Codestil, Savepoints, PHPDoc, PHPUnit) läuft fehlerfrei.
+
+---
+
 # 1.7.0-rc7 (2026-10-24) – Marketplace-Vorbereitung
 
 - **JavaScript:** Inline-Skripte und `selection.js` durch AMD-Module (`amd/src/knowledgebases.js`, `amd/src/selection.js`) ersetzt, geladen über `js_call_amd`. Die Dateien in `amd/build` sind von Hand im Moodle-Format erzeugt; vor einer Einreichung einmal `grunt amd` ausführen.
