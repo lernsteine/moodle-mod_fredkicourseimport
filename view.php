@@ -32,8 +32,10 @@ $id = required_param('id', PARAM_INT);
 $importall = optional_param('importall', 0, PARAM_BOOL);
 $refreshcurrent = optional_param('refreshcurrent', 0, PARAM_BOOL);
 $selectcontent = optional_param('selectcontent', 0, PARAM_BOOL);
-$selectionmode = optional_param('selectionmode', 'visible', PARAM_ALPHA);
-if (!in_array($selectionmode, ['visible', 'all', 'none'], true)) {
+$selectionmode = optional_param('selectionmode', '', PARAM_ALPHA);
+// An explicit mode (toolbar link without JavaScript) overrides the saved selection.
+$selectionmodeexplicit = in_array($selectionmode, ['visible', 'all', 'none'], true);
+if (!$selectionmodeexplicit) {
     $selectionmode = 'visible';
 }
 
@@ -242,13 +244,15 @@ $targetcm = get_fast_modinfo($course)->get_cm($cm->id);
  * @param cm_info $targetcm The targetcm.
  * @param stdClass $activity The FredKI activity record.
  * @param string $selectionmode The selectionmode.
+ * @param bool $explicitmode Whether the selection mode was explicitly requested and overrides saved choices.
  * @return string The result.
  */
 function fredkicourseimport_render_activity_selection(
     stdClass $course,
     cm_info $targetcm,
     stdClass $activity,
-    string $selectionmode = 'visible'
+    string $selectionmode = 'visible',
+    bool $explicitmode = false
 ): string {
     global $DB, $OUTPUT, $PAGE;
 
@@ -301,8 +305,11 @@ function fredkicourseimport_render_activity_selection(
         'id' => $targetcm->id,
         'selectcontent' => 1,
     ]);
-    $html .= html_writer::start_div('fredki-selection-toolbar');
-    $html .= html_writer::tag(
+    // The toolbar is rendered after all checkboxes, so the highlighted mode matches the real state.
+    $toolbarplaceholder = '<!-- fredki-selection-toolbar -->';
+    $html .= $toolbarplaceholder;
+    $toolbar = html_writer::start_div('fredki-selection-toolbar');
+    $toolbar .= html_writer::tag(
         'span',
         get_string('selection', 'mod_fredkicourseimport') . ':',
         ['class' => 'fredki-selection-toolbar-label']
@@ -315,17 +322,15 @@ function fredkicourseimport_render_activity_selection(
         ] as $mode => $label
     ) {
         if ($mode !== 'visible') {
-            $html .= html_writer::tag('span', '|', ['class' => 'fredki-selection-separator']);
+            $toolbar .= html_writer::tag('span', '|', ['class' => 'fredki-selection-separator']);
         }
         $modeurl = new moodle_url($selectionbaseurl, ['selectionmode' => $mode]);
-        $classes = 'fredki-selection-link' . ($selectionmode === $mode ? ' is-active' : '');
-        $html .= html_writer::link($modeurl, $label, [
-            'class' => $classes,
+        $toolbar .= html_writer::link($modeurl, $label, [
+            'class' => 'fredki-selection-link {{active-' . $mode . '}}',
             'data-selection-mode' => $mode,
-            'aria-current' => $selectionmode === $mode ? 'page' : null,
         ]);
     }
-    $html .= html_writer::end_div();
+    $toolbar .= html_writer::end_div();
 
     $bulkcompleteid = 'fredki-bulk-contentmode-complete';
     $bulkreferenceid = 'fredki-bulk-contentmode-reference';
@@ -369,7 +374,11 @@ function fredkicourseimport_render_activity_selection(
         'value' => 1,
         'class' => 'fredki-select-item',
     ];
-    if (isset($savedselection[0])) {
+    if ($explicitmode) {
+        if ($selectionmode !== 'none') {
+            $sectioncheckboxattrs['checked'] = 'checked';
+        }
+    } else if (isset($savedselection[0])) {
         if (!empty($savedselection[0]->selected)) {
             $sectioncheckboxattrs['checked'] = 'checked';
         }
@@ -392,6 +401,7 @@ function fredkicourseimport_render_activity_selection(
     );
     $html .= html_writer::end_div();
 
+    $selectionstates = [];
     foreach ($sections as $section) {
         $sectioncms = [];
         foreach ($modinfo->cms as $sourcecm) {
@@ -432,11 +442,12 @@ function fredkicourseimport_render_activity_selection(
                 'data-visible-participant' => $isvisibleforparticipants ? '1' : '0',
             ];
             $sourcecmid = (int)$sourcecm->id;
-            if (isset($savedselection[$sourcecmid])) {
+            if ($explicitmode) {
+                $shouldcheck = $selectionmode === 'all'
+                    || ($selectionmode === 'visible' && $isvisibleforparticipants);
+            } else if (isset($savedselection[$sourcecmid])) {
                 $shouldcheck = !empty($savedselection[$sourcecmid]->selected);
-            } else if ($hassavedselection) {
-                $shouldcheck = false;
-            } else if (array_key_exists($sourcecmid, $existingselected)) {
+            } else if (!$hassavedselection && array_key_exists($sourcecmid, $existingselected)) {
                 $shouldcheck = !empty($existingselected[$sourcecmid]);
             } else {
                 $shouldcheck = $selectionmode === 'all'
@@ -445,6 +456,7 @@ function fredkicourseimport_render_activity_selection(
             if ($shouldcheck) {
                 $checkboxattrs['checked'] = 'checked';
             }
+            $selectionstates[] = ['visible' => $isvisibleforparticipants, 'checked' => $shouldcheck];
             $hiddennote = $isvisibleforparticipants ? '' : html_writer::tag(
                 'span',
                 get_string('hiddenforparticipants', 'mod_fredkicourseimport'),
@@ -537,6 +549,36 @@ function fredkicourseimport_render_activity_selection(
     $html .= html_writer::end_div();
 
     $html .= html_writer::end_tag('form');
+
+    // Highlight the toolbar mode that matches the rendered checkboxes (none if the selection is custom).
+    $sectionchecked = !empty($sectioncheckboxattrs['checked']);
+    $matchesmode = static function (string $mode) use ($selectionstates, $sectionchecked): bool {
+        if ($sectionchecked !== ($mode !== 'none')) {
+            return false;
+        }
+        foreach ($selectionstates as $state) {
+            $expected = $mode === 'all' || ($mode === 'visible' && $state['visible']);
+            if ($state['checked'] !== $expected) {
+                return false;
+            }
+        }
+        return true;
+    };
+    $activemode = '';
+    foreach (['visible', 'all', 'none'] as $mode) {
+        if ($matchesmode($mode)) {
+            $activemode = $mode;
+            break;
+        }
+    }
+    foreach (['visible', 'all', 'none'] as $mode) {
+        $toolbar = str_replace(
+            '{{active-' . $mode . '}}',
+            $mode === $activemode ? 'is-active" aria-current="page' : '',
+            $toolbar
+        );
+    }
+    $html = str_replace($toolbarplaceholder, $toolbar, $html);
     $PAGE->requires->js_call_amd('mod_fredkicourseimport/selection', 'init');
     return $html;
 }
@@ -586,7 +628,13 @@ if (!$isconfigured) {
 }
 
 if ($selectcontent && has_capability('mod/fredkicourseimport:sync', $context)) {
-    echo fredkicourseimport_render_activity_selection($course, $targetcm, $activity, $selectionmode);
+    echo fredkicourseimport_render_activity_selection(
+        $course,
+        $targetcm,
+        $activity,
+        $selectionmode,
+        $selectionmodeexplicit
+    );
     echo $OUTPUT->footer();
     exit;
 }

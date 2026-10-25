@@ -94,6 +94,26 @@ export const init = () => {
         updateActiveLink(mode);
     }
 
+    // Highlight the toolbar mode that matches the current checkboxes (none for a custom selection).
+    function matchesMode(mode) {
+        if (sectionCheckbox && sectionCheckbox.checked !== (mode !== 'none')) {
+            return false;
+        }
+        return Array.from(activityCheckboxes).every(function(checkbox) {
+            const expected = mode === 'all' || (mode === 'visible' && checkbox.dataset.visibleParticipant === '1');
+            return checkbox.checked === expected;
+        });
+    }
+
+    function refreshActiveLink() {
+        const mode = ['visible', 'all', 'none'].find(matchesMode) || '';
+        updateActiveLink(mode);
+    }
+
+    form.querySelectorAll('.fredki-select-item').forEach(function(checkbox) {
+        checkbox.addEventListener('change', refreshActiveLink);
+    });
+
     links.forEach(function(link) {
         link.addEventListener('click', function(event) {
             const mode = link.dataset.selectionMode;

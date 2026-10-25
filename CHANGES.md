@@ -1,9 +1,18 @@
+# 1.7.1 (2026-10-25) – Korrekturen
+
+- **JavaScript:** Source-Maps für `amd/build` ergänzt. Ohne sie lädt Moodle im Entwicklermodus (JS-Cache aus) die ES-Quelldateien aus `amd/src`, die der Browser nicht ausführen kann. Dadurch funktionierten Wissensbasis-Auswahl und Inhaltsauswahl nicht.
+- **Inhaltsauswahl:** Neue, noch nie gespeicherte Aktivitäten folgen der Auswahl „Für Teilnehmende sichtbar“. Die hervorgehobene Auswahl entspricht jetzt immer dem tatsächlichen Zustand der Häkchen (bei individueller Auswahl ist keine hervorgehoben).
+- **Formular:** „Gespeicherte FredKI-Anmeldung verwenden“ ist beim ersten Aufruf nicht mehr vorausgewählt.
+- **Sprache:** Deutsche Sprachdatei (`lang/de`) wieder enthalten.
+
+---
+
 # 1.7.0 (2026-10-24) – Stabile Version
 
 - **Reife:** Von Release Candidate (`MATURITY_RC`) auf stabil (`MATURITY_STABLE`) umgestellt; funktional identisch mit 1.7.0-rc7.
 - **Upgrade:** Reihenfolge der Upgrade-Savepoints korrigiert (`2026042810` → `20260428010`).
 - **Sprachdateien:** Doppelt definierten String `configureactivityfirst` entfernt (der wirksame, spätere Text bleibt unverändert).
-- **Marketplace:** Nur noch englische Sprachdatei im Plugin (Deutsch folgt über AMOS/lang.moodle.org), deutsche Code-Kommentare übersetzt, README auf Englisch neu geschrieben.
+- **Marketplace:** Deutsche Code-Kommentare übersetzt, README auf Englisch neu geschrieben.
 - **Allgemein ausgerichtet:** Ungenutzte, themenspezifische Hilfsfunktionen in `sync_manager` entfernt (feste Kategorien und Schlagwörter wie „Vereinsgründung und Vereinsrecht“ oder „Lesestunden gestalten“); keine Auswirkung auf den Import.
 - **Dokumentation:** Fehlende `@param`/`@return`-Angaben in `classes/local` ergänzt; Moodle-CI (Codestil, Savepoints, PHPDoc, PHPUnit) läuft fehlerfrei.
 

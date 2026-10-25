@@ -145,7 +145,7 @@ class mod_fredkicourseimport_mod_form extends moodleform_mod {
                     get_string('fredkiusesaved_desc', 'mod_fredkicourseimport', s($savedlogin->username))
                 );
                 $mform->addHelpButton('fredkiusesaved', 'fredkiusesaved', 'mod_fredkicourseimport');
-                $mform->setDefault('fredkiusesaved', 1);
+                $mform->setDefault('fredkiusesaved', 0);
             }
             $mform->addElement('text', 'fredkiusername', get_string('fredkiusername', 'mod_fredkicourseimport'), [
                 'size' => 40,
