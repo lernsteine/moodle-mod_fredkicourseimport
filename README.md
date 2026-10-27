@@ -10,7 +10,8 @@ course material.
 - A FredKI account (username and password) and at least one FredKI knowledge base.
   FredKI is an external service with its own terms of use and is not part of this
   plugin. To obtain an account, please contact lernsteine.com.
-- The HTTPS base URL of your FredKI installation (configured by the site administrator).
+- The HTTPS base URL of your FredKI installation (configured by the site administrator),
+  for example `https://fredki.lernsteine.com`.
 
 ## Features
 
@@ -30,7 +31,8 @@ course material.
    *Site administration > Plugins > Install plugins*).
 2. Run the Moodle upgrade from *Site administration > Notifications*.
 3. Go to *Site administration > Plugins > Activity modules > FredKI course data* and
-   enter the FredKI base URL.
+   enter the FredKI base URL. The default login path `/admin/api/user/login` normally
+   does not need to be changed.
 
 ## Usage
 
