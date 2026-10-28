@@ -21,6 +21,9 @@ course material.
 - Selection of the course content to synchronise: files (PDF, Office documents),
   section texts, activity descriptions, pages, text areas, books, lessons, glossaries,
   URLs, H5P and SCORM activities.
+- Glossaries in complete mode: every approved entry becomes its own FredKI document,
+  named after the concept and linking directly to the entry. The glossary description
+  is transferred once as a separate overview document.
 - "Update changes" action that only transfers new, changed or deleted content.
 - Moodle section hierarchy (including subsections) and custom fields are added as
   searchable metadata and FredKI tags.
