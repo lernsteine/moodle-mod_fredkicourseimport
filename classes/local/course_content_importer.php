@@ -431,27 +431,34 @@ class course_content_importer {
         if (!$glossary) {
             return $this->add_single_metadata_export($course, $sourcecm, $summary, 'glossaries');
         }
-        $entries = $DB->get_records('glossary_entries', ['glossaryid' => $glossary->id, 'approved' => 1], 'concept ASC');
-        $contentparts = [];
+        // Each approved glossary entry gets its own FredKI document with a direct link
+        // to that entry. The id-based filename stays stable when the concept is renamed.
+        $entries = $DB->get_records(
+            'glossary_entries',
+            ['glossaryid' => $glossary->id, 'approved' => 1],
+            'concept ASC, id ASC'
+        );
+        if (!$entries) {
+            return $this->add_single_metadata_export($course, $sourcecm, $summary, 'glossaries');
+        }
+        $glossaryurl = $this->get_activity_url($course, $sourcecm);
         foreach ($entries as $entry) {
             $title = trim((string)$entry->concept) ?: get_string('untitledglossaryentry', 'mod_fredkicourseimport');
             $definition = $this->content_to_plain_text((string)$entry->definition, (int)$entry->definitionformat, $sourcecm);
-            if ($definition !== '') {
-                $contentparts[] = '## ' . $title . "\n\n" . $definition;
-            }
+            $document = $this->render_document($course, $sourcecm, [
+                'title' => $title,
+                'summary' => $summary,
+                'activityurl' => glossary_entry_helper::direct_url((int)$entry->id),
+                'glossaryurl' => $glossaryurl,
+                'content' => $definition,
+            ]);
+            $this->add_text_file(
+                glossary_entry_helper::FILEPATH,
+                glossary_entry_helper::export_filename((int)$sourcecm->id, (int)$entry->id),
+                $document
+            );
         }
-        $url = $this->get_activity_url($course, $sourcecm);
-        $document = $this->render_document($course, $sourcecm, [
-            'summary' => $summary, 'activityurl' => $url, 'sourceurl' => $url,
-            'content' => implode("\n\n", $contentparts),
-        ]);
-        $title = trim((string)$sourcecm->name) ?: 'Glossar';
-        $this->add_text_file(
-            '/glossaries/',
-            $this->build_safe_filename('cm' . $sourcecm->id . '-glossary-' . $title . '.html'),
-            $document
-        );
-        return 1;
+        return count($entries);
     }
 
     /**
@@ -573,7 +580,13 @@ class course_content_importer {
         if ($filename !== '') {
             $rows[] = '<p><strong>Dateiname:</strong> ' . s($filename) . '</p>';
         }
-        $rows[] = $this->render_html_link_row('Aktivitätslink', $activityurl);
+        if (!empty($data['glossaryurl'])) {
+            $rows[] = '<p><strong>Glossar:</strong> ' . s(format_string($sourcecm->name)) . '</p>';
+            $rows[] = $this->render_html_link_row('Direktlink zum Glossareintrag', $activityurl);
+            $rows[] = $this->render_html_link_row('Glossarübersicht', (string)$data['glossaryurl']);
+        } else {
+            $rows[] = $this->render_html_link_row('Aktivitätslink', $activityurl);
+        }
         $rows[] = '<p><strong>Kurs:</strong> ' . s(format_string($course->fullname)) . '</p>';
         $rows[] = $this->render_html_link_row('Kurslink', $courselink);
         $rows[] = '<p><strong>Typ:</strong> ' . s($this->get_readable_activity_type($sourcecm->modname)) . '</p>';

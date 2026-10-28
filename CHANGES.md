@@ -1,3 +1,11 @@
+# 1.7.2 (2026-10-28) – Glossar: ein Dokument pro Eintrag
+
+- **Glossar „Vollständig“:** Jeder freigegebene Glossareintrag wird wieder als eigenes FredKI-Dokument übertragen (Name = Begriff, Direktlink zum Eintrag, Link zur Glossarübersicht). Bisher landeten alle Einträge in einem Sammeldokument.
+- **Umstellung:** Beim nächsten Import bzw. „Änderungen aktualisieren“ wird das bisherige Sammeldokument in FredKI gelöscht und durch die Einzeldokumente ersetzt.
+- **Tests:** PHPUnit-Test für den Glossar-Export ergänzt.
+
+---
+
 # 1.7.1 (2026-10-25) – Korrekturen
 
 - **JavaScript:** Source-Maps für `amd/build` ergänzt. Ohne sie lädt Moodle im Entwicklermodus (JS-Cache aus) die ES-Quelldateien aus `amd/src`, die der Browser nicht ausführen kann. Dadurch funktionierten Wissensbasis-Auswahl und Inhaltsauswahl nicht.

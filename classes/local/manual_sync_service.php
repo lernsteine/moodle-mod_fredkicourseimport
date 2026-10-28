@@ -190,6 +190,24 @@ class manual_sync_service {
                     }
                 }
                 $metadata['activitylink'] = $sourceurl;
+                // A complete glossary exports one file per entry: the entry concept is the
+                // FredKI document name and heading, and the link points to that entry.
+                $glossaryentry = glossary_entry_helper::parse_export_filename($file->get_filepath(), $file->get_filename());
+                if ($glossaryentry !== null && $sourcecm->modname === 'glossary' && (int)$sourcecm->id === $glossaryentry['cmid']) {
+                    $entry = $DB->get_record('glossary_entries', [
+                        'id' => $glossaryentry['entryid'],
+                        'glossaryid' => (int)$sourcecm->instance,
+                    ], 'id, concept', IGNORE_MISSING);
+                    if ($entry) {
+                        $entrytitle = trim((string)$entry->concept);
+                        if ($entrytitle === '') {
+                            $entrytitle = self::get_localized_string('untitledglossaryentry', $course);
+                        }
+                        $metadata['title'] = $entrytitle;
+                        $metadata['documenttitle'] = $entrytitle;
+                        $metadata['activitylink'] = glossary_entry_helper::direct_url((int)$entry->id);
+                    }
+                }
                 $modrecord = $DB->get_record($sourcecm->modname, ['id' => $sourcecm->instance], '*', IGNORE_MISSING);
                 if ($modrecord && property_exists($modrecord, 'intro')) {
                     $description = trim(preg_replace('/\s+/u', ' ', html_to_text((string)$modrecord->intro, 0, false)) ?? '');
