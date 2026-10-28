@@ -32,7 +32,7 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 20260422070) {
+    if ($oldversion < 2026042207) {
         $table = new xmldb_table('fredkicourseimport_map');
         $field = new xmldb_field('lastresult', XMLDB_TYPE_CHAR, '20', null, null, null, null, 'status');
 
@@ -40,10 +40,10 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_mod_savepoint(true, 20260422070, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026042207, 'fredkicourseimport');
     }
 
-    if ($oldversion < 20260427000) {
+    if ($oldversion < 2026042700) {
         $table = new xmldb_table('fredkicourseimport');
 
         $fields = [
@@ -57,10 +57,10 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
             }
         }
 
-        upgrade_mod_savepoint(true, 20260427000, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026042700, 'fredkicourseimport');
     }
 
-    if ($oldversion < 20260428006) {
+    if ($oldversion < 2026042806) {
         $table = new xmldb_table('fredkicourseimport');
 
         $fields = [
@@ -75,10 +75,10 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
             }
         }
 
-        upgrade_mod_savepoint(true, 20260428006, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026042806, 'fredkicourseimport');
     }
 
-    if ($oldversion < 20260428010) {
+    if ($oldversion < 2026042810) {
         $table = new xmldb_table('fredkicourseimport');
         $field = new xmldb_field('fredkichaturl', XMLDB_TYPE_TEXT, null, null, null, null, null, 'fredkiembedcode');
 
@@ -86,10 +86,10 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_mod_savepoint(true, 20260428010, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026042810, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202607290001) {
+    if ($oldversion < 2026072901) {
         $table = new xmldb_table('fredkicourseimport');
         $authorized = new xmldb_field('authorizedbyuserid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'knowledgebasename');
         if (!$dbman->field_exists($table, $authorized)) {
@@ -138,20 +138,20 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
             $dbman->change_field_default($maptable, $filenamefield);
         }
         $dbman->add_index($maptable, $index);
-        upgrade_mod_savepoint(true, 202607290001, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026072901, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202607290003) {
+    if ($oldversion < 2026072903) {
         // Regression-recovery release. No database changes are required.
-        upgrade_mod_savepoint(true, 202607290003, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026072903, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202607310001) {
+    if ($oldversion < 2026073101) {
         // Capability, request validation, and security hardening release.
-        upgrade_mod_savepoint(true, 202607310001, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026073101, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202607310003) {
+    if ($oldversion < 2026073103) {
         $table = new xmldb_table('fredkicourseimport_map');
         $sourcecmidfield = new xmldb_field(
             'sourcecmid',
@@ -179,10 +179,10 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_mod_savepoint(true, 202607310003, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026073103, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202607310005) {
+    if ($oldversion < 2026073105) {
         // Document titles are localised using the course language. Existing FredKI
         // documents must be recreated once so that previously generated German
         // prefixes are replaced by the language configured for each Moodle course.
@@ -194,10 +194,10 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         $DB->set_field_select('fredkicourseimport_map', 'status', 'pending', $sql, $params);
         $DB->set_field_select('fredkicourseimport_map', 'lastresult', 'updated', $sql, $params);
 
-        upgrade_mod_savepoint(true, 202607310005, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026073105, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202609250300) {
+    if ($oldversion < 2026092503) {
         // Reference is the safe default for every newly created upload/mapping.
         // Explicitly selected Complete/knowledge modes remain unchanged.
         $table = new xmldb_table('fredkicourseimport_map');
@@ -214,10 +214,10 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         if ($dbman->field_exists($table, $field)) {
             $dbman->change_field_default($table, $field);
         }
-        upgrade_mod_savepoint(true, 202609250300, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026092503, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202609250600) {
+    if ($oldversion < 2026092506) {
         $table = new xmldb_table('fredkicourseimport_selection');
         if (!$dbman->table_exists($table)) {
             $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
@@ -277,10 +277,10 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
             }
         }
 
-        upgrade_mod_savepoint(true, 202609250600, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026092506, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202609250800) {
+    if ($oldversion < 2026092508) {
         $table = new xmldb_table('fredkicourseimport_map');
         $field = new xmldb_field(
             'metadatahash',
@@ -310,38 +310,38 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
             $DB->update_record('fredkicourseimport_map', $map);
         }
 
-        upgrade_mod_savepoint(true, 202609250800, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026092508, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202609260100) {
+    if ($oldversion < 2026092601) {
         // Search-oriented document format v2:
         // - real activity title as paragraph title
         // - compact metadata block
         // - deterministic linked questions via MaxKB paragraph problem_list.
         // No schema change is required. file_sync_helper's importformat marker
         // makes existing active mappings refresh once on the next synchronization.
-        upgrade_mod_savepoint(true, 202609260100, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026092601, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202609260300) {
+    if ($oldversion < 2026092603) {
         // Search precision v4:
         // Generic linked questions repeated across many materials are removed.
         // Only the title-specific lookup question remains. The importformat marker
         // in file_sync_helper causes active mappings to refresh once so obsolete
         // MaxKB problem_list entries are replaced by the precise version.
-        upgrade_mod_savepoint(true, 202609260300, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026092603, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202609270100) {
+    if ($oldversion < 2026092701) {
         // Search precision v5:
         // CourseImport no longer creates MaxKB linked questions (paragraph.problem_list).
         // The file_sync_helper import-format marker changes as well, so existing active
         // mappings are recreated once. Replacing the old FredKI document removes the
         // previously importer-generated linked questions together with that old document.
-        upgrade_mod_savepoint(true, 202609270100, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026092701, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202610050008) {
+    if ($oldversion < 2026100508) {
         // Repair/bridge upgrade for installations that came from the 1.4.x branch.
         // That branch used a higher build number than the original 1.6.x schema
         // migrations, so Moodle legitimately skipped those older-numbered steps.
@@ -460,10 +460,10 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         // Leave metadatahash NULL so the normal synchronization logic refreshes
         // those mappings safely on the next run.
 
-        upgrade_mod_savepoint(true, 202610050008, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026100508, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202610110001) {
+    if ($oldversion < 2026101101) {
         $table = new xmldb_table('fredkicourseimport_cleanup');
         if (!$dbman->table_exists($table)) {
             $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
@@ -477,10 +477,10 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
             $table->add_index('course_ix', XMLDB_INDEX_NOTUNIQUE, ['courseid']);
             $dbman->create_table($table);
         }
-        upgrade_mod_savepoint(true, 202610110001, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026101101, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202610130001) {
+    if ($oldversion < 2026101301) {
         // Retain ALL current activity mappings, owner IDs and auth rows.
         // Previously saved passwords cannot be recovered from access tokens;
         // users may reconnect once in the existing activity settings.
@@ -489,17 +489,17 @@ function xmldb_fredkicourseimport_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_mod_savepoint(true, 202610130001, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026101301, 'fredkicourseimport');
     }
 
-    if ($oldversion < 202610240001) {
+    if ($oldversion < 2026102401) {
         // The plugin is released under the GNU GPL v3 and no longer uses a license key.
         foreach (['fredkicourseimport', 'mod_fredkicourseimport'] as $component) {
             unset_config('licensekey', $component);
             unset_config('license_status_cache', $component);
             unset_config('license_valid_until', $component);
         }
-        upgrade_mod_savepoint(true, 202610240001, 'fredkicourseimport');
+        upgrade_mod_savepoint(true, 2026102401, 'fredkicourseimport');
     }
 
     return true;

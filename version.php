@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_fredkicourseimport';
-$plugin->version = 202610280002;
+$plugin->version = 2026102800;
 $plugin->requires = 2024100700;
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.7.3';
+$plugin->release = '1.7.4';

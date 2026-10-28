@@ -1,3 +1,14 @@
+# 1.7.4 (2026-10-28) – Versionsnummer im Moodle-Format
+
+- **Versionsnummer:** Auf das von Moodle verlangte Format JJJJMMTTXX umgestellt (`2026102800` statt `202610280002`). Alle Upgrade-Schritte in `db/upgrade.php` entsprechend umgerechnet, Reihenfolge unverändert.
+- **Wichtig für bestehende Installationen (Version 1.7.3 oder älter mit 12-stelliger Nummer):** Moodle lehnt ein Update auf eine kleinere Versionsnummer ab. Vor dem Update einmalig in der Datenbank ausführen (Tabellenpräfix ggf. anpassen):
+
+  `UPDATE mdl_config_plugins SET value = '2026102700' WHERE plugin = 'mod_fredkicourseimport' AND name = 'version';`
+
+  Danach Caches leeren und das Update wie gewohnt einspielen. Es werden keine Upgrade-Schritte erneut ausgeführt; Daten und FredKI-Zuordnungen bleiben erhalten.
+
+---
+
 # 1.7.3 (2026-10-28) – Glossar: Beschreibung nur einmal
 
 - **Glossar „Vollständig“:** Die Beschreibung des Glossars wird nicht mehr in jeden Eintrag übernommen. Sie war in allen Einträgen gleich, ließ die Einträge für die Suche ähnlich aussehen und führte zu unpassenden Treffern.
