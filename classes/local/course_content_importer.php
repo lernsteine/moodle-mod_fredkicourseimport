@@ -441,13 +441,18 @@ class course_content_importer {
         if (!$entries) {
             return $this->add_single_metadata_export($course, $sourcecm, $summary, 'glossaries');
         }
+        // The glossary description is the same for every entry. Repeating it in each entry
+        // document would make all entries look alike to the search and pull unrelated
+        // entries into answers, so it is transferred once as its own overview document.
+        if (trim($summary) !== '') {
+            $this->add_single_metadata_export($course, $sourcecm, $summary, 'glossaries');
+        }
         $glossaryurl = $this->get_activity_url($course, $sourcecm);
         foreach ($entries as $entry) {
             $title = trim((string)$entry->concept) ?: get_string('untitledglossaryentry', 'mod_fredkicourseimport');
             $definition = $this->content_to_plain_text((string)$entry->definition, (int)$entry->definitionformat, $sourcecm);
             $document = $this->render_document($course, $sourcecm, [
                 'title' => $title,
-                'summary' => $summary,
                 'activityurl' => glossary_entry_helper::direct_url((int)$entry->id),
                 'glossaryurl' => $glossaryurl,
                 'content' => $definition,

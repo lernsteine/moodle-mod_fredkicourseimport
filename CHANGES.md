@@ -1,3 +1,11 @@
+# 1.7.3 (2026-10-28) – Glossar: Beschreibung nur einmal
+
+- **Glossar „Vollständig“:** Die Beschreibung des Glossars wird nicht mehr in jeden Eintrag übernommen. Sie war in allen Einträgen gleich, ließ die Einträge für die Suche ähnlich aussehen und führte zu unpassenden Treffern.
+- **Neu:** Hat das Glossar eine Beschreibung, wird sie einmal als eigenes Dokument (Name des Glossars) übertragen.
+- Andere Aktivitäten sind unverändert.
+
+---
+
 # 1.7.2 (2026-10-28) – Glossar: ein Dokument pro Eintrag
 
 - **Glossar „Vollständig“:** Jeder freigegebene Glossareintrag wird wieder als eigenes FredKI-Dokument übertragen (Name = Begriff, Direktlink zum Eintrag, Link zur Glossarübersicht). Bisher landeten alle Einträge in einem Sammeldokument.

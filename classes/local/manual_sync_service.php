@@ -206,10 +206,12 @@ class manual_sync_service {
                         $metadata['title'] = $entrytitle;
                         $metadata['documenttitle'] = $entrytitle;
                         $metadata['activitylink'] = glossary_entry_helper::direct_url((int)$entry->id);
+                        $metadata['glossaryentry'] = true;
                     }
                 }
                 $modrecord = $DB->get_record($sourcecm->modname, ['id' => $sourcecm->instance], '*', IGNORE_MISSING);
-                if ($modrecord && property_exists($modrecord, 'intro')) {
+                // Glossary entries never repeat the glossary description (see course_content_importer).
+                if ($modrecord && property_exists($modrecord, 'intro') && empty($metadata['glossaryentry'])) {
                     $description = trim(preg_replace('/\s+/u', ' ', html_to_text((string)$modrecord->intro, 0, false)) ?? '');
                     if ($description !== '') {
                         // Keep the full activity description for reference imports.

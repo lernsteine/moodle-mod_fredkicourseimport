@@ -91,14 +91,20 @@ final class glossary_entry_export_test extends \advanced_testcase {
              * @return array
              */
             public function make_glossary(\stdClass $course, \cm_info $sourcecm, \stdClass $glossary): array {
-                $count = $this->add_glossary_exports($course, $sourcecm, $glossary, '');
+                $count = $this->add_glossary_exports($course, $sourcecm, $glossary, 'Shared glossary description');
                 return ['count' => $count, 'files' => $this->textfiles];
             }
         };
         $glossaryrecord = $DB->get_record('glossary', ['id' => $glossary->id], '*', MUST_EXIST);
         $export = $importer->make_glossary($course, $sourcecm, $glossaryrecord);
+        // Two approved entries plus one overview document carrying the glossary description.
         $this->assertSame(2, $export['count']);
-        $this->assertCount(2, $export['files']);
+        $this->assertCount(3, $export['files']);
+        $overview = array_filter($export['files'], static function (array $file): bool {
+            return glossary_entry_helper::parse_export_filename($file['filepath'], $file['filename']) === null;
+        });
+        $this->assertCount(1, $overview);
+        $this->assertStringContainsString('Shared glossary description', reset($overview)['content']);
 
         $entryfilename = glossary_entry_helper::export_filename((int)$sourcecm->id, (int)$ids[0]);
         $this->assertArrayHasKey('/glossaries/' . $entryfilename, $export['files']);
@@ -107,6 +113,8 @@ final class glossary_entry_export_test extends \advanced_testcase {
         $this->assertStringContainsString('Plants turn light into energy.', $content);
         $this->assertStringContainsString('showentry.php?eid=' . $ids[0], $content);
         $this->assertStringNotContainsString('Hidden draft', implode(' ', array_column($export['files'], 'content')));
+        // The glossary description is not repeated in every entry.
+        $this->assertStringNotContainsString('Shared glossary description', $content);
 
         // The FredKI document name and link are specific to the entry.
         $method = new \ReflectionMethod(manual_sync_service::class, 'get_source_metadata');
@@ -124,5 +132,6 @@ final class glossary_entry_export_test extends \advanced_testcase {
         $this->assertSame('Photosynthesis', $metadata['title']);
         $this->assertSame('Photosynthesis', $metadata['documenttitle']);
         $this->assertSame($entryurl, $metadata['activitylink']);
+        $this->assertArrayNotHasKey('summary', $metadata);
     }
 }
