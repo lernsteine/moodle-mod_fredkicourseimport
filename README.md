@@ -9,7 +9,8 @@ course material.
 - Moodle 4.5 or later (tested with Moodle 5.2 on PostgreSQL and MariaDB).
 - A FredKI account (username and password) and at least one FredKI knowledge base.
   FredKI is an external service with its own terms of use and is not part of this
-  plugin. To obtain an account, please contact lernsteine.com.
+  plugin. The plugin itself is free software (GPL). For FredKI access and current
+  conditions, see https://lernsteine.com.
 - The HTTPS base URL of your FredKI installation (configured by the site administrator),
   for example `https://fredki.lernsteine.com`.
 
