@@ -35,6 +35,12 @@ export const init = () => {
     const statusText = document.getElementById('fredki-mini-live-text');
     const submitButton = document.getElementById('fredki-import-link');
 
+    /**
+     * Show the upload status next to the import button.
+     *
+     * @param {string} state Status class: is-ready, is-working, is-success or is-error.
+     * @param {string} message Status text.
+     */
     function setUploadStatus(state, message) {
         if (statusText) {
             statusText.textContent = message;
@@ -66,6 +72,11 @@ export const init = () => {
         setUploadStatus('is-ready', form.dataset.readyLabel || 'Ready');
     });
 
+    /**
+     * Mark the toolbar link of a selection mode as active.
+     *
+     * @param {string} mode Selection mode, or an empty string for a custom selection.
+     */
     function updateActiveLink(mode) {
         links.forEach(function(link) {
             const active = link.dataset.selectionMode === mode;
@@ -78,6 +89,11 @@ export const init = () => {
         });
     }
 
+    /**
+     * Tick the checkboxes that belong to a selection mode.
+     *
+     * @param {string} mode Selection mode: all, none or visible.
+     */
     function applySelectionMode(mode) {
         activityCheckboxes.forEach(function(checkbox) {
             if (mode === 'all') {
@@ -94,7 +110,14 @@ export const init = () => {
         updateActiveLink(mode);
     }
 
-    // Highlight the toolbar mode that matches the current checkboxes (none for a custom selection).
+    /**
+     * Whether the current checkboxes match a selection mode.
+     *
+     * The toolbar highlights the matching mode, and none for a custom selection.
+     *
+     * @param {string} mode Selection mode: all, none or visible.
+     * @returns {boolean}
+     */
     function matchesMode(mode) {
         if (sectionCheckbox && sectionCheckbox.checked !== (mode !== 'none')) {
             return false;
@@ -105,6 +128,9 @@ export const init = () => {
         });
     }
 
+    /**
+     * Highlight the toolbar mode that matches the current checkboxes.
+     */
     function refreshActiveLink() {
         const mode = ['visible', 'all', 'none'].find(matchesMode) || '';
         updateActiveLink(mode);

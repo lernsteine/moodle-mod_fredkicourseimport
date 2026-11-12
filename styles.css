@@ -13,7 +13,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 .fredki-actions {
     display: flex;
     gap: 12px;
@@ -41,55 +40,55 @@
     flex-wrap: wrap;
 }
 
-.fredki-btn-main {
-    display: inline-flex !important;
+.btn.fredki-btn-main {
+    display: inline-flex;
     justify-content: center;
     width: 100%;
     max-width: 420px;
-    padding: 14px 18px !important;
+    padding: 14px 18px;
     font-size: 1.08rem;
     font-weight: 600;
 }
 
 /* Soft green */
-.fredki-btn-sync {
-    background: #e6f4ea !important;
-    border: 1px solid #b7e1c1 !important;
-    color: #000 !important;
+.btn.fredki-btn-sync {
+    background: #e6f4ea;
+    border: 1px solid #b7e1c1;
+    color: #000;
 }
 
-.fredki-btn-sync:hover,
-.fredki-btn-sync:focus {
-    background: #d7eedf !important;
-    border-color: #b7e1c1 !important;
-    color: #000 !important;
+.btn.fredki-btn-sync:hover,
+.btn.fredki-btn-sync:focus {
+    background: #d7eedf;
+    border-color: #b7e1c1;
+    color: #000;
 }
 
 /* Soft red */
-.fredki-btn-delete {
-    background: #fdecea !important;
-    border: 1px solid #f5c2c0 !important;
-    color: #000 !important;
+.btn.fredki-btn-delete {
+    background: #fdecea;
+    border: 1px solid #f5c2c0;
+    color: #000;
 }
 
-.fredki-btn-delete:hover,
-.fredki-btn-delete:focus {
-    background: #fbdada !important;
-    border-color: #f5c2c0 !important;
-    color: #000 !important;
+.btn.fredki-btn-delete:hover,
+.btn.fredki-btn-delete:focus {
+    background: #fbdada;
+    border-color: #f5c2c0;
+    color: #000;
 }
 
-.fredki-btn-edit {
-    background: #eef2f7 !important;
-    border: 1px solid #cfd7e3 !important;
-    color: #000 !important;
+.btn.fredki-btn-edit {
+    background: #eef2f7;
+    border: 1px solid #cfd7e3;
+    color: #000;
 }
 
-.fredki-btn-edit:hover,
-.fredki-btn-edit:focus {
-    background: #e4e9f0 !important;
-    border-color: #cfd7e3 !important;
-    color: #000 !important;
+.btn.fredki-btn-edit:hover,
+.btn.fredki-btn-edit:focus {
+    background: #e4e9f0;
+    border-color: #cfd7e3;
+    color: #000;
 }
 
 .fredki-summary {
@@ -300,15 +299,29 @@
 }
 
 @keyframes fredkiPulse {
-    0% { box-shadow: 0 0 0 0 rgba(45, 116, 218, 0.45); }
-    70% { box-shadow: 0 0 0 8px rgba(45, 116, 218, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(45, 116, 218, 0); }
+    0% {
+        box-shadow: 0 0 0 0 rgba(45, 116, 218, 0.45);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgba(45, 116, 218, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(45, 116, 218, 0);
+    }
 }
 
 @keyframes fredki-loading {
-    0% { background-position: 200% 0; }
-    100% { background-position: 0 0; }
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
 }
+
 .fredki-selection-form {
     margin-top: 1.25rem;
 }
@@ -479,7 +492,6 @@
     }
 }
 
-
 .fredki-kb-picker {
     margin-top: .5rem;
 }
@@ -577,7 +589,6 @@
     }
 }
 
-
 .fredki-selection-link.is-active {
     border-bottom: 3px solid #00a8c6;
     border-radius: 0;
@@ -613,7 +624,6 @@
     margin: 0;
 }
 
-
 .fredki-contentmode-bulk {
     display: flex;
     align-items: center;
@@ -630,18 +640,35 @@
     font-weight: 600;
 }
 
-
 /* Live upload state. */
-.fredki-mini-live-dot.is-ready { opacity: .75; }
+.fredki-mini-live-dot.is-ready {
+    opacity: .75;
+}
+
 .fredki-mini-live-dot.is-working {
     opacity: 1;
     animation: fredki-live-pulse 1s ease-in-out infinite;
 }
-.fredki-mini-live-dot.is-success { opacity: 1; }
-.fredki-mini-live-dot.is-error { opacity: 1; }
+
+.fredki-mini-live-dot.is-success {
+    opacity: 1;
+}
+
+.fredki-mini-live-dot.is-error {
+    opacity: 1;
+}
+
 @keyframes fredki-live-pulse {
-    0%, 100% { transform: scale(1); opacity: .55; }
-    50% { transform: scale(1.35); opacity: 1; }
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: .55;
+    }
+
+    50% {
+        transform: scale(1.35);
+        opacity: 1;
+    }
 }
 
 .fredki-refresh-form {
