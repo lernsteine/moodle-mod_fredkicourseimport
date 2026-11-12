@@ -1,3 +1,12 @@
+# 1.7.5 (2026-11-12) – Review-Hinweise des Plugins Directory
+
+- **Lizenz:** `LICENSE` enthält jetzt den vollständigen Text der GNU GPL v3 (vorher Verweis auf `COPYING`).
+- **Event:** Neues Event `course_module_viewed`; beim Aufruf der Aktivität wird es ausgelöst und der Abschluss „angesehen“ gesetzt.
+- **CSS:** `styles.css` wird nicht mehr von Hand geladen, Moodle bindet sie automatisch ein.
+- **JavaScript:** AMD-Dateien mit Moodles Grunt neu gebaut und minifiziert.
+
+---
+
 # 1.7.4 (2026-10-28) – Versionsnummer im Moodle-Format
 
 - **Versionsnummer:** Auf das von Moodle verlangte Format JJJJMMTTXX umgestellt (`2026102800` statt `202610280002`). Alle Upgrade-Schritte in `db/upgrade.php` entsprechend umgerechnet, Reihenfolge unverändert.

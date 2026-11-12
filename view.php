@@ -234,7 +234,7 @@ if ($refreshcurrent) {
 $PAGE->set_url('/mod/fredkicourseimport/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($activity->name));
 $PAGE->set_heading(format_string($course->fullname));
-$PAGE->requires->css('/mod/fredkicourseimport/styles.css');
+fredkicourseimport_view($activity, $course, $cm, $context);
 $targetcm = get_fast_modinfo($course)->get_cm($cm->id);
 
 /**

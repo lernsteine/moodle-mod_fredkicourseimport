@@ -84,3 +84,11 @@ jobs:
       - name: PHPUnit
         if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
         run: moodle-plugin-ci phpunit
+      - name: Mustache lint
+        if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
+        run: moodle-plugin-ci mustache
+      - name: Grunt (AMD build, ESLint, stylelint)
+        if: ${{ !cancelled() && steps.moodle_install.outcome == 'success' }}
+        run: |
+          set -o pipefail
+          moodle-plugin-ci grunt --max-lint-warnings 0 2>&1 | tee /tmp/out.txt || { sed 's/\x1b\[[0-9;]*m//g' /tmp/out.txt | grep -E "✖|⚠|WARNING|ERROR|rror|arning|stale|needs to be" | head -c 30000 | split -C 3500 - /tmp/chunk_; for f in /tmp/chunk_*; do echo "::error title=Grunt::$(sed -e ':a;N;$!ba' -e 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g' $f)"; done; exit 1; }

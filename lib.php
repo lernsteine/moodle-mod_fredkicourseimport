@@ -648,3 +648,28 @@ function fredkicourseimport_pluginfile($course, $cm, $context, $filearea, $args,
 
     send_stored_file($file, 0, 0, $forcedownload, $options);
 }
+
+/**
+ * Mark the activity as viewed and trigger the course module viewed event.
+ *
+ * @param stdClass $activity The FredKI activity record.
+ * @param stdClass $course The course record.
+ * @param stdClass|cm_info $cm The course module.
+ * @param context_module $context The module context.
+ */
+function fredkicourseimport_view(stdClass $activity, stdClass $course, $cm, context_module $context): void {
+    global $CFG;
+    require_once($CFG->libdir . '/completionlib.php');
+
+    $event = \mod_fredkicourseimport\event\course_module_viewed::create([
+        'context' => $context,
+        'objectid' => $activity->id,
+    ]);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('fredkicourseimport', $activity);
+    $event->trigger();
+
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
