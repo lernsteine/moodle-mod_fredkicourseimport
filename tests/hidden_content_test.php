@@ -52,6 +52,7 @@ final class hidden_content_test extends \advanced_testcase {
         set_coursemodule_visible($hidden->cmid, 0);
         set_section_visible($course->id, 2, 0);
         rebuild_course_cache($course->id, true);
+        $course = get_course($course->id);
 
         $modinfo = get_fast_modinfo($course);
         $this->assertTrue(selection_manager::is_visible_for_participants($modinfo->get_cm($visible->cmid)));

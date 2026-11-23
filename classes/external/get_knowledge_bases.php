@@ -23,6 +23,7 @@
  */
 
 namespace mod_fredkicourseimport\external;
+
 use external_api;
 use external_function_parameters;
 use external_multiple_structure;
