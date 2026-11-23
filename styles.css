@@ -419,8 +419,9 @@
 
 .fredki-selection-document {
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: .5rem;
+    gap: .15rem .5rem;
     min-width: 0;
 }
 
@@ -597,17 +598,11 @@
 }
 
 .fredki-hidden-participant-note {
+    flex-basis: 100%;
+    padding-left: calc(18px + .5rem);
     color: #6c757d;
-    font-size: .9rem;
+    font-size: .85rem;
     font-weight: 400;
-    margin-left: .45rem;
-    white-space: nowrap;
-}
-
-.fredki-hidden-participant-note::before {
-    content: "|";
-    color: #adb5bd;
-    margin-right: .45rem;
 }
 
 .fredki-content-option {

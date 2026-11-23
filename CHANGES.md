@@ -1,3 +1,9 @@
+# 1.7.8 (2026-11-23) – Layout der Auswahlseite
+
+- **Layout:** Der Hinweis „Für Teilnehmer/innen verborgen – wird nur übertragen, wenn angehakt“ steht jetzt in einer eigenen Zeile unter dem Titel. Vorher wurde der Titel dadurch so schmal, dass er Buchstabe für Buchstabe umbrach.
+
+---
+
 # 1.7.7 (2026-11-23) – Verborgene Inhalte nur, wenn angehakt
 
 - **Fehler behoben:** Auswahlseite und Übertragung nutzen jetzt dieselbe Regel. Bisher konnte die Seite verborgene Inhalte als nicht angehakt zeigen, während „nur Änderungen aktualisieren“ sie aus einer älteren gespeicherten Auswahl oder aus den bisherigen FredKI-Zuordnungen trotzdem übertrug.
