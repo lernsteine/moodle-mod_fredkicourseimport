@@ -26,9 +26,8 @@ course material.
 - Glossaries in complete mode: every approved entry becomes its own FredKI document,
   named after the concept and linking directly to the entry. The glossary description
   is transferred once as a separate overview document.
-- Only content visible to participants is transferred: hidden activities and activities
-  in hidden sections are never sent to FredKI, and previously sent hidden content is
-  removed on the next sync.
+- Content hidden from participants is transferred only if the trainer ticks it; such
+  ticks are kept for all later syncs. By default only visible content is selected.
 - "Update changes" action that only transfers new, changed or deleted content.
 - Moodle section hierarchy (including subsections) and custom fields are added as
   searchable metadata and FredKI tags.

@@ -1,3 +1,13 @@
+# 1.7.7 (2026-11-23) – Verborgene Inhalte nur, wenn angehakt
+
+- **Fehler behoben:** Auswahlseite und Übertragung nutzen jetzt dieselbe Regel. Bisher konnte die Seite verborgene Inhalte als nicht angehakt zeigen, während „nur Änderungen aktualisieren“ sie aus einer älteren gespeicherten Auswahl oder aus den bisherigen FredKI-Zuordnungen trotzdem übertrug.
+- **Regel:** Ohne gespeicherte Auswahl sind nur für Teilnehmende sichtbare Inhalte angehakt. Für Teilnehmende verborgene Inhalte werden nur übertragen, wenn die Trainerin/der Trainer sie selbst anhakt.
+- **Häkchen bleiben:** Selbst gesetzte Häkchen (auch bei verborgenen Inhalten) werden gespeichert und gelten bei jedem weiteren Import und bei „nur Änderungen aktualisieren“, bis sie entfernt werden. Neu hinzugekommene Aktivitäten folgen der Regel „sichtbar für Teilnehmende“.
+- **Auswahlseite:** Verborgene Inhalte sind wieder anhakbar (Hinweis „wird nur übertragen, wenn angehakt“). „Sichtbare“ setzt die Auswahl auf alle sichtbaren Inhalte zurück, „Keine“ entfernt alle Häkchen.
+- Ersetzt die Sperre aus 1.7.6.
+
+---
+
 # 1.7.6 (2026-11-23) – Verborgene Inhalte werden nicht übertragen
 
 - **Fehler behoben:** Für Teilnehmende verborgene Aktivitäten und Aktivitäten in verborgenen Abschnitten wurden übertragen, wenn sie ausgewählt waren (z. B. aus einer früheren Auswahl oder über „Alle“). Sie werden jetzt grundsätzlich nicht mehr übertragen, auch nicht über „Änderungen aktualisieren“.

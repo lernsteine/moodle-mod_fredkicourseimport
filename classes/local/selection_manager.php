@@ -134,67 +134,64 @@ class selection_manager {
     }
 
     /**
-     * Resolve the selection used by the one-click "update changes" action.
+     * Resolve the effective selection: the single rule used by the selection page and by every sync.
      *
-     * Explicit selection records take precedence. For upgraded installations that have not
-     * saved a selection yet, active mapping records are used as a conservative fallback.
+     * - A saved choice of the trainer always wins, also for content hidden from participants.
+     *   A hidden activity is therefore transferred only if the trainer ticked it, and the tick
+     *   stays until the trainer removes it.
+     * - Without a saved choice (new activity, or no selection saved yet), an activity is selected
+     *   only if it is visible to participants. Hidden content is never selected by default.
      *
+     * @param \stdClass $course Course record.
+     * @param int $targetcmid Course module id of this FredKI activity.
      * @param int $activityid FredKI course import activity instance id.
-     * @return array{selectedcmids:int[],includesectiontexts:bool,contentmodes:array<int,string>}
+     * @return array{selected:array<int,bool>,selectedcmids:int[],includesectiontexts:bool,contentmodes:array<int,string>}
      */
-    public static function get_current_selection(int $activityid): array {
+    public static function resolve(\stdClass $course, int $targetcmid, int $activityid): array {
         global $DB;
 
         $records = self::get_records($activityid);
-        if ($records) {
-            $selectedcmids = [];
-            $contentmodes = [];
-            $includesectiontexts = false;
-            foreach ($records as $sourcecmid => $record) {
+
+        // Content modes and section texts of installations that never saved a selection
+        // are taken from what is currently active in FredKI.
+        $mapmodes = [];
+        $mapsectiontexts = null;
+        if (!$records) {
+            $maps = $DB->get_records('fredkicourseimport_map', ['activityid' => $activityid], 'timemodified ASC, id ASC');
+            foreach ($maps as $map) {
+                $sourcecmid = (int)($map->sourcecmid ?? 0);
+                $isactive = !in_array((string)$map->status, ['deleted', 'removed'], true);
                 if ($sourcecmid === 0) {
-                    $includesectiontexts = !empty($record->selected);
-                    continue;
-                }
-                $contentmodes[$sourcecmid] = ($record->contentmode ?? 'reference') === 'knowledge'
-                    ? 'knowledge'
-                    : 'reference';
-                if (!empty($record->selected)) {
-                    $selectedcmids[] = $sourcecmid;
+                    $mapsectiontexts = $mapsectiontexts || $isactive;
+                } else {
+                    $mapmodes[$sourcecmid] = ($map->contentmode ?? 'reference') === 'knowledge' ? 'knowledge' : 'reference';
                 }
             }
-            sort($selectedcmids);
-            return compact('selectedcmids', 'includesectiontexts', 'contentmodes');
         }
 
-        // Upgrade fallback: preserve what is currently active in FredKI; do not silently add
-        // course activities that have never been selected before.
-        $maps = $DB->get_records('fredkicourseimport_map', ['activityid' => $activityid], 'timemodified ASC, id ASC');
-        $selectedstate = [];
+        $modinfo = get_fast_modinfo($course);
+        $selected = [];
         $contentmodes = [];
-        foreach ($maps as $map) {
-            $sourcecmid = (int)($map->sourcecmid ?? 0);
-            $isactive = !in_array((string)$map->status, ['deleted', 'removed'], true);
-            if (!isset($selectedstate[$sourcecmid])) {
-                $selectedstate[$sourcecmid] = false;
+        foreach (self::get_supported_source_cmids($course, $targetcmid) as $sourcecmid) {
+            if (isset($records[$sourcecmid])) {
+                $selected[$sourcecmid] = !empty($records[$sourcecmid]->selected);
+                $mode = $records[$sourcecmid]->contentmode ?? 'reference';
+            } else {
+                $selected[$sourcecmid] = self::is_visible_for_participants($modinfo->get_cm($sourcecmid));
+                $mode = $mapmodes[$sourcecmid] ?? 'reference';
             }
-            if ($isactive) {
-                $selectedstate[$sourcecmid] = true;
-            }
-            if ($sourcecmid > 0) {
-                $contentmodes[$sourcecmid] = ($map->contentmode ?? 'reference') === 'knowledge'
-                    ? 'knowledge'
-                    : 'reference';
-            }
+            $contentmodes[$sourcecmid] = $mode === 'knowledge' ? 'knowledge' : 'reference';
         }
-        $selectedcmids = [];
-        foreach ($selectedstate as $sourcecmid => $isselected) {
-            if ($sourcecmid > 0 && $isselected) {
-                $selectedcmids[] = (int)$sourcecmid;
-            }
+
+        if (isset($records[0])) {
+            $includesectiontexts = !empty($records[0]->selected);
+        } else {
+            $includesectiontexts = $mapsectiontexts ?? true;
         }
+
+        $selectedcmids = array_keys(array_filter($selected));
         sort($selectedcmids);
-        $includesectiontexts = !empty($selectedstate[0]);
-        return compact('selectedcmids', 'includesectiontexts', 'contentmodes');
+        return compact('selected', 'selectedcmids', 'includesectiontexts', 'contentmodes');
     }
 
     /**

@@ -32,12 +32,6 @@ $id = required_param('id', PARAM_INT);
 $importall = optional_param('importall', 0, PARAM_BOOL);
 $refreshcurrent = optional_param('refreshcurrent', 0, PARAM_BOOL);
 $selectcontent = optional_param('selectcontent', 0, PARAM_BOOL);
-$selectionmode = optional_param('selectionmode', '', PARAM_ALPHA);
-// An explicit mode (toolbar link without JavaScript) overrides the saved selection.
-$selectionmodeexplicit = in_array($selectionmode, ['visible', 'all', 'none'], true);
-if (!$selectionmodeexplicit) {
-    $selectionmode = 'visible';
-}
 
 $cm = get_coursemodule_from_id('fredkicourseimport', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -92,7 +86,9 @@ function fredkicourseimport_execute_sync(
         // concurrent editors could overwrite the saved selection while an
         // earlier upload is still in progress.
         if ($reloadselection) {
-            $selection = \mod_fredkicourseimport\local\selection_manager::get_current_selection(
+            $selection = \mod_fredkicourseimport\local\selection_manager::resolve(
+                $course,
+                (int)$cm->id,
                 (int)$activity->id
             );
             $selectedcmids = $selection['selectedcmids'];
@@ -243,40 +239,17 @@ $targetcm = get_fast_modinfo($course)->get_cm($cm->id);
  * @param stdClass $course The course record.
  * @param cm_info $targetcm The targetcm.
  * @param stdClass $activity The FredKI activity record.
- * @param string $selectionmode The selectionmode.
- * @param bool $explicitmode Whether the selection mode was explicitly requested and overrides saved choices.
  * @return string The result.
  */
 function fredkicourseimport_render_activity_selection(
     stdClass $course,
     cm_info $targetcm,
-    stdClass $activity,
-    string $selectionmode = 'visible',
-    bool $explicitmode = false
+    stdClass $activity
 ): string {
-    global $DB, $OUTPUT, $PAGE;
+    global $OUTPUT, $PAGE;
 
-    $savedselection = \mod_fredkicourseimport\local\selection_manager::get_records((int)$activity->id);
-    $hassavedselection = !empty($savedselection);
-
-    // Fallback for installations upgraded from versions that did not persist checkbox state.
-    $existingmodes = [];
-    $existingselected = [];
-    $existingrecords = $DB->get_records('fredkicourseimport_map', ['activityid' => $activity->id]);
-    foreach ($existingrecords as $existingrecord) {
-        $sourcecmid = (int)($existingrecord->sourcecmid ?? 0);
-        if (!isset($existingselected[$sourcecmid])) {
-            $existingselected[$sourcecmid] = false;
-        }
-        if (!in_array((string)$existingrecord->status, ['deleted', 'removed'], true)) {
-            $existingselected[$sourcecmid] = true;
-        }
-        if ($sourcecmid > 0) {
-            $existingmodes[$sourcecmid] = ($existingrecord->contentmode ?? 'reference') === 'reference'
-                ? 'reference'
-                : 'knowledge';
-        }
-    }
+    // The page shows exactly the selection that "update changes" will transfer.
+    $resolved = \mod_fredkicourseimport\local\selection_manager::resolve($course, (int)$targetcm->id, (int)$activity->id);
 
     $modinfo = get_fast_modinfo($course);
     $sections = $modinfo->get_section_info_all();
@@ -373,23 +346,8 @@ function fredkicourseimport_render_activity_selection(
         'value' => 1,
         'class' => 'fredki-select-item',
     ];
-    if ($explicitmode) {
-        if ($selectionmode !== 'none') {
-            $sectioncheckboxattrs['checked'] = 'checked';
-        }
-    } else if (isset($savedselection[0])) {
-        if (!empty($savedselection[0]->selected)) {
-            $sectioncheckboxattrs['checked'] = 'checked';
-        }
-    } else if (!$hassavedselection) {
-        // Once an explicit selection exists, new/untracked items stay off until selected.
-        if (array_key_exists(0, $existingselected)) {
-            if (!empty($existingselected[0])) {
-                $sectioncheckboxattrs['checked'] = 'checked';
-            }
-        } else if ($selectionmode !== 'none') {
-            $sectioncheckboxattrs['checked'] = 'checked';
-        }
+    if ($resolved['includesectiontexts']) {
+        $sectioncheckboxattrs['checked'] = 'checked';
     }
     $html .= html_writer::start_div('fredki-section-card fredki-section-card-special');
     $html .= html_writer::tag(
@@ -436,39 +394,16 @@ function fredkicourseimport_render_activity_selection(
                 'type' => 'checkbox',
                 'name' => 'selectedcmid[]',
                 'value' => $sourcecm->id,
-                'class' => 'fredki-select-item fredki-select-activity fredki-visible-participant',
-                'data-visible-participant' => '1',
+                'class' => 'fredki-select-item fredki-select-activity' .
+                    ($isvisibleforparticipants ? ' fredki-visible-participant' : ' fredki-hidden-participant'),
+                'data-visible-participant' => $isvisibleforparticipants ? '1' : '0',
             ];
-            if (!$isvisibleforparticipants) {
-                // Hidden content is never transferred, so it cannot be selected either.
-                $checkboxattrs = [
-                    'type' => 'checkbox',
-                    'disabled' => 'disabled',
-                    'class' => 'fredki-hidden-participant',
-                    'aria-label' => get_string('hiddenforparticipants', 'mod_fredkicourseimport'),
-                ];
-            }
             $sourcecmid = (int)$sourcecm->id;
-            if ($explicitmode) {
-                $shouldcheck = $selectionmode === 'all'
-                    || ($selectionmode === 'visible' && $isvisibleforparticipants);
-            } else if (isset($savedselection[$sourcecmid])) {
-                $shouldcheck = !empty($savedselection[$sourcecmid]->selected);
-            } else if (!$hassavedselection && array_key_exists($sourcecmid, $existingselected)) {
-                $shouldcheck = !empty($existingselected[$sourcecmid]);
-            } else {
-                $shouldcheck = $selectionmode === 'all'
-                    || ($selectionmode === 'visible' && $isvisibleforparticipants);
-            }
-            if (!$isvisibleforparticipants) {
-                $shouldcheck = false;
-            }
+            $shouldcheck = !empty($resolved['selected'][$sourcecmid]);
             if ($shouldcheck) {
                 $checkboxattrs['checked'] = 'checked';
             }
-            if ($isvisibleforparticipants) {
-                $selectionstates[] = ['visible' => true, 'checked' => $shouldcheck];
-            }
+            $selectionstates[] = ['visible' => $isvisibleforparticipants, 'checked' => $shouldcheck];
             $hiddennote = $isvisibleforparticipants ? '' : html_writer::tag(
                 'span',
                 get_string('hiddenforparticipants', 'mod_fredkicourseimport'),
@@ -500,11 +435,8 @@ function fredkicourseimport_render_activity_selection(
                 ['class' => 'fredki-selection-main']
             );
             // Every supported activity can be transferred as complete content or as a reference.
-            if ($isvisibleforparticipants) {
-                $savedrecord = $savedselection[(int)$sourcecm->id] ?? null;
-                $currentmode = $savedrecord
-                    ? (($savedrecord->contentmode ?? 'reference') === 'knowledge' ? 'knowledge' : 'reference')
-                    : ($existingmodes[(int)$sourcecm->id] ?? 'reference');
+            {
+                $currentmode = $resolved['contentmodes'][(int)$sourcecm->id] ?? 'reference';
                 $knowledgeid = 'fredki-contentmode-knowledge-' . $sourcecm->id;
                 $referenceid = 'fredki-contentmode-reference-' . $sourcecm->id;
                 $radioname = 'contentmode_' . $sourcecm->id;
@@ -640,13 +572,7 @@ if (!$isconfigured) {
 }
 
 if ($selectcontent && has_capability('mod/fredkicourseimport:sync', $context)) {
-    echo fredkicourseimport_render_activity_selection(
-        $course,
-        $targetcm,
-        $activity,
-        $selectionmode,
-        $selectionmodeexplicit
-    );
+    echo fredkicourseimport_render_activity_selection($course, $targetcm, $activity);
     echo $OUTPUT->footer();
     exit;
 }

@@ -28,21 +28,20 @@ use mod_fredkicourseimport\local\course_content_importer;
 use mod_fredkicourseimport\local\selection_manager;
 
 /**
- * Hidden activities and activities in hidden sections are skipped even when selected.
+ * Hidden content is transferred only when the trainer ticked it, and such ticks persist.
  *
  * @covers \mod_fredkicourseimport\local\course_content_importer
  * @covers \mod_fredkicourseimport\local\selection_manager
  */
 final class hidden_content_test extends \advanced_testcase {
     /**
-     * Only the page visible to participants is exported.
+     * Build a course with a visible page, a hidden page and a page in a hidden section.
+     *
+     * @return array
      */
-    public function test_hidden_content_is_not_exported(): void {
+    private function make_course(): array {
         global $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['numsections' => 2], ['createsections' => true]);
         $target = $generator->create_module('label', ['course' => $course->id, 'section' => 0]);
@@ -52,22 +51,24 @@ final class hidden_content_test extends \advanced_testcase {
         set_coursemodule_visible($hidden->cmid, 0);
         set_section_visible($course->id, 2, 0);
         rebuild_course_cache($course->id, true);
-        $course = get_course($course->id);
+        return [get_course($course->id), (int)$target->cmid, (int)$visible->cmid, (int)$hidden->cmid, (int)$insection->cmid];
+    }
 
-        $modinfo = get_fast_modinfo($course);
-        $this->assertTrue(selection_manager::is_visible_for_participants($modinfo->get_cm($visible->cmid)));
-        $this->assertFalse(selection_manager::is_visible_for_participants($modinfo->get_cm($hidden->cmid)));
-        $this->assertFalse(selection_manager::is_visible_for_participants($modinfo->get_cm($insection->cmid)));
-
-        $targetcm = get_coursemodule_from_id('label', $target->cmid, 0, false, MUST_EXIST);
-        $selected = [(int)$visible->cmid, (int)$hidden->cmid, (int)$insection->cmid];
-        $modes = array_fill_keys($selected, 'knowledge');
+    /**
+     * Export with the given selection and return the generated content.
+     *
+     * @param \stdClass $course Course record.
+     * @param int $targetcmid Target course module id.
+     * @param int $activityid Activity id.
+     * @param array|null $selected Selected course module ids, or null for no explicit selection.
+     * @return string
+     */
+    private function export(\stdClass $course, int $targetcmid, int $activityid, ?array $selected): string {
+        $targetcm = get_coursemodule_from_id('label', $targetcmid, 0, false, MUST_EXIST);
         $importer = new course_content_importer();
-        $counts = $importer->import_course_content($course, $targetcm, (object)['id' => 987654], $selected, false, $modes);
-
-        $this->assertSame(1, $counts['pages']);
+        $importer->import_course_content($course, $targetcm, (object)['id' => $activityid], $selected, false, []);
         $files = get_file_storage()->get_area_files(
-            \context_module::instance($target->cmid)->id,
+            \context_module::instance($targetcmid)->id,
             'mod_fredkicourseimport',
             'generated_files',
             0,
@@ -78,8 +79,62 @@ final class hidden_content_test extends \advanced_testcase {
         foreach ($files as $file) {
             $content .= $file->get_content();
         }
+        return $content;
+    }
+
+    /**
+     * Without a saved selection, only content visible to participants is selected and exported.
+     */
+    public function test_default_selection_skips_hidden_content(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [$course, $targetcmid, $visible, $hidden, $insection] = $this->make_course();
+
+        $modinfo = get_fast_modinfo($course);
+        $this->assertTrue(selection_manager::is_visible_for_participants($modinfo->get_cm($visible)));
+        $this->assertFalse(selection_manager::is_visible_for_participants($modinfo->get_cm($hidden)));
+        $this->assertFalse(selection_manager::is_visible_for_participants($modinfo->get_cm($insection)));
+
+        $resolved = selection_manager::resolve($course, $targetcmid, 4711);
+        $this->assertSame([$visible], $resolved['selectedcmids']);
+
+        $content = $this->export($course, $targetcmid, 4711, $resolved['selectedcmids']);
         $this->assertStringContainsString('Visible page', $content);
         $this->assertStringNotContainsString('Hidden page', $content);
         $this->assertStringNotContainsString('Page in hidden section', $content);
+
+        // No explicit selection at all: hidden content is skipped as well.
+        $content = $this->export($course, $targetcmid, 4711, null);
+        $this->assertStringNotContainsString('Hidden page', $content);
+    }
+
+    /**
+     * A hidden activity ticked by the trainer is exported and stays ticked for later syncs.
+     */
+    public function test_ticked_hidden_content_is_exported_and_persists(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        [$course, $targetcmid, $visible, $hidden, $insection] = $this->make_course();
+
+        selection_manager::save($course, $targetcmid, 4712, [$visible, $hidden], false, []);
+
+        // "Update changes" resolves the same saved selection again.
+        $resolved = selection_manager::resolve($course, $targetcmid, 4712);
+        $this->assertSame([$visible, $hidden], $resolved['selectedcmids']);
+        $this->assertFalse($resolved['selected'][$insection]);
+
+        $content = $this->export($course, $targetcmid, 4712, $resolved['selectedcmids']);
+        $this->assertStringContainsString('Visible page', $content);
+        $this->assertStringContainsString('Hidden page', $content);
+        $this->assertStringNotContainsString('Page in hidden section', $content);
+
+        // Activities added after the last save follow the default rule; existing ticks stay.
+        $generator = $this->getDataGenerator();
+        $newvisible = $generator->create_module('page', ['course' => $course->id, 'section' => 1]);
+        $newhidden = $generator->create_module('page', ['course' => $course->id, 'section' => 1, 'visible' => 0]);
+        $resolved = selection_manager::resolve(get_course($course->id), $targetcmid, 4712);
+        $this->assertTrue($resolved['selected'][$hidden]);
+        $this->assertTrue($resolved['selected'][(int)$newvisible->cmid]);
+        $this->assertFalse($resolved['selected'][(int)$newhidden->cmid]);
     }
 }
