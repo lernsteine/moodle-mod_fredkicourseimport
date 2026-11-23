@@ -85,6 +85,12 @@ class course_content_importer {
             if ($sourcecm->deletioninprogress || !$sourcecm->uservisible) {
                 continue;
             }
+            // Never transfer content hidden from participants, even if it was selected
+            // earlier or by a user who can see hidden activities. Previously transferred
+            // hidden content is removed from FredKI by the stale-mapping cleanup.
+            if (!selection_manager::is_visible_for_participants($sourcecm)) {
+                continue;
+            }
             if ($selectedmap !== null && !isset($selectedmap[(int)$sourcecm->id])) {
                 continue;
             }

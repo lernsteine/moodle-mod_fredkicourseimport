@@ -1,3 +1,12 @@
+# 1.7.6 (2026-11-23) – Verborgene Inhalte werden nicht übertragen
+
+- **Fehler behoben:** Für Teilnehmende verborgene Aktivitäten und Aktivitäten in verborgenen Abschnitten wurden übertragen, wenn sie ausgewählt waren (z. B. aus einer früheren Auswahl oder über „Alle“). Sie werden jetzt grundsätzlich nicht mehr übertragen, auch nicht über „Änderungen aktualisieren“.
+- **Aufräumen:** Bereits übertragene verborgene Inhalte werden beim nächsten Import bzw. „Änderungen aktualisieren“ automatisch aus FredKI® entfernt.
+- **Auswahlseite:** Verborgene Inhalte sind ausgegraut, nicht auswählbar und mit „verborgen – wird nicht übertragen“ gekennzeichnet. Die Auswahl „Alle“ entfällt.
+- **Tests:** PHPUnit-Test für verborgene Aktivitäten und Abschnitte ergänzt.
+
+---
+
 # 1.7.5 (2026-11-12) – Review-Hinweise des Plugins Directory
 
 - **Lizenz:** `LICENSE` enthält jetzt den vollständigen Text der GNU GPL v3 (vorher Verweis auf `COPYING`).

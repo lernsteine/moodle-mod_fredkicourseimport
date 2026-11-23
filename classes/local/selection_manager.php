@@ -59,6 +59,23 @@ class selection_manager {
     }
 
     /**
+     * Whether participants can currently see this course module.
+     *
+     * Hidden activities and activities in hidden sections are never transferred to
+     * FredKI, independent of the saved selection and of the editing user's own rights.
+     *
+     * @param \cm_info $cm Course module.
+     * @return bool
+     */
+    public static function is_visible_for_participants(\cm_info $cm): bool {
+        if (empty($cm->visible)) {
+            return false;
+        }
+        $section = $cm->get_section_info();
+        return !$section || !empty($section->visible);
+    }
+
+    /**
      * Records keyed by sourcecmid. An empty result means no explicit selection has been saved yet.
      *
      * @param int $activityid FredKI course import activity instance id.

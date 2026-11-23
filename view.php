@@ -317,7 +317,6 @@ function fredkicourseimport_render_activity_selection(
     foreach (
         [
         'visible' => get_string('selectvisible', 'mod_fredkicourseimport'),
-        'all' => get_string('selectall', 'mod_fredkicourseimport'),
         'none' => get_string('deselectall', 'mod_fredkicourseimport'),
         ] as $mode => $label
     ) {
@@ -432,15 +431,23 @@ function fredkicourseimport_render_activity_selection(
                 ['src' => $sourcecm->get_icon_url(), 'alt' => '', 'class' => 'fredki-selection-icon']
             ) : '';
             $modlabel = get_string('pluginname', 'mod_' . $sourcecm->modname);
-            $isvisibleforparticipants = !empty($sourcecm->visible);
+            $isvisibleforparticipants = \mod_fredkicourseimport\local\selection_manager::is_visible_for_participants($sourcecm);
             $checkboxattrs = [
                 'type' => 'checkbox',
                 'name' => 'selectedcmid[]',
                 'value' => $sourcecm->id,
-                'class' => 'fredki-select-item fredki-select-activity' .
-                    ($isvisibleforparticipants ? ' fredki-visible-participant' : ' fredki-hidden-participant'),
-                'data-visible-participant' => $isvisibleforparticipants ? '1' : '0',
+                'class' => 'fredki-select-item fredki-select-activity fredki-visible-participant',
+                'data-visible-participant' => '1',
             ];
+            if (!$isvisibleforparticipants) {
+                // Hidden content is never transferred, so it cannot be selected either.
+                $checkboxattrs = [
+                    'type' => 'checkbox',
+                    'disabled' => 'disabled',
+                    'class' => 'fredki-hidden-participant',
+                    'aria-label' => get_string('hiddenforparticipants', 'mod_fredkicourseimport'),
+                ];
+            }
             $sourcecmid = (int)$sourcecm->id;
             if ($explicitmode) {
                 $shouldcheck = $selectionmode === 'all'
@@ -453,10 +460,15 @@ function fredkicourseimport_render_activity_selection(
                 $shouldcheck = $selectionmode === 'all'
                     || ($selectionmode === 'visible' && $isvisibleforparticipants);
             }
+            if (!$isvisibleforparticipants) {
+                $shouldcheck = false;
+            }
             if ($shouldcheck) {
                 $checkboxattrs['checked'] = 'checked';
             }
-            $selectionstates[] = ['visible' => $isvisibleforparticipants, 'checked' => $shouldcheck];
+            if ($isvisibleforparticipants) {
+                $selectionstates[] = ['visible' => true, 'checked' => $shouldcheck];
+            }
             $hiddennote = $isvisibleforparticipants ? '' : html_writer::tag(
                 'span',
                 get_string('hiddenforparticipants', 'mod_fredkicourseimport'),
@@ -488,7 +500,7 @@ function fredkicourseimport_render_activity_selection(
                 ['class' => 'fredki-selection-main']
             );
             // Every supported activity can be transferred as complete content or as a reference.
-            {
+            if ($isvisibleforparticipants) {
                 $savedrecord = $savedselection[(int)$sourcecm->id] ?? null;
                 $currentmode = $savedrecord
                     ? (($savedrecord->contentmode ?? 'reference') === 'knowledge' ? 'knowledge' : 'reference')
