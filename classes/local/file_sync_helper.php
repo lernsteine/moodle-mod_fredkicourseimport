@@ -198,7 +198,7 @@ class file_sync_helper {
                 return sha1('missing:' . $sourcecmid);
             }
 
-            $course = $DB->get_record('course', ['id' => $cm->course], 'id,fullname,category', IGNORE_MISSING);
+            $course = $DB->get_record('course', ['id' => $cm->course], 'id,fullname,category,format', IGNORE_MISSING);
             $modrecord = null;
             if ($DB->get_manager()->table_exists($cm->modname)) {
                 $modrecord = $DB->get_record($cm->modname, ['id' => $cm->instance], '*', IGNORE_MISSING);
