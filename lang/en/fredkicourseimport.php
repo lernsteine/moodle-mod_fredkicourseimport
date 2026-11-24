@@ -24,6 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['getfredki'] = 'Need a FredKI® server?';
+$string['getfredki_desc'] = 'FredKI® is open source: host it yourself for free, or let lernsteine.com host it for you – with AI models running in Germany, setup and support.';
+$string['getfredkihosted'] = 'FredKI® hosting by lernsteine.com';
+$string['getfredkiselfhost'] = 'Self-host FredKI® (GitHub)';
 $string['pluginname'] = 'FredKI course data';
 $string['modulename'] = 'FredKI course data';
 $string['modulenameplural'] = 'FredKI course data';

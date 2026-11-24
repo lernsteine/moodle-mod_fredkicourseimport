@@ -1,3 +1,7 @@
+# 1.7.9 (2026-11-24) – Hinweis auf FredKI®-Hosting
+
+- The settings show where to get a FredKI® server: hosted by lernsteine.com or self-hosted from GitHub.
+
 # 1.7.8 (2026-11-23) – Layout der Auswahlseite
 
 - **Layout:** Der Hinweis „Für Teilnehmer/innen verborgen – wird nur übertragen, wenn angehakt“ steht jetzt in einer eigenen Zeile unter dem Titel. Vorher wurde der Titel dadurch so schmal, dass er Buchstabe für Buchstabe umbrach.

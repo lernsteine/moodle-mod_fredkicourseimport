@@ -25,6 +25,22 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
+    // Where to get a FredKI server: hosted by lernsteine.com or self-hosted from GitHub.
+    $offerlinks = html_writer::link(
+        'https://fredki.com/fredki_moodle_hosting/',
+        get_string('getfredkihosted', 'mod_fredkicourseimport'),
+        ['class' => 'btn btn-primary me-2 mb-2', 'target' => '_blank', 'rel' => 'noopener']
+    ) . html_writer::link(
+        'https://github.com/lernsteine/FredKI',
+        get_string('getfredkiselfhost', 'mod_fredkicourseimport'),
+        ['class' => 'btn btn-outline-secondary mb-2', 'target' => '_blank', 'rel' => 'noopener']
+    );
+    $settings->add(new admin_setting_heading(
+        'mod_fredkicourseimport/getfredki',
+        get_string('getfredki', 'mod_fredkicourseimport'),
+        html_writer::tag('p', get_string('getfredki_desc', 'mod_fredkicourseimport')) . html_writer::div($offerlinks)
+    ));
+
     $settings->add(new admin_setting_heading(
         'mod_fredkicourseimport/cleanupregister',
         get_string('cleanupregister', 'mod_fredkicourseimport'),
